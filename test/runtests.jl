@@ -1,6 +1,6 @@
-using TensorNetworkCodes
 using Test
+using SafeTestsets
 
-@testset "TensorNetworkCodes.jl" begin
-    # Write your tests here.
+@testset verbose=true "TensorNetworkCodes.jl" begin
+    @safetestset "hello.jl" begin include("hello.jl") end
 end
