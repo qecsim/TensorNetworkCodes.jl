@@ -54,8 +54,8 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Pkg
-            Pkg.add(PackageSpec(url="https://github.com/dkt29/Qecsim.jl"))
             Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.add(PackageSpec(url="https://github.com/dkt29/Qecsim.jl"))
             Pkg.instantiate()'
       - run: |
           julia --project=docs -e '
