@@ -4,3 +4,5 @@
 /Manifest.toml
 /docs/build/
 /docs/Manifest.toml
+# jupyter
+.ipynb_checkpoints/
