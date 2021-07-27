@@ -54,8 +54,7 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Pkg
-            Pkg.develop(PackageSpec(url="https://github.com/dkt29/Qecsim.jl"))'
-            Pkg.develop(PackageSpec(url="https://github.com/dkt29/TensorNetworkCodes.jl"))'
+            Pkg.develop(PackageSpec(url="https://github.com/dkt29/Qecsim.jl"))
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
       - run: |
