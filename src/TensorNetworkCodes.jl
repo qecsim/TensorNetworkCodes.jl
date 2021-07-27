@@ -1,6 +1,7 @@
 module TensorNetworkCodes
 
 # imports
+using Qecsim
 
 # exports
 export hello

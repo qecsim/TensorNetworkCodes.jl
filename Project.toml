@@ -3,6 +3,9 @@ uuid = "b317c587-d840-4e81-9857-9d906192e215"
 authors = ["Terry Farrelly", "David K. Tuckett"]
 version = "0.1.0"
 
+[deps]
+Qecsim = "e6c2bad3-a74c-45bb-aaa0-aff4e9ffa0d7"
+
 [compat]
 julia = "1"
 
