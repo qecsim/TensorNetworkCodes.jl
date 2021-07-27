@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(TensorNetworkCodes, :DocTestSetup, :(using TensorNetworkCode
 
 makedocs(;
     modules=[TensorNetworkCodes],
-    authors="David K. Tuckett, Terry Farrelly",
+    authors="Terry Farrelly, David K. Tuckett",
     repo="https://github.com/dkt29/TensorNetworkCodes.jl/blob/{commit}{path}#{line}",
     sitename="TensorNetworkCodes.jl",
     format=Documenter.HTML(;

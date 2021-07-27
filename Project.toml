@@ -1,6 +1,6 @@
 name = "TensorNetworkCodes"
 uuid = "b317c587-d840-4e81-9857-9d906192e215"
-authors = ["David K. Tuckett", "Terry Farrelly"]
+authors = ["Terry Farrelly", "David K. Tuckett"]
 version = "0.1.0"
 
 [compat]
