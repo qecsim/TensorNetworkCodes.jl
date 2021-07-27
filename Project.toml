@@ -1,0 +1,13 @@
+name = "TensorNetworkCodes"
+uuid = "b317c587-d840-4e81-9857-9d906192e215"
+authors = ["David K. Tuckett", "Terry Farrelly"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
