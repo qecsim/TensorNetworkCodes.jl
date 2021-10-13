@@ -10,7 +10,8 @@ using StatsPlots: groupedbar
 
 #exports
 export OperatorWeights
-export operator_weights_plot, TN_distance, TN_operator_weights
+export operator_weights_plot
+export TN_distance, TN_operator_weights
 
 """
     OperatorWeights

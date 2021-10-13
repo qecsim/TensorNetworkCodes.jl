@@ -7,15 +7,15 @@ DONE * Extract TNCodes code from notebooks to package.
 DONE * Move SimpleCodes code/tests to main module.
 DONE * Move TNCodes code/tests to main module.
 DONE * Apply BlueStyle for using/imports.
-DONE * Extract TN_distance code from notebooks to submodule.
-* Extract TN_decoders code from notebooks to submodule.
+DONE * Extract TN_distance code from notebook to submodule.
+DONE * Extract TN_decoders code from notebook to submodule.
 * Add unit tests
   - SimpleCodes
   - Core
-  - TN_distance submodule
-  - TN_decoders submodule
+  - TNDistance submodule
+  - TNDecode submodule
   - Check coverage
-* Refactor code
+* Refactor code and tests
   - Review / reorganize.
   - Identify public API and _prefix private functions.
   - Do we want to overload Base.size and Base.merge?
@@ -23,9 +23,9 @@ DONE * Extract TN_distance code from notebooks to submodule.
   - Apply BlueStyle for exports.
   - Minimize dependencies / Remove heavy dependencies (e.g. PyPlot).
   - ...
+* Add Qecsim conversion layer / remove duplicate code.
 * Review API doc-strings.
 * Structure generated API docs.
-* Add Qecsim conversion layer / remove duplicate code.
 * Add Notebook examples for paper features:
 DONE   - Fig 1: Build small codes and weight histogram.
 DONE   - Fig 2, 6 & 3: Build standard/modified surface code and performance.

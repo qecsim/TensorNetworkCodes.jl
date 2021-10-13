@@ -13,7 +13,6 @@ using GraphPlot: gplot
 using ITensors: Index, ITensor, dim, hastags, inds
 using LightGraphs: Graph, add_edge!
 
-
 # exports
 
 # SimpleCode exports
@@ -51,6 +50,7 @@ export checkerboard_code, funny_code
 include("core/surface.jl")
 
 # include submodules (not reexported)
+include("TNDecode.jl")
 include("TNDistance.jl")
 
 end
