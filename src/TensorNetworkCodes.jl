@@ -10,7 +10,7 @@ using StatsBase: Weights, sample
 
 # Core imports
 using GraphPlot: gplot
-using ITensors: Index, ITensor, dim, inds, hastags
+using ITensors: Index, ITensor, dim, hastags, inds
 using LightGraphs: Graph, add_edge!
 
 
@@ -49,5 +49,8 @@ include("core/contract.jl")
 export surface_code,diamond_lattice_code,almost_surface_code,fully_random_code
 export checkerboard_code, funny_code
 include("core/surface.jl")
+
+# include submodules (not reexported)
+include("TNDistance.jl")
 
 end
