@@ -1,9 +1,3 @@
-# import Base.merge
-
-
-
-
-
 """
     remove_qubits!(operators,qubits_to_remove)
 
@@ -29,7 +23,7 @@ Merges two `SimpleCodes`.  Physically equivalent to preparing two
 codes on different sets of qubits.  Mathematically, this is the
 tensor product of two codes.
 """
-function merge(code1::SimpleCode,code2::SimpleCode)
+function Base.merge(code1::SimpleCode,code2::SimpleCode)
 
     n1 = size(code1)
     n2 = size(code2)
@@ -435,7 +429,7 @@ Merges two `CodeGraphs` with physical and virtual nodes and
 preserves their metadata (`type`, `indices`, `coords` and 'qubit'
 labels).
 """
-function merge(code_graph1::CodeGraph,code_graph2::CodeGraph)
+function Base.merge(code_graph1::CodeGraph,code_graph2::CodeGraph)
 
     n1 = num_nodes(code_graph1)
     Labels = nodes(code_graph1)
@@ -626,7 +620,7 @@ end
 
 Takes the (disjoint) union of two error correcting codes.
 """
-function merge(code1::TNCode,code2::TNCode)
+function Base.merge(code1::TNCode,code2::TNCode)
 
     new_code = merge(SimpleCode(code1),SimpleCode(code2))
     new_code_graph = merge(code1.code_graph,code2.code_graph)

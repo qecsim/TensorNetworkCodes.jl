@@ -4,14 +4,14 @@ module TensorNetworkCodes
 using Qecsim
 
 # SimpleCode imports
-import Base: size
-import StatsBase
-using Combinatorics
-using Random
+using Combinatorics: combinations
+using Random: MersenneTwister, RandomDevice, rand
+using StatsBase: Weights, sample
 
 # Core imports
-import Base.merge
-using LightGraphs, GraphPlot, ITensors
+using GraphPlot: gplot
+using ITensors: Index, ITensor, dim, inds, hastags
+using LightGraphs: Graph, add_edge!
 
 
 # exports

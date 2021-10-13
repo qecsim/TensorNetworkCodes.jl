@@ -1,16 +1,9 @@
-# import Base: size
-# using Combinatorics
-
-
-
-
-
 """
     size(code)
 
 Returns the size (number of physical qubits) of a `Quantum_code`.
 """
-function size(code::QuantumCode)
+function Base.size(code::QuantumCode)
     if length(code.stabilizers) == 0
         return 0
     end

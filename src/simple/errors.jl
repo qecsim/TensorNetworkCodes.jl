@@ -1,9 +1,3 @@
-#import StatsBase
-#using Random
-
-
-
-
 """
     random_pauli_error(n::Int64,error_prob::Float64,seed::Int64)
 
@@ -14,8 +8,8 @@ function random_pauli_error(n::Int64,error_prob::Float64,seed::Int64)
     values = [0, 1, 2, 3]
 
     probabilities = [1-error_prob, error_prob/3, error_prob/3, error_prob/3]
-    w = StatsBase.Weights(probabilities)
-    return [StatsBase.sample(rng,values,w) for α in 1:n]
+    w = Weights(probabilities)
+    return [sample(rng,values,w) for α in 1:n]
 end
 
 
@@ -25,6 +19,6 @@ function random_pauli_error(n::Int64,error_prob::Float64)
     values = [0, 1, 2, 3]
 
     probabilities = [1-error_prob, error_prob/3, error_prob/3, error_prob/3]
-    w = StatsBase.Weights(probabilities)
-    return [StatsBase.sample(rng,values,w) for α in 1:n]
+    w = Weights(probabilities)
+    return [sample(rng,values,w) for α in 1:n]
 end
