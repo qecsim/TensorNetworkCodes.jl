@@ -1,0 +1,42 @@
+TASKS TO PREPARE FOR RELEASE
+----------------------------
+
+DONE * Upload latest notebooks.
+DONE * Extract SimpleCodes code from notebooks to package.
+DONE * Extract TNCodes code from notebooks to package.
+DONE * Move SimpleCodes code/tests to main module.
+DONE * Move TNCodes code/tests to main module.
+* Apply Blue style for using/imports.
+* Extract TN_distance code from notebooks to submodule.
+* Extract TN_decoders code from notebooks to submodule.
+* Refactor code
+  - Review / reorganize.
+  - Remove heavy dependencies (e.g. PyPlot)
+  - Apply Blue-style naming conventions.
+  - ...
+* Add unit tests
+  - SimpleCodes
+  - Core
+  - TN_distance submodule
+  - TN_decoders submodule
+  - Check coverage
+* Review API doc-strings.
+* Structure generated API docs.
+* Add Qecsim conversion layer / remove duplicate code.
+* Add Notebook examples for paper features:
+DONE   - Fig 1: Build small codes and weight histogram.
+DONE   - Fig 2, 6 & 3: Build standard/modified surface code and performance.
+  - Fig 5: Build color code.
+* Add overview / installation to generated docs.
+* Update README.
+* Review documentation and notebooks.
+* Package for release (also package Qecsim for release)
+
+
+FURTHER TASKS
+-------------
+
+* Pure errors combine on combining codes.
+DONE * Speed up MPS/MPO decoder.
+* TN_distance histogram using approx. contraction.
+* Investigate surface code variants with additional 5-qubit states to make stabilizers non-extensive.
