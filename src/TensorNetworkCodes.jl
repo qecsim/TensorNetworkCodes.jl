@@ -20,7 +20,7 @@ export SimpleCode, QuantumCode
 include("simple/types.jl")
 export five_qubit_code,five_qubit_surface_code,steane_code
 include("simple/examples.jl")
-export pauli_product, pauli_communtation, do_they_commute
+export pauli_commutation, pauli_product, do_they_commute
 export pauli_rep_change, weight, are_they_independent
 include("simple/pauli_functions.jl")
 export size, permute, generate_pure_errors, verify_code

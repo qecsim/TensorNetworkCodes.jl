@@ -1,7 +1,57 @@
 """
+    pauli_commutation(a::Int, b::Int) -> 0 or 1
+    pauli_commutation(a::AbstractVector{Int}, b::AbstractVector{Int}) -> 0 or 1
+
+Return the commutation relation of two Paulis, i.e. 0 if they commute and 1 if not.
+
+# Examples
+```jldoctest
+julia> pauli_commutation(1, 1)  # X commutes with itself
+0
+
+julia> pauli_commutation(1, 3)  # X does not commute with Z
+1
+```
+
+```jldoctest
+julia> pauli_commutation([1, 3, 3, 1, 0], [1, 1, 1, 1, 1])  # XZZXI commutes with XXXXX
+0
+
+julia> stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]];
+
+julia> error = [1, 1, 0, 0, 0];  # XXIII
+
+julia> syndrome = pauli_commutation.(stabilizers, Ref(error))
+4-element Vector{Int64}:
+ 1
+ 0
+ 0
+ 1
+```
+"""
+function pauli_commutation(a::Int, b::Int)
+    if a == 0
+        return 0
+    elseif b == 0
+        return 0
+    elseif a == b
+        return 0
+    else
+        return 1
+    end
+end
+function pauli_commutation(a::AbstractVector{Int}, b::AbstractVector{Int})
+    output = 0
+    for n in 1:length(a)
+        output += pauli_commutation(a[n], b[n])
+    end
+    return mod(output, 2)
+end
+
+"""
     pauli_product(a::Int, b::Int) -> Int
 
-Product of two Paulis using integer representation.
+Return the product of two Paulis.
 
 # Examples
 ```jldoctest
@@ -31,42 +81,6 @@ function pauli_product(a::Int, b::Int)
         end
     end
 end
-
-
-
-
-
-"""
-    pauli_commutation(a::Int,b::Int) -> 0 or 1
-
-Checks if two single Paulis commute (0) or don't commute (1).
-"""
-function pauli_commutation(a::Int, b::Int)
-    if a == 0
-        return 0
-    elseif b == 0
-        return 0
-    elseif a == b
-        return 0
-    else
-        return 1
-    end
-end
-
-
-
-"""
-Second method: checks if two Pauli vectors commute (0) or don't commute (1).
-"""
-function pauli_commutation(a::Array{Int64,1}, b::Array{Int64,1})
-    output = 0
-    for n in 1:length(a)
-        output += pauli_commutation(a[n], b[n])
-    end
-    return mod(output, 2)
-end
-
-
 
 """
 Third method: checks if a set of Pauli vectors is commuting (0) or not commuting (1).
