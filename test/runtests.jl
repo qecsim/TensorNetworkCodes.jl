@@ -3,10 +3,8 @@ using SafeTestsets
 
 @testset verbose=true "TensorNetworkCodes.jl" begin
     # SimpleCode tests
-    @safetestset "simple/functions.jl" begin include("simple/functions.jl") end
-    @safetestset "simple/functions_advanced.jl" begin
-        include("simple/functions_advanced.jl")
-    end
+    @safetestset "simple/pauli_functions.jl" begin include("simple/pauli_functions.jl") end
+    @safetestset "simple/code_functions.jl" begin include("simple/code_functions.jl") end
     # Core tests
     @safetestset "core/types.jl" begin include("core/types.jl") end
     @safetestset "core/contract.jl" begin include("core/contract.jl") end
