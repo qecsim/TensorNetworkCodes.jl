@@ -1,16 +1,22 @@
-
-
-
-
-
-
 """
-    pauli_product(a,b) -> Int64
+    pauli_product(a::Int, b::Int) -> Int
 
-Gives the result of multiplying two Paulis.  Note 0 is the identity (not 4 like
-in the holo code notebooks).
+Product of two Paulis using integer representation.
+
+# Examples
+```jldoctest
+julia> pauli_product(1, 2) # X.Y -> Z
+3
+
+julia> pauli_product.([1,0,3,2], [1,1,1,3]) # (XIZY).(XXXZ) -> (IXYX)
+4-element Vector{Int64}:
+ 0
+ 1
+ 2
+ 1
+```
 """
-function pauli_product(a::Int,b::Int)
+function pauli_product(a::Int, b::Int)
     if a == 0
         return b
     elseif b == 0
@@ -35,7 +41,7 @@ end
 
 Checks if two single Paulis commute (0) or don't commute (1).
 """
-function do_they_commute(a::Int,b::Int)
+function do_they_commute(a::Int, b::Int)
     if a == 0
         return 0
     elseif b == 0
@@ -52,12 +58,12 @@ end
 """
 Second method: checks if two Pauli vectors commute (0) or don't commute (1).
 """
-function do_they_commute(a::Array{Int64,1},b::Array{Int64,1})
+function do_they_commute(a::Array{Int64,1}, b::Array{Int64,1})
     output = 0
     for n in 1:length(a)
-        output += do_they_commute(a[n],b[n])
+        output += do_they_commute(a[n], b[n])
     end
-    return mod(output,2)
+    return mod(output, 2)
 end
 
 
@@ -67,8 +73,8 @@ Third method: checks if a set of Pauli vectors is commuting (0) or not commuting
 """
 function do_they_commute(a::Array{Array{Int64,1},1})
     num_operators = length(a)
-    for n in 1:num_operators, m in 1:n-1
-        if do_they_commute(a[n],a[m]) == 1
+    for n in 1:num_operators, m in 1:n - 1
+        if do_they_commute(a[n], a[m]) == 1
             return 1
             break
         end
@@ -132,20 +138,20 @@ end
 Give a list of operators and binary powers, this returns their
 product with the appropriate powers.
 """
-function product_with_powers(operators,powers)::Array{Int64,1}
-    output = fill(0,length(operators[1]))
+function product_with_powers(operators, powers)::Array{Int64,1}
+    output = fill(0, length(operators[1]))
     for n in 1:length(operators)
         if powers[n] != 0
             if !(powers[n] in [0,1])
-               error("powers of Paulis are not in [0,1]!")
+                error("powers of Paulis are not in [0,1]!")
             end
-            output = pauli_product.(output,operators[n])
+            output = pauli_product.(output, operators[n])
         end
     end
     return output
 end
 
-product_with_powers(g,l,powers) = product_with_powers(vcat(g,l),powers)
+product_with_powers(g,l,powers) = product_with_powers(vcat(g, l), powers)
 
 
 
@@ -183,20 +189,20 @@ function are_they_independent(operators::Array{Array{Int64,1},1})
         indices = Int[]
         for α in remaining
             if operators[α][qubit] in paulis
-                setdiff!(paulis,operators[α][qubit])
-                push!(indices,α)
+                setdiff!(paulis, operators[α][qubit])
+                push!(indices, α)
             end
             if length(paulis) == 1
                 break
             end
         end
 
-        remaining = setdiff(remaining,indices)
+        remaining = setdiff(remaining, indices)
         for α in remaining
             if operators[α][qubit] == 0
                 continue
             end
-            new_operator = pauli_product.(operators[α],operators[indices[1]])
+            new_operator = pauli_product.(operators[α], operators[indices[1]])
             if new_operator[qubit] == 0
                 operators[α] = deepcopy(new_operator)
                 continue
@@ -204,13 +210,13 @@ function are_they_independent(operators::Array{Array{Int64,1},1})
             if length(paulis) == 2
                 continue
             end
-            new_operator = pauli_product.(operators[α],operators[indices[2]])
+            new_operator = pauli_product.(operators[α], operators[indices[2]])
             if new_operator[qubit] == 0
                 operators[α] = deepcopy(new_operator)
                 continue
             end
-            new_operator = pauli_product.(operators[α],operators[indices[1]])
-            new_operator = pauli_product.(new_operator,operators[indices[2]])
+            new_operator = pauli_product.(operators[α], operators[indices[1]])
+            new_operator = pauli_product.(new_operator, operators[indices[2]])
             if new_operator[qubit] == 0
                 operators[α] = deepcopy(new_operator)
                 continue
@@ -218,7 +224,7 @@ function are_they_independent(operators::Array{Array{Int64,1},1})
         end
 
         for α in remaining
-            if operators[α] == zeros(Int64,num_qubits)
+            if operators[α] == zeros(Int64, num_qubits)
                 return false
             end
         end
