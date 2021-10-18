@@ -37,11 +37,11 @@ end
 
 
 """
-    do_they_commute(a::Int,b::Int) -> 0 or 1
+    pauli_commutation(a::Int,b::Int) -> 0 or 1
 
 Checks if two single Paulis commute (0) or don't commute (1).
 """
-function do_they_commute(a::Int, b::Int)
+function pauli_commutation(a::Int, b::Int)
     if a == 0
         return 0
     elseif b == 0
@@ -58,10 +58,10 @@ end
 """
 Second method: checks if two Pauli vectors commute (0) or don't commute (1).
 """
-function do_they_commute(a::Array{Int64,1}, b::Array{Int64,1})
+function pauli_commutation(a::Array{Int64,1}, b::Array{Int64,1})
     output = 0
     for n in 1:length(a)
-        output += do_they_commute(a[n], b[n])
+        output += pauli_commutation(a[n], b[n])
     end
     return mod(output, 2)
 end
@@ -74,7 +74,7 @@ Third method: checks if a set of Pauli vectors is commuting (0) or not commuting
 function do_they_commute(a::Array{Array{Int64,1},1})
     num_operators = length(a)
     for n in 1:num_operators, m in 1:n - 1
-        if do_they_commute(a[n], a[m]) == 1
+        if pauli_commutation(a[n], a[m]) == 1
             return 1
             break
         end

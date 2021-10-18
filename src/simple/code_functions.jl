@@ -52,14 +52,14 @@ function fix_pure_errors!(
 
     for α in 1:r
         for β in α:r
-            if do_they_commute(pure_errors[β],stabilizers[α]) != 0
+            if pauli_commutation(pure_errors[β],stabilizers[α]) != 0
                 pure_errors[α],pure_errors[β] = pure_errors[β],pure_errors[α]
                 success += 1
                 break
             end
         end
         for β in 1:r
-            if α != β && do_they_commute(pure_errors[β],stabilizers[α]) != 0
+            if α != β && pauli_commutation(pure_errors[β],stabilizers[α]) != 0
                 pure_errors[β] = pauli_product.(pure_errors[α],pure_errors[β])
             end
         end
@@ -198,14 +198,14 @@ function verify_code(code::QuantumCode)
 
 
     # Do pure errors fulfil their role?
-    if do_they_commute.(code.stabilizers,code.pure_errors) != ones(Int64,r)
+    if pauli_commutation.(code.stabilizers,code.pure_errors) != ones(Int64,r)
         println("pure errors don't anticommute with their corresponding
             stabilizers!")
         return false
     end
 
     for α in 1:r, β in 1:r
-        if α != β && do_they_commute(code.stabilizers[α],code.pure_errors[β]) == 1
+        if α != β && pauli_commutation(code.stabilizers[α],code.pure_errors[β]) == 1
             println("pure errors anticommute with the wrong stabilizers!")
             return false
         end
@@ -294,8 +294,8 @@ function distance(
             end
 
 
-            if do_they_commute.(Ref(operator),stabilizers) == zeros(Int64,r)
-                if (do_they_commute.(Ref(operator),logicals) != zeros(Int64,kk) ||
+            if pauli_commutation.(Ref(operator),stabilizers) == zeros(Int64,r)
+                if (pauli_commutation.(Ref(operator),logicals) != zeros(Int64,kk) ||
                     operator ∈ logicals )
                 distance = L  # = weight(operator)
                 push!(lowest_weight_logicals,operator)
@@ -356,7 +356,7 @@ function distance(
                 operator[locations[index]] = paulis[index]
             end
 
-            if (do_they_commute.(Ref(operator),stabilizers) == zeros(Int64,r) &&
+            if (pauli_commutation.(Ref(operator),stabilizers) == zeros(Int64,r) &&
                     are_they_independent(vcat(stabilizers,[operator])))
                 distance = L
                 push!(lowest_weight_logicals,operator)

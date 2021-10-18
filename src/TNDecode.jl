@@ -4,7 +4,7 @@ module TNDecode
 using ..TensorNetworkCodes: TNCode
 using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor
-using ..TensorNetworkCodes: do_they_commute, pauli_product
+using ..TensorNetworkCodes: pauli_commutation, pauli_product
 using ..TensorNetworkCodes: get_syndrome, get_pure_error, product_with_powers
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
@@ -267,7 +267,7 @@ function compare_code_success_empirical(
                 bond_dim=χ)
 
             effect_on_code = pauli_product.(error,code1_correction)
-            if (do_they_commute.(Ref(effect_on_code),code1.logicals)
+            if (pauli_commutation.(Ref(effect_on_code),code1.logicals)
                 == zeros(Int64,length(code1.logicals)))
                 code1_success[α] += 1
             end
@@ -283,7 +283,7 @@ function compare_code_success_empirical(
                 bond_dim=χ)
 
             effect_on_code = pauli_product.(error,code2_correction)
-            if (do_they_commute.(Ref(effect_on_code),code2.logicals)
+            if (pauli_commutation.(Ref(effect_on_code),code2.logicals)
                 == zeros(Int64,length(code2.logicals)))
                 code2_success[α] += 1
             end

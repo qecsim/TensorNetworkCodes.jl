@@ -7,6 +7,7 @@ the Pauli operator ``X \otimes I \otimes Z \otimes Y``.
 
 ```@docs
 pauli_product
+pauli_commutation
 do_they_commute
 pauli_rep_change
 product_with_powers

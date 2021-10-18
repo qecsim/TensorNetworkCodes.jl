@@ -7,12 +7,12 @@ Given an `error_operator` return the syndrome, which tells us which of
 function get_syndrome(code::QuantumCode,error_operator::Array{Int64,1})
     g = code.stabilizers
     n = size(code)
-    
+
     if n != length(error_operator)
         error("size of error does not match size of code!")
     end
 
-    return do_they_commute.(g,Ref(error_operator))
+    return pauli_commutation.(g,Ref(error_operator))
 end
 
 
@@ -30,18 +30,18 @@ function get_pure_error(code::QuantumCode,syndrome::Array{Int64,1})
     pe = code.pure_errors
     n = size(code)
     r = length(pe)
-    
+
     if r != length(syndrome)
         error("number of syndrome bits is not compatible with this code!")
     end
-    
+
     output = zeros(Int64,n)
     for α in 1:r
         if syndrome[α] == 1
             output = pauli_product.(output,pe[α])
         end
     end
-    
+
     return output
 end
 
@@ -61,7 +61,7 @@ function min_weight_brute_force(
         code::QuantumCode,
         syndrome::Array{Int64,1};
         error_model="depolarizing")
-    
+
     g = code.stabilizers
     r = length(g)
     n = size(code)
@@ -69,19 +69,19 @@ function min_weight_brute_force(
     if r != length(syndrome)
         error("number of syndrome bits does not match number of stabilizers!")
     end
-    
+
     error_guess = zeros(Int64,n)
     error_weight = n + 1
     for α in 0:4^n-1
         operator = digits!(zeros(Int64,n),α,base = 4)
         w = weight(operator)
-        if (get_syndrome(code,operator) == syndrome && 
+        if (get_syndrome(code,operator) == syndrome &&
                 w <= error_weight)
             error_weight = w
             error_guess = operator
         end
     end
-    
+
     return error_guess
 end
 
@@ -96,9 +96,9 @@ Returns a correction which does nothing!
 """
 function do_nothing_decoder(code::QuantumCode,syndrome::Array{Int64,1},
         error_prob)
-    
+
     n = size(code)
-    
+
     return zeros(Int64,n)
 end
 
@@ -109,7 +109,7 @@ end
 """
     monte_carlo_simulation(code,probabilities,N,decoder)
 
-Randomly generates errors, decodes and then evaluates success 
+Randomly generates errors, decodes and then evaluates success
 probabilities for a `code` given a range of physical error
 `probabilities` each for `N` Monte Carlo samples using `decoder`.
 """
@@ -130,12 +130,12 @@ function monte_carlo_simulation(
             correction = decoder(code,syndrome,p)
             effect_on_code = pauli_product.(initial_error,correction)
 
-            if (do_they_commute.(Ref(effect_on_code),code.logicals) 
+            if (do_they_commute.(Ref(effect_on_code),code.logicals)
                 == zeros(Int64,length(code.logicals)))
                 success += 1
             end
         end
-        
+
         push!(successes,success)
     end
 
