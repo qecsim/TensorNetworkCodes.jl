@@ -1,9 +1,8 @@
 using TensorNetworkCodes
 using Test
 
-@testset "are_they_independent" begin
-    new_code = steane_code()
-    @test are_they_independent(new_code.stabilizers)
+@testset "size" begin
+    @test size(five_qubit_code()) == 5
 end
 
 @testset "verify_code" begin
