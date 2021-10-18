@@ -1,9 +1,10 @@
 # Pauli functions
 
+Pauli functions for evaluating products, commutations, weights and independence.
 Single-qubit Pauli operators ``I``, ``X``, ``Y``, ``Z`` are represented by integers
 0, 1, 2, 3, respectively. Correspondingly, multi-qubit Pauli operators are represented by
-vectors of integers. For example, `[1, 0, 3, 2]` represents the Pauli operator
-``X \otimes I \otimes Z \otimes Y``.
+vectors of integers; for example, ``X \otimes I \otimes Z \otimes Y`` is represented by
+`[1, 0, 3, 2]`.
 
 ```@docs
 pauli_commutation
