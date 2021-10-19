@@ -29,7 +29,7 @@ DONE * Extract TN_decoders code from notebook to submodule.
 * Add Notebook examples for paper features:
 DONE   - Fig 1: Build small codes and weight histogram.
 DONE   - Fig 2, 6 & 3: Build standard/modified surface code and performance.
-  - Fig 5: Build color code.
+DONE   - Fig 5: Build color code.
 * Add overview / installation to generated docs.
 * Update README.
 * Review documentation and notebooks.
