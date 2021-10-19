@@ -46,6 +46,18 @@ end
     @test pauli_product.(Ref(3), [0, 1, 2, 3]) == [3, 2, 1, 0]  # Z with IXYZ -> ZYXI
 end
 
+@testset "pauli_product_pow" begin
+    ops = [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1]]
+    @test pauli_product_pow(ops, [0, 0, 0]) == [0, 0, 0, 0]
+    @test pauli_product_pow(ops, [0, 0, 1]) == [2, 3, 0, 1]
+    @test pauli_product_pow(ops, [0, 1, 0]) == [1, 0, 3, 2]
+    @test pauli_product_pow(ops, [0, 1, 1]) == [3, 3, 3, 3]
+    @test pauli_product_pow(ops, [1, 0, 0]) == [0, 1, 2, 3]
+    @test pauli_product_pow(ops, [1, 0, 1]) == [2, 2, 2, 2]
+    @test pauli_product_pow(ops, [1, 1, 0]) == [1, 1, 1, 1]
+    @test pauli_product_pow(ops, [1, 1, 1]) == [3, 2, 1, 0]
+end
+
 @testset "pauli_rep_change" begin
     @test pauli_rep_change.([0, 1, 2, 3]) == ['I', 'X', 'Y', 'Z']
     @test pauli_rep_change.(['I', 'X', 'Y', 'Z']) == [0, 1, 2, 3]

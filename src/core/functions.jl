@@ -14,7 +14,7 @@ function code_to_tensor(code::QuantumCode)
 
     for α in 0:2^n-1
         powers = digits!(zeros(Int64,n),α,base = 2)
-        operator = product_with_powers(g,powers)
+        operator = pauli_product_pow(g,powers)
         operator = operator .+ 1
 
         index = CartesianIndex(operator...)

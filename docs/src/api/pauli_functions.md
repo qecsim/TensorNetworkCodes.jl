@@ -10,7 +10,7 @@ pauli_are_commuting
 pauli_are_independent
 pauli_commutation
 pauli_product
+pauli_product_pow
 pauli_rep_change
-product_with_powers
 weight
 ```

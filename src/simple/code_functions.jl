@@ -392,7 +392,7 @@ function low_weight_stabilizers(stabilizers::Array{Array{Int64,1}})
         for m in 1:2^r-1
             powers = digits!(zeros(Int8,r),m,base = 2)
 
-            operator = product_with_powers(stabilizers,powers)
+            operator = pauli_product_pow(stabilizers,powers)
             w = weight(operator)
             temp = deepcopy(new_stabilizers)
 
@@ -555,13 +555,13 @@ function gauge_code(
         logical_powers = copy(logical_power_list[β])
         op_range = 2*(α-1)+1:2*(α)
 
-        new_stabilizer = product_with_powers(l[op_range],logical_powers)
+        new_stabilizer = pauli_product_pow(l[op_range],logical_powers)
         if logical_powers[2] == 1
             logical_powers[1] = mod(logical_powers[1]+1,2)
         elseif logical_powers[1] == 1
             logical_powers[2] = mod(logical_powers[2]+1,2)
         end
-        new_pure_error = product_with_powers(l[op_range],logical_powers)
+        new_pure_error = pauli_product_pow(l[op_range],logical_powers)
 
         push!(output_stabilizers,new_stabilizer)
         push!(output_pure_errors,new_pure_error)

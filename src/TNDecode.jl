@@ -4,8 +4,8 @@ module TNDecode
 using ..TensorNetworkCodes: TNCode
 using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor
-using ..TensorNetworkCodes: pauli_commutation, pauli_product
-using ..TensorNetworkCodes: get_syndrome, get_pure_error, product_with_powers
+using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
+using ..TensorNetworkCodes: get_syndrome, get_pure_error
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
 using ITensors: Index, ITensor, array, hastags
@@ -188,7 +188,7 @@ function TN_decoder(
         powers[2] = 1
     end
 
-    correction = product_with_powers(code.logicals,powers)  # TensorNetworkCodes.product_with_powers
+    correction = pauli_product_pow(code.logicals,powers)
     correction = pauli_product.(correction,pure_error)
 
     return correction

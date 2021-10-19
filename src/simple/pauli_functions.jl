@@ -184,6 +184,38 @@ function pauli_product(a::Int, b::Int)
 end
 
 """
+    pauli_product_pow(operators, powers)
+
+Return the product of the Pauli operators each raised to the corresponding integer power.
+
+Operators is an iterable of `AbstractVector{Int}` and powers is an iterable of `Int`. The
+product is evaluated to the length of the shorter of the two iterables.
+
+# Examples
+```jldoctest
+julia> ops = [[3, 3, 0], [0, 1, 1], [2, 0, 2]];  # ZZI, IXX, YIY
+
+julia> pauli_product_pow(ops, [1, 0, 1])
+3-element Vector{Int64}:
+ 1
+ 3
+ 2
+```
+"""
+function pauli_product_pow(operators, powers)::Array{Int64,1}
+    output = fill(0, length(operators[1]))
+    for n in 1:length(operators)
+        if powers[n] != 0
+            if !(powers[n] in [0,1])
+                error("powers of Paulis are not in [0,1]!")
+            end
+            output = pauli_product.(output, operators[n])
+        end
+    end
+    return output
+end
+
+"""
     pauli_rep_change(pauli::Int) -> Char
     pauli_rep_change(pauli::Char) -> Int
 
@@ -221,35 +253,6 @@ function pauli_rep_change(pauli::Char)
 end
 
 
-
-
-
-
-
-
-
-
-
-"""
-    product_with_powers(operators,powers) -> Array{Int64,1}
-
-Give a list of operators and binary powers, this returns their
-product with the appropriate powers.
-"""
-function product_with_powers(operators, powers)::Array{Int64,1}
-    output = fill(0, length(operators[1]))
-    for n in 1:length(operators)
-        if powers[n] != 0
-            if !(powers[n] in [0,1])
-                error("powers of Paulis are not in [0,1]!")
-            end
-            output = pauli_product.(output, operators[n])
-        end
-    end
-    return output
-end
-
-product_with_powers(g,l,powers) = product_with_powers(vcat(g, l), powers)
 
 
 
