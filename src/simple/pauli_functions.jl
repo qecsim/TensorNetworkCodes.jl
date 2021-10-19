@@ -129,22 +129,10 @@ julia> syndrome = pauli_commutation.(stabilizers, Ref(error))
 ```
 """
 function pauli_commutation(a::Int, b::Int)
-    if a == 0
-        return 0
-    elseif b == 0
-        return 0
-    elseif a == b
-        return 0
-    else
-        return 1
-    end
+    return a == 0 || b == 0 || a == b ? 0 : 1
 end
 function pauli_commutation(a::AbstractVector{Int}, b::AbstractVector{Int})
-    output = 0
-    for n in 1:length(a)
-        output += pauli_commutation(a[n], b[n])
-    end
-    return mod(output, 2)
+    return mod(sum(pauli_commutation.(a, b)), 2)
 end
 
 """
@@ -162,7 +150,7 @@ julia> z_inverse = pauli_pow(3, -1)
 ```
 """
 function pauli_pow(a::Int, power::Int)
-    return (mod(power, 2) == 0) ? 0 : a
+    return mod(power, 2) == 0 ? 0 : a
 end
 
 """
