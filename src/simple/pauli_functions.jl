@@ -148,6 +148,24 @@ function pauli_commutation(a::AbstractVector{Int}, b::AbstractVector{Int})
 end
 
 """
+    pauli_pow(a::Int, power::Int) -> Int
+
+Return the Pauli raised to the given power.
+
+# Examples
+```jldoctest
+julia> x_squared = pauli_pow(1, 2)
+0
+
+julia> z_inverse = pauli_pow(3, -1)
+3
+```
+"""
+function pauli_pow(a::Int, power::Int)
+    return (mod(power, 2) == 0) ? 0 : a
+end
+
+"""
     pauli_product(a::Int, b::Int) -> Int
 
 Return the product of two Paulis.
@@ -184,10 +202,12 @@ end
 """
     pauli_product_pow(operators, powers)
 
-Return the product of the Pauli operators each raised to the corresponding integer power.
+Return the product of the Pauli operators each raised to the corresponding power.
 
 Operators is an iterable of `AbstractVector{Int}` and powers is an iterable of `Int`. The
 product is evaluated to the length of the shorter of the two iterables.
+
+See also [`pauli_product`](@ref), [`pauli_pow`](@ref).
 
 # Examples
 ```jldoctest
@@ -200,17 +220,11 @@ julia> pauli_product_pow(ops, [1, 0, 1])
  2
 ```
 """
-function pauli_product_pow(operators, powers)::Array{Int64,1}
-    output = fill(0, length(operators[1]))
-    for n in 1:length(operators)
-        if powers[n] != 0
-            if !(powers[n] in [0,1])
-                error("powers of Paulis are not in [0,1]!")
-            end
-            output = pauli_product.(output, operators[n])
-        end
-    end
-    return output
+function pauli_product_pow(operators, powers)
+    return reduce(
+        (a, b)->pauli_product.(a, b),
+        (pauli_pow.(operator, power) for (operator, power) in zip(operators, powers))
+    )
 end
 
 """

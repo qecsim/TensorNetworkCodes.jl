@@ -25,10 +25,10 @@ end
 
 @testset "pauli_commutation" begin
     # single-qubit
-    @test pauli_commutation.(Ref(0), [0, 1, 2, 3]) == [0, 0, 0, 0]  # I with IXYZ
-    @test pauli_commutation.(Ref(1), [0, 1, 2, 3]) == [0, 0, 1, 1]  # X with IXYZ
-    @test pauli_commutation.(Ref(2), [0, 1, 2, 3]) == [0, 1, 0, 1]  # Y with IXYZ
-    @test pauli_commutation.(Ref(3), [0, 1, 2, 3]) == [0, 1, 1, 0]  # Z with IXYZ
+    @test pauli_commutation.(0, [0, 1, 2, 3]) == [0, 0, 0, 0]  # I with IXYZ
+    @test pauli_commutation.(1, [0, 1, 2, 3]) == [0, 0, 1, 1]  # X with IXYZ
+    @test pauli_commutation.(2, [0, 1, 2, 3]) == [0, 1, 0, 1]  # Y with IXYZ
+    @test pauli_commutation.(3, [0, 1, 2, 3]) == [0, 1, 1, 0]  # Z with IXYZ
     # multi-qubit
     # 5-qubit code stabilizers: XZZXI, IXZZX, XIXZZ, ZXIXZ
     stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
@@ -39,11 +39,18 @@ end
     @test pauli_commutation.(Ref([0, 0, 2, 0, 0]), stabilizers) == [1, 1, 1, 0] # IIYII
 end
 
+@testset "pauli_pow" begin
+    @test pauli_pow.(0, [-1, 0, 1, 2, 3]) == [0, 0, 0, 0, 0]  # I to powers
+    @test pauli_pow.(1, [-1, 0, 1, 2, 3]) == [1, 0, 1, 0, 1]  # X to powers
+    @test pauli_pow.(2, [-1, 0, 1, 2, 3]) == [2, 0, 2, 0, 2]  # Y to powers
+    @test pauli_pow.(3, [-1, 0, 1, 2, 3]) == [3, 0, 3, 0, 3]  # Z to powers
+end
+
 @testset "pauli_product" begin
-    @test pauli_product.(Ref(0), [0, 1, 2, 3]) == [0, 1, 2, 3]  # I with IXYZ -> IXYZ
-    @test pauli_product.(Ref(1), [0, 1, 2, 3]) == [1, 0, 3, 2]  # X with IXYZ -> XIZY
-    @test pauli_product.(Ref(2), [0, 1, 2, 3]) == [2, 3, 0, 1]  # Y with IXYZ -> YZIX
-    @test pauli_product.(Ref(3), [0, 1, 2, 3]) == [3, 2, 1, 0]  # Z with IXYZ -> ZYXI
+    @test pauli_product.(0, [0, 1, 2, 3]) == [0, 1, 2, 3]  # I with IXYZ -> IXYZ
+    @test pauli_product.(1, [0, 1, 2, 3]) == [1, 0, 3, 2]  # X with IXYZ -> XIZY
+    @test pauli_product.(2, [0, 1, 2, 3]) == [2, 3, 0, 1]  # Y with IXYZ -> YZIX
+    @test pauli_product.(3, [0, 1, 2, 3]) == [3, 2, 1, 0]  # Z with IXYZ -> ZYXI
 end
 
 @testset "pauli_product_pow" begin
@@ -56,6 +63,7 @@ end
     @test pauli_product_pow(ops, [1, 0, 1]) == [2, 2, 2, 2]
     @test pauli_product_pow(ops, [1, 1, 0]) == [1, 1, 1, 1]
     @test pauli_product_pow(ops, [1, 1, 1]) == [3, 2, 1, 0]
+    @test pauli_product_pow(ops, [-1, 3, 1]) == [3, 2, 1, 0]  # non-binary powers
 end
 
 @testset "pauli_rep_change" begin

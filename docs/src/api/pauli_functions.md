@@ -9,6 +9,7 @@ vectors of integers; for example, ``X ⊗ I ⊗ Z ⊗ Y`` is represented by `[1,
 pauli_are_commuting
 pauli_are_independent
 pauli_commutation
+pauli_pow
 pauli_product
 pauli_product_pow
 pauli_rep_change
