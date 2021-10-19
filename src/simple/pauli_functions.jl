@@ -283,11 +283,5 @@ julia> pauli_weight([3, 0, 2, 0, 1])  # ZIYIX
 ```
 """
 function pauli_weight(operator::AbstractVector{Int})
-    output = 0
-    for n in 1:length(operator)
-        if operator[n] != 0
-            output += 1
-        end
-    end
-    return output
+    return count(!=(0), operator)
 end
