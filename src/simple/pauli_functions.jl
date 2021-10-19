@@ -40,6 +40,9 @@ function pauli_are_independent(operators)
     operator_list = collect(operators)  # collect iterable to use length and index access
 
     num_operators = length(operator_list)
+    if num_operators == 0  # empty operator_list is independent
+        return true
+    end
     num_qubits = length(operator_list[1])
     remaining = collect(1:num_operators)
 
