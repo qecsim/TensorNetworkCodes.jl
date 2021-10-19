@@ -213,7 +213,7 @@ function verify_code(code::QuantumCode)
 
 
     # Do stabilizers commute?
-    if do_they_commute(code.stabilizers) != 0
+    if !pauli_are_commuting(code.stabilizers)
         println("stabilizers don't commute!")
         return false
     end
@@ -230,7 +230,7 @@ function verify_code(code::QuantumCode)
     for logical in code.logicals
         operators = deepcopy(code.stabilizers)
         push!(operators,logical)
-        if do_they_commute(operators) != 0
+        if !pauli_are_commuting(operators)
             println("logicals don't commute with stabilizers!")
             return false
         end
@@ -440,16 +440,16 @@ function are_physically_equivalent(x::QuantumCode,y::QuantumCode)
     end
 
 
-    if do_they_commute(vcat(x.stabilizers,y.stabilizers)) != 0
+    if !pauli_are_commuting(vcat(x.stabilizers,y.stabilizers))
         return false
     end
     for logical in x.logicals
-        if do_they_commute(vcat(y.stabilizers,[logical])) != 0
+        if !pauli_are_commuting(vcat(y.stabilizers,[logical]))
             return false
         end
     end
     for logical in y.logicals
-        if do_they_commute(vcat(x.stabilizers,[logical])) != 0
+        if !pauli_are_commuting(vcat(x.stabilizers,[logical]))
             return false
         end
     end
@@ -604,7 +604,7 @@ function random_stabilizer_state(n::Int64)
             @goto try_again
         elseif !are_they_independent(vcat(stabilizers,[new_stabilizer]))
             @goto try_again
-        elseif do_they_commute(vcat(stabilizers,[new_stabilizer])) == 1
+        elseif !pauli_are_commuting(vcat(stabilizers,[new_stabilizer]))
             @goto try_again
         end
 

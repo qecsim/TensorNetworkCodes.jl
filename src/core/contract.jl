@@ -196,7 +196,7 @@ function annoying_stabilizers(
         operator[i] = σ
         operator[j] = σ
 
-        if do_they_commute(vcat(stabilizers,[operator])) == 0
+        if pauli_are_commuting(vcat(stabilizers,[operator]))
             push!(output,operator)
         end
         if length(output) == 2
@@ -232,7 +232,7 @@ function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
         println("There were annoying operators!")
     end
     for logical in logicals
-        if do_they_commute(vcat(annoying_ops,[logical])) == 1
+        if !pauli_are_commuting(vcat(annoying_ops,[logical]))
             println("Can't contract!")
             return SimpleCode()
         end

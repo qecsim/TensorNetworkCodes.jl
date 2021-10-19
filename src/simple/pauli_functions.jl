@@ -1,4 +1,35 @@
 """
+    pauli_are_commuting(operators::AbstractVector{<:AbstractVector{Int}}) -> Bool
+
+Return true if the list of Pauli vectors mutually commute, or false otherwise.
+
+# Examples
+```jldoctest
+julia> stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]];
+
+julia> pauli_are_commuting(stabilizers)  # stabilizers mutually commute
+true
+
+julia> logical_x = [1, 1, 1, 1, 1];  # XXXXX
+
+julia> logical_z = [3, 3, 3, 3, 3];  # ZZZZZ
+
+julia> pauli_are_commuting([logical_x, logical_z])  # logicals do not commute
+false
+```
+"""
+function pauli_are_commuting(operators::AbstractVector{<:AbstractVector{Int}})
+    num_operators = length(operators)
+    for n in 1:num_operators, m in 1:n - 1
+        if pauli_commutation(operators[n], operators[m]) == 1
+            return false
+            break
+        end
+    end
+    return true
+end
+
+"""
     pauli_commutation(a::Int, b::Int) -> 0 or 1
     pauli_commutation(a::AbstractVector{Int}, b::AbstractVector{Int}) -> 0 or 1
 
@@ -81,23 +112,6 @@ function pauli_product(a::Int, b::Int)
         end
     end
 end
-
-"""
-Third method: checks if a set of Pauli vectors is commuting (0) or not commuting (1).
-"""
-function do_they_commute(a::Array{Array{Int64,1},1})
-    num_operators = length(a)
-    for n in 1:num_operators, m in 1:n - 1
-        if pauli_commutation(a[n], a[m]) == 1
-            return 1
-            break
-        end
-    end
-    return 0
-end
-
-
-
 
 
 """

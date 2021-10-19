@@ -1,6 +1,17 @@
 using TensorNetworkCodes
 using Test
 
+@testset "pauli_are_commuting" begin
+    # 5-qubit code stabilizers: XZZXI, IXZZX, XIXZZ, ZXIXZ
+    stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
+    logical_x = [1, 1, 1, 1, 1]  # XXXXX
+    logical_z = [3, 3, 3, 3, 3]  # ZZZZZ
+    @test pauli_are_commuting(stabilizers)
+    @test pauli_are_commuting(vcat(stabilizers, [logical_x]))
+    @test pauli_are_commuting(vcat(stabilizers, [logical_z]))
+    @test !pauli_are_commuting([logical_x, logical_z])
+end
+
 @testset "pauli_commutation" begin
     # single-qubit
     @test pauli_commutation.(Ref(0), [0, 1, 2, 3]) == [0, 0, 0, 0]  # I with IXYZ

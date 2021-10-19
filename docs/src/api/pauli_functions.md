@@ -7,9 +7,9 @@ vectors of integers; for example, ``X \otimes I \otimes Z \otimes Y`` is represe
 `[1, 0, 3, 2]`.
 
 ```@docs
+pauli_are_commuting
 pauli_commutation
 pauli_product
-do_they_commute
 pauli_rep_change
 product_with_powers
 weight

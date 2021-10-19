@@ -130,7 +130,7 @@ function monte_carlo_simulation(
             correction = decoder(code,syndrome,p)
             effect_on_code = pauli_product.(initial_error,correction)
 
-            if (do_they_commute.(Ref(effect_on_code),code.logicals)
+            if (pauli_commutation.(Ref(effect_on_code),code.logicals)
                 == zeros(Int64,length(code.logicals)))
                 success += 1
             end
