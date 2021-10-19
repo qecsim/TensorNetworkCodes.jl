@@ -8,10 +8,10 @@ vectors of integers; for example, ``X \otimes I \otimes Z \otimes Y`` is represe
 
 ```@docs
 pauli_are_commuting
+pauli_are_independent
 pauli_commutation
 pauli_product
 pauli_rep_change
 product_with_powers
 weight
-are_they_independent
 ```

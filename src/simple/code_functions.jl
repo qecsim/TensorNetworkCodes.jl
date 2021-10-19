@@ -220,7 +220,7 @@ function verify_code(code::QuantumCode)
 
 
     # Are stabilizers independent?  (This may be redundant)
-    if !are_they_independent(code.stabilizers)
+    if !pauli_are_independent(code.stabilizers)
         println("stabilizers aren't independent!")
         return false
     end
@@ -357,7 +357,7 @@ function distance(
             end
 
             if (pauli_commutation.(Ref(operator),stabilizers) == zeros(Int64,r) &&
-                    are_they_independent(vcat(stabilizers,[operator])))
+                    pauli_are_independent(vcat(stabilizers,[operator])))
                 distance = L
                 push!(lowest_weight_logicals,operator)
             end
@@ -396,7 +396,7 @@ function low_weight_stabilizers(stabilizers::Array{Array{Int64,1}})
             w = weight(operator)
             temp = deepcopy(new_stabilizers)
 
-            if (w < op_weight && are_they_independent(push!(temp,operator))
+            if (w < op_weight && pauli_are_independent(push!(temp,operator))
                     && operator != zeros(Int,n))
                 op_weight = w
                 lowest_weight_stabilizer = operator
@@ -456,7 +456,7 @@ function are_physically_equivalent(x::QuantumCode,y::QuantumCode)
 
     # Check that the stabilizer groups are equal
     for stabilizer in y.stabilizers
-        if are_they_independent(vcat(x.stabilizers,[stabilizer]))
+        if pauli_are_independent(vcat(x.stabilizers,[stabilizer]))
             return false
         end
     end
@@ -602,7 +602,7 @@ function random_stabilizer_state(n::Int64)
 
         if weight(new_stabilizer) <= 1
             @goto try_again
-        elseif !are_they_independent(vcat(stabilizers,[new_stabilizer]))
+        elseif !pauli_are_independent(vcat(stabilizers,[new_stabilizer]))
             @goto try_again
         elseif !pauli_are_commuting(vcat(stabilizers,[new_stabilizer]))
             @goto try_again

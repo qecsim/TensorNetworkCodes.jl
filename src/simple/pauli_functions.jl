@@ -1,7 +1,7 @@
 """
     pauli_are_commuting(operators::AbstractVector{<:AbstractVector{Int}}) -> Bool
 
-Return true if the list of Pauli vectors mutually commute, or false otherwise.
+Return true if the Pauli operators mutually commute, or false otherwise.
 
 # Examples
 ```jldoctest
@@ -27,6 +27,76 @@ function pauli_are_commuting(operators::AbstractVector{<:AbstractVector{Int}})
         end
     end
     return true
+end
+
+"""
+    pauli_are_independent(operators::AbstractVector{<:AbstractVector{Int}}) -> Bool
+
+Return true if the Pauli operators are linearly independent, or false otherwise.
+
+# Examples
+```jldoctest
+julia> pauli_are_independent([[3, 3, 1], [1, 3, 3]])  # ZZI, IZZ
+true
+
+julia> pauli_are_independent([[3, 3, 1], [1, 3, 3], [3, 1, 3]])  # ZZI, IZZ, ZIZ
+false
+```
+"""
+function pauli_are_independent(operators::AbstractVector{<:AbstractVector{Int}})
+
+    num_operators = length(operators)
+    num_qubits = length(operators[1])
+    remaining = collect(1:num_operators)
+
+    for qubit in 1:num_qubits
+        paulis = [1,2,3]
+        indices = Int[]
+        for α in remaining
+            if operators[α][qubit] in paulis
+                setdiff!(paulis, operators[α][qubit])
+                push!(indices, α)
+            end
+            if length(paulis) == 1
+                break
+            end
+        end
+
+        remaining = setdiff(remaining, indices)
+        for α in remaining
+            if operators[α][qubit] == 0
+                continue
+            end
+            new_operator = pauli_product.(operators[α], operators[indices[1]])
+            if new_operator[qubit] == 0
+                operators[α] = deepcopy(new_operator)
+                continue
+            end
+            if length(paulis) == 2
+                continue
+            end
+            new_operator = pauli_product.(operators[α], operators[indices[2]])
+            if new_operator[qubit] == 0
+                operators[α] = deepcopy(new_operator)
+                continue
+            end
+            new_operator = pauli_product.(operators[α], operators[indices[1]])
+            new_operator = pauli_product.(new_operator, operators[indices[2]])
+            if new_operator[qubit] == 0
+                operators[α] = deepcopy(new_operator)
+                continue
+            end
+        end
+
+        for α in remaining
+            if operators[α] == zeros(Int64, num_qubits)
+                return false
+            end
+        end
+    end
+
+    return true
+
 end
 
 """
@@ -197,67 +267,4 @@ function weight(operator)
         end
     end
     return output
-end
-
-
-"""
-    are_they_independent(operators)
-
-Checks if a set of Pauli vectors is independent, i.e., is any one a product of
-the others.
-"""
-function are_they_independent(operators::Array{Array{Int64,1},1})
-
-    num_operators = length(operators)
-    num_qubits = length(operators[1])
-    remaining = collect(1:num_operators)
-
-    for qubit in 1:num_qubits
-        paulis = [1,2,3]
-        indices = Int[]
-        for α in remaining
-            if operators[α][qubit] in paulis
-                setdiff!(paulis, operators[α][qubit])
-                push!(indices, α)
-            end
-            if length(paulis) == 1
-                break
-            end
-        end
-
-        remaining = setdiff(remaining, indices)
-        for α in remaining
-            if operators[α][qubit] == 0
-                continue
-            end
-            new_operator = pauli_product.(operators[α], operators[indices[1]])
-            if new_operator[qubit] == 0
-                operators[α] = deepcopy(new_operator)
-                continue
-            end
-            if length(paulis) == 2
-                continue
-            end
-            new_operator = pauli_product.(operators[α], operators[indices[2]])
-            if new_operator[qubit] == 0
-                operators[α] = deepcopy(new_operator)
-                continue
-            end
-            new_operator = pauli_product.(operators[α], operators[indices[1]])
-            new_operator = pauli_product.(new_operator, operators[indices[2]])
-            if new_operator[qubit] == 0
-                operators[α] = deepcopy(new_operator)
-                continue
-            end
-        end
-
-        for α in remaining
-            if operators[α] == zeros(Int64, num_qubits)
-                return false
-            end
-        end
-    end
-
-    return true
-
 end

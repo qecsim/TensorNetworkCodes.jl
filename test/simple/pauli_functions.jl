@@ -12,6 +12,17 @@ using Test
     @test !pauli_are_commuting([logical_x, logical_z])
 end
 
+@testset "pauli_are_independent" begin
+    # 5-qubit code stabilizers: XZZXI, IXZZX, XIXZZ, ZXIXZ
+    stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
+    logical_x = [1, 1, 1, 1, 1]  # XXXXX
+    logical_z = [3, 3, 3, 3, 3]  # ZZZZZ
+    @test pauli_are_independent(stabilizers)
+    @test pauli_are_independent(vcat(stabilizers, [logical_x, logical_z]))
+    extra_stabilizer = pauli_product.(stabilizers[1], stabilizers[2])
+    @test !pauli_are_independent(vcat(stabilizers, [extra_stabilizer]))
+end
+
 @testset "pauli_commutation" begin
     # single-qubit
     @test pauli_commutation.(Ref(0), [0, 1, 2, 3]) == [0, 0, 0, 0]  # I with IXYZ
@@ -33,9 +44,4 @@ end
     @test pauli_product.(Ref(1), [0, 1, 2, 3]) == [1, 0, 3, 2]  # X with IXYZ -> XIZY
     @test pauli_product.(Ref(2), [0, 1, 2, 3]) == [2, 3, 0, 1]  # Y with IXYZ -> YZIX
     @test pauli_product.(Ref(3), [0, 1, 2, 3]) == [3, 2, 1, 0]  # Z with IXYZ -> ZYXI
-end
-
-@testset "are_they_independent" begin
-    new_code = steane_code()
-    @test are_they_independent(new_code.stabilizers)
 end

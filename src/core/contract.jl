@@ -262,7 +262,7 @@ function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
     if length(useful_inds) != 2
         new_stabilizers = Array{Int64,1}[]
         for α in 1:length(stabilizers)
-            if are_they_independent(vcat(new_stabilizers,[stabilizers[α]]))
+            if pauli_are_independent(vcat(new_stabilizers,[stabilizers[α]]))
                 push!(new_stabilizers,stabilizers[α])
             end
         end
