@@ -297,7 +297,7 @@ function distance(
             if pauli_commutation.(Ref(operator),stabilizers) == zeros(Int64,r)
                 if (pauli_commutation.(Ref(operator),logicals) != zeros(Int64,kk) ||
                     operator ∈ logicals )
-                distance = L  # = weight(operator)
+                distance = L  # = pauli_weight(operator)
                 push!(lowest_weight_logicals,operator)
                 end
             end
@@ -393,7 +393,7 @@ function low_weight_stabilizers(stabilizers::Array{Array{Int64,1}})
             powers = digits!(zeros(Int8,r),m,base = 2)
 
             operator = pauli_product_pow(stabilizers,powers)
-            w = weight(operator)
+            w = pauli_weight(operator)
             temp = deepcopy(new_stabilizers)
 
             if (w < op_weight && pauli_are_independent(push!(temp,operator))
@@ -600,7 +600,7 @@ function random_stabilizer_state(n::Int64)
         @label try_again
         new_stabilizer = rand(0:3,n)
 
-        if weight(new_stabilizer) <= 1
+        if pauli_weight(new_stabilizer) <= 1
             @goto try_again
         elseif !pauli_are_independent(vcat(stabilizers,[new_stabilizer]))
             @goto try_again

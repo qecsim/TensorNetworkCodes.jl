@@ -62,3 +62,10 @@ end
     @test pauli_rep_change.([0, 1, 2, 3]) == ['I', 'X', 'Y', 'Z']
     @test pauli_rep_change.(['I', 'X', 'Y', 'Z']) == [0, 1, 2, 3]
 end
+
+@testset "pauli_weight" begin
+    @test pauli_weight([0, 0, 0, 0, 0]) == 0
+    @test pauli_weight([0, 0, 1, 2, 0]) == 2
+    @test pauli_weight([3, 0, 2, 0, 1]) == 3
+    @test pauli_weight([3, 2, 1, 2, 2]) == 5
+end

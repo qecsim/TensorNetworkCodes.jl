@@ -10,9 +10,7 @@ julia> stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 
 julia> pauli_are_commuting(stabilizers)  # stabilizers mutually commute
 true
 
-julia> logical_x = [1, 1, 1, 1, 1];  # XXXXX
-
-julia> logical_z = [3, 3, 3, 3, 3];  # ZZZZZ
+julia> logical_x, logical_z = [1, 1, 1, 1, 1], [3, 3, 3, 3, 3];  # XXXXX, ZZZZZ
 
 julia> pauli_are_commuting([logical_x, logical_z])  # logicals do not commute
 false
@@ -223,8 +221,15 @@ Convert Pauli between alphabetical and numerical representation.
 
 # Examples
 ```jldoctest
+julia> pauli_rep_change(1)
+'X': ASCII/Unicode U+0058 (category Lu: Letter, uppercase)
+
+julia> pauli_rep_change('X')
+1
+
 julia> pauli_rep_change.((0, 1, 2, 3))
 ('I', 'X', 'Y', 'Z')
+
 julia> pauli_rep_change.(('I', 'X', 'Y', 'Z'))
 (0, 1, 2, 3)
 ```
@@ -252,17 +257,18 @@ function pauli_rep_change(pauli::Char)
     end
 end
 
-
-
-
-
-
-
 """
-Find the weight of a vector of Pauli operators, i.e., the number of entries with
-non identity elements.
+    pauli_weight(operator::AbstractVector{Int}) -> Int
+
+Return the weight of the Pauli operator, i.e. the number of non-identity elements.
+
+# Examples
+```jldoctest
+julia> pauli_weight([3, 0, 2, 0, 1])  # ZIYIX
+3
+```
 """
-function weight(operator)
+function pauli_weight(operator::AbstractVector{Int})
     output = 0
     for n in 1:length(operator)
         if operator[n] != 0

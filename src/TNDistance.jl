@@ -4,7 +4,7 @@ module TNDistance
 using ..TensorNetworkCodes: TNCode
 using ..TensorNetworkCodes: all_cosets, code_to_Itensor, identity_coset
 using ..TensorNetworkCodes: nodes, node_indices, node_types
-using ..TensorNetworkCodes: weight
+using ..TensorNetworkCodes: pauli_weight
 using ITensors: Index, ITensor, array, contract, dim, hastags, inds
 using StatsPlots: groupedbar
 
@@ -52,7 +52,7 @@ function simple_weight_tensor(
 
     for γ in 0:4^n-1
         index = digits!(zeros(Int64,n),γ,base=4)
-        w = weight(index)
+        w = pauli_weight(index)
         index = index .+ 1
 
         full_index = vcat(index,w+1)

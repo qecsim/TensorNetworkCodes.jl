@@ -74,7 +74,7 @@ function min_weight_brute_force(
     error_weight = n + 1
     for α in 0:4^n-1
         operator = digits!(zeros(Int64,n),α,base = 4)
-        w = weight(operator)
+        w = pauli_weight(operator)
         if (get_syndrome(code,operator) == syndrome &&
                 w <= error_weight)
             error_weight = w

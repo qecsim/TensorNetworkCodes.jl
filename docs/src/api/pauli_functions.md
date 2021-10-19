@@ -12,5 +12,5 @@ pauli_commutation
 pauli_product
 pauli_product_pow
 pauli_rep_change
-weight
+pauli_weight
 ```
