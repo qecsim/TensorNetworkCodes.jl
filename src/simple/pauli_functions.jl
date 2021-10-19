@@ -1,7 +1,8 @@
 """
-    pauli_are_commuting(operators::AbstractVector{<:AbstractVector{Int}}) -> Bool
+    pauli_are_commuting(operators) -> Bool
 
-Return true if the Pauli operators mutually commute, or false otherwise.
+Return true if the Pauli operators mutually commute, or false otherwise, where `operators`
+is an iterable of `AbstractVector{Int}`.
 
 # Examples
 ```jldoctest
@@ -16,15 +17,8 @@ julia> pauli_are_commuting([logical_x, logical_z])  # logicals do not commute
 false
 ```
 """
-function pauli_are_commuting(operators::AbstractVector{<:AbstractVector{Int}})
-    num_operators = length(operators)
-    for n in 1:num_operators, m in 1:n - 1
-        if pauli_commutation(operators[n], operators[m]) == 1
-            return false
-            break
-        end
-    end
-    return true
+function pauli_are_commuting(operators)
+    return all(==(0), pauli_commutation(a, b) for (a, b) in combinations(operators, 2))
 end
 
 """
@@ -190,10 +184,10 @@ end
 """
     pauli_product_pow(operators, powers)
 
-Return the product of the Pauli operators each raised to the corresponding power.
+Return the product of the Pauli operators each raised to the corresponding power, where
+`operators` is an iterable of `AbstractVector{Int}` and `powers` is an iterable of `Int`.
 
-Operators is an iterable of `AbstractVector{Int}` and powers is an iterable of `Int`. The
-product is evaluated to the length of the shorter of the two iterables.
+Note: The product is evaluated to the length of the shorter of the two iterables.
 
 See also [`pauli_product`](@ref), [`pauli_pow`](@ref).
 
