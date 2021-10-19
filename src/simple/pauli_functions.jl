@@ -166,18 +166,13 @@ julia> pauli_product.([1, 0, 3, 2], [1, 1, 1, 3]) # (XIZY).(XXXZ) -> (IXYX)
 ```
 """
 function pauli_product(a::Int, b::Int)
-    if a == 0
-        return b
-    elseif b == 0
-        return a
-    elseif a == b
+    if a == b  # pauli squared is identity
         return 0
-    else
-        for n in 1:3
-            if n != a && n != b
-                return n
-            end
-        end
+    elseif a == 0 || b == 0  # pauli times identity is pauli
+        return a + b
+    else  # product of distinct paulis is the other pauli
+        # X.Y=Z -> 6-(1+2)=3,  X.Z=Y -> 6-(1+3)=2,  Y.Z=X -> 6-(2+3)=1
+        return 6 - (a + b)
     end
 end
 
