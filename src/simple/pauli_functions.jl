@@ -36,10 +36,10 @@ Return true if the Pauli operators are linearly independent, or false otherwise.
 
 # Examples
 ```jldoctest
-julia> pauli_are_independent([[3, 3, 1], [1, 3, 3]])  # ZZI, IZZ
+julia> pauli_are_independent([[3, 3, 0], [0, 3, 3]])  # ZZI, IZZ
 true
 
-julia> pauli_are_independent([[3, 3, 1], [1, 3, 3], [3, 1, 3]])  # ZZI, IZZ, ZIZ
+julia> pauli_are_independent([[3, 3, 0], [0, 3, 3], [3, 0, 3]])  # ZZI, IZZ, ZIZ
 false
 ```
 """
@@ -159,7 +159,7 @@ Return the product of two Paulis.
 julia> pauli_product(1, 2) # X.Y -> Z
 3
 
-julia> pauli_product.([1,0,3,2], [1,1,1,3]) # (XIZY).(XXXZ) -> (IXYX)
+julia> pauli_product.([1, 0, 3, 2], [1, 1, 1, 3]) # (XIZY).(XXXZ) -> (IXYX)
 4-element Vector{Int64}:
  0
  1
@@ -183,40 +183,40 @@ function pauli_product(a::Int, b::Int)
     end
 end
 
-
-"""
-    pauli_rep_change(pauli::Char) -> Int
-
-Converts from alphabetical to numerical representation of Paulis.
-"""
-function pauli_rep_change(pauli::Char)
-    if pauli ==  'I'
-        return 0
-    elseif pauli == 'x'
-        return 1
-    elseif pauli == 'y'
-        return 2
-    elseif pauli == 'z'
-        return 3
-    end
-end
-
-
-
 """
     pauli_rep_change(pauli::Int) -> Char
+    pauli_rep_change(pauli::Char) -> Int
 
-Converts from numerical to alphabetical representation of Paulis.
+Convert Pauli between alphabetical and numerical representation.
+
+# Examples
+```jldoctest
+julia> pauli_rep_change.((0, 1, 2, 3))
+('I', 'X', 'Y', 'Z')
+julia> pauli_rep_change.(('I', 'X', 'Y', 'Z'))
+(0, 1, 2, 3)
+```
 """
 function pauli_rep_change(pauli::Int)
     if pauli == 0
         return 'I'
     elseif pauli == 1
-        return 'x'
+        return 'X'
     elseif pauli == 2
-        return 'y'
+        return 'Y'
     elseif pauli == 3
-        return 'z'
+        return 'Z'
+    end
+end
+function pauli_rep_change(pauli::Char)
+    if pauli ==  'I'
+        return 0
+    elseif pauli == 'X'
+        return 1
+    elseif pauli == 'Y'
+        return 2
+    elseif pauli == 'Z'
+        return 3
     end
 end
 

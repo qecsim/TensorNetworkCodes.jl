@@ -45,3 +45,8 @@ end
     @test pauli_product.(Ref(2), [0, 1, 2, 3]) == [2, 3, 0, 1]  # Y with IXYZ -> YZIX
     @test pauli_product.(Ref(3), [0, 1, 2, 3]) == [3, 2, 1, 0]  # Z with IXYZ -> ZYXI
 end
+
+@testset "pauli_rep_change" begin
+    @test pauli_rep_change.([0, 1, 2, 3]) == ['I', 'X', 'Y', 'Z']
+    @test pauli_rep_change.(['I', 'X', 'Y', 'Z']) == [0, 1, 2, 3]
+end
