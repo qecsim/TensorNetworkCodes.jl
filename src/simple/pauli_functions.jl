@@ -249,26 +249,11 @@ julia> pauli_rep_change.(('I', 'X', 'Y', 'Z'))
 ```
 """
 function pauli_rep_change(pauli::Int)
-    if pauli == 0
-        return 'I'
-    elseif pauli == 1
-        return 'X'
-    elseif pauli == 2
-        return 'Y'
-    elseif pauli == 3
-        return 'Z'
-    end
+    return "IXYZ"[pauli+1]
 end
+const _pauli_rep_map = Dict(zip("IXYZ", 0:3))
 function pauli_rep_change(pauli::Char)
-    if pauli ==  'I'
-        return 0
-    elseif pauli == 'X'
-        return 1
-    elseif pauli == 'Y'
-        return 2
-    elseif pauli == 'Z'
-        return 3
-    end
+    return _pauli_rep_map[pauli]
 end
 
 """
