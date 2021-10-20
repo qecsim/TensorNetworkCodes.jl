@@ -4,6 +4,7 @@ module TNDistance
 using ..TensorNetworkCodes: TNCode
 using ..TensorNetworkCodes: all_cosets, code_to_Itensor, identity_coset
 using ..TensorNetworkCodes: nodes, node_indices, node_types
+using ..TensorNetworkCodes: num_qubits
 using ..TensorNetworkCodes: pauli_weight
 using ITensors: Index, ITensor, array, contract, dim, hastags, inds
 using StatsPlots: groupedbar
@@ -106,7 +107,7 @@ the code.  (`cosets` is applied to each `seed_code` separately.)
 function TN_weights(
         code::TNCode;
         cosets=all_cosets,
-        truncate_to=size(code)+1)
+        truncate_to=num_qubits(code)+1)
 
     code_tensors = ITensor[]
 
@@ -177,7 +178,7 @@ of each weight, as well as the number of logical representatives
 """
 function TN_operator_weights(
         code::TNCode;
-        truncate_to=size(code)+1)
+        truncate_to=num_qubits(code)+1)
 
     stabilizer_weights = array(TN_weights(
             code,
@@ -199,7 +200,7 @@ Returns the code distance calculated by contracting a tensor network.
 """
 function TN_distance(
         code::TNCode;
-        truncate_to=size(code)+1)
+        truncate_to=num_qubits(code)+1)
 
     op_weights = TN_operator_weights(
         code::TNCode;

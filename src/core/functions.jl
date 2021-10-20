@@ -6,7 +6,7 @@ Returns a tensor (array) describing the logical cosets of the code.
 function code_to_tensor(code::QuantumCode)
 
     alt_code = purify_code(code)
-    n = size(alt_code)
+    n = num_qubits(alt_code)
     g = alt_code.stabilizers
 
     dims = fill(4,n)
@@ -37,7 +37,7 @@ function code_to_Itensor(code::QuantumCode,
         logical_indices::Array{Index{Int64},1},
         physical_indices::Array{Index{Int64},1})
 
-    n = size(code)
+    n = num_qubits(code)
     K = length(code.logicals)
     if K/2 != length(logical_indices) || n != length(physical_indices)
         error("incorrect number of indices!")

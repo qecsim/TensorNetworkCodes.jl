@@ -32,7 +32,7 @@ function diamond_lattice_code(codes::Matrix{TNCode})
 
         output = combine_by_coordinates(output,next_code)
 
-        if size(output) == 0
+        if num_qubits(output) == 0
             return output
         end
     end
@@ -178,7 +178,7 @@ function boundary_fusion(
 
     # Now we can put the code together
     output = bulk_code
-    if size(output) == 0
+    if num_qubits(output) == 0
         return output
     end
 

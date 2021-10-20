@@ -1,8 +1,11 @@
 using TensorNetworkCodes
 using Test
 
-@testset "size" begin
-    @test size(five_qubit_code()) == 5
+@testset "num_qubits" begin
+    @test num_qubits(five_qubit_code()) == 5
+    @test num_qubits(steane_code()) == 7
+    @test num_qubits(random_code(4, 1)) == 4
+    @test num_qubits(random_stabilizer_state(6)) == 6
 end
 
 @testset "verify_code" begin

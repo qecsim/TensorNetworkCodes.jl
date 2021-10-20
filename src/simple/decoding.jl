@@ -6,7 +6,7 @@ Given an `error_operator` return the syndrome, which tells us which of
 """
 function get_syndrome(code::QuantumCode,error_operator::Array{Int64,1})
     g = code.stabilizers
-    n = size(code)
+    n = num_qubits(code)
 
     if n != length(error_operator)
         error("size of error does not match size of code!")
@@ -28,7 +28,7 @@ products of the `code.pure_errors`.
 """
 function get_pure_error(code::QuantumCode,syndrome::Array{Int64,1})
     pe = code.pure_errors
-    n = size(code)
+    n = num_qubits(code)
     r = length(pe)
 
     if r != length(syndrome)
@@ -64,7 +64,7 @@ function min_weight_brute_force(
 
     g = code.stabilizers
     r = length(g)
-    n = size(code)
+    n = num_qubits(code)
 
     if r != length(syndrome)
         error("number of syndrome bits does not match number of stabilizers!")
@@ -97,7 +97,7 @@ Returns a correction which does nothing!
 function do_nothing_decoder(code::QuantumCode,syndrome::Array{Int64,1},
         error_prob)
 
-    n = size(code)
+    n = num_qubits(code)
 
     return zeros(Int64,n)
 end
@@ -124,7 +124,7 @@ function monte_carlo_simulation(
     for p in probabilities
         success = 0
         for seed in 1:N
-            initial_error = random_pauli_error(size(code),p,seed)
+            initial_error = random_pauli_error(num_qubits(code),p,seed)
             syndrome = get_syndrome(code,initial_error)
 
             correction = decoder(code,syndrome,p)

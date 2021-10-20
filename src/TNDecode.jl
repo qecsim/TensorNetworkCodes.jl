@@ -5,6 +5,7 @@ using ..TensorNetworkCodes: TNCode
 using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor
 using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
+using ..TensorNetworkCodes: num_qubits
 using ..TensorNetworkCodes: get_syndrome, get_pure_error
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
@@ -45,7 +46,7 @@ function create_virtual_tensor(code::TNCode,node::Int64)
     code_type = node_types(code,node)
     seed_code = code.seed_codes[code_type]
 
-    k = size(seed_code) - length(seed_code.stabilizers)
+    k = num_qubits(seed_code) - length(seed_code.stabilizers)
     logical_indices = [Index(4,"logical") for α in 1:k]
 
     return code_to_Itensor(
@@ -121,7 +122,7 @@ function contract(
         contraction_function=basic_contract,
         bond_dim = 10)
 
-    L = Int64(sqrt(size(code)))
+    L = Int64(sqrt(num_qubits(code)))
     imatrix = [ITensor(1) for i in 1:L, j in 1:L]
 
     for i in 1:L, j in 1:L
@@ -245,8 +246,8 @@ function compare_code_success_empirical(
     code1_success = zeros(P)
     code2_success = zeros(P)
 
-    n = size(code1)
-    if n != size(code2)
+    n = num_qubits(code1)
+    if n != num_qubits(code2)
         error("different size codes")
     end
 
@@ -309,8 +310,8 @@ function compare_code_success_predicted(
     code2_success = zeros(P)
     code2_stderr = zeros(P)
 
-    n = size(code1)
-    if n != size(code2)
+    n = num_qubits(code1)
+    if n != num_qubits(code2)
         error("different size codes")
     end
 

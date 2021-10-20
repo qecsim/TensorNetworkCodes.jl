@@ -193,7 +193,7 @@ end
 # Most useful constructor for TNCodes
 function TNCode(code::SimpleCode)
 
-    n = size(code)
+    n = num_qubits(code)
 
 
     # Initialize dictionaries

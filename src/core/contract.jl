@@ -25,8 +25,8 @@ tensor product of two codes.
 """
 function Base.merge(code1::SimpleCode,code2::SimpleCode)
 
-    n1 = size(code1)
-    n2 = size(code2)
+    n1 = num_qubits(code1)
+    n2 = num_qubits(code2)
 
     stabilizers = Array{Int64,1}[]
     logicals = Array{Int64,1}[]
@@ -286,7 +286,7 @@ function fusion(code::SimpleCode,qubit_pairs::Array{Array{Int64,1},1})
     update_qubit_pairs!(code,qubit_pairs)
 
     for qubit_pair in qubit_pairs
-        if size(output_code)  == 0
+        if num_qubits(output_code)  == 0
             return SimpleCode()
         end
         output_code = fusion(output_code,qubit_pair)
@@ -667,7 +667,7 @@ function contract(
         code2::TNCode,
         qubit_pairs::Array{Array{Int64,1},1})
 
-    qubit_pairs = [[qubit_pairs[m][1],qubit_pairs[m][2]+size(code1)]
+    qubit_pairs = [[qubit_pairs[m][1],qubit_pairs[m][2]+num_qubits(code1)]
             for m in 1:length(qubit_pairs)]
 
     output_code = merge(code1,code2)
