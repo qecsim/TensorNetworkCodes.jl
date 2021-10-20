@@ -10,5 +10,14 @@ Documentation for [TensorNetworkCodes](https://github.com/dkt29/TensorNetworkCod
 
 ### API
 ```@contents
-Pages = ["api/pauli_functions.md", "api/index.md"]
+Pages = [
+    "api/pauli_functions.md",
+    "api/code_functions.md",
+    "api/codegraph_functions.md",
+    "api/contraction_functions.md",
+    "api/plotting_functions.md",
+    "api/example_codes.md",
+    "api/qecsim_adaptors.md",
+    "api/index.md",
+]
 ```

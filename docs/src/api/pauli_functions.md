@@ -1,6 +1,6 @@
 # Pauli functions
 
-Pauli functions for evaluating products, commutations, weights and independence.
+Functions for evaluating products, commutations, weights and independence of Paulis.
 Single-qubit Pauli operators ``I``, ``X``, ``Y``, ``Z`` are represented by integers
 0, 1, 2, 3, respectively. Correspondingly, multi-qubit Pauli operators are represented by
 vectors of integers; for example, ``X ⊗ I ⊗ Z ⊗ Y`` is represented by `[1, 0, 3, 2]`.
