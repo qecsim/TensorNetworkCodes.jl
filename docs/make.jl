@@ -16,6 +16,7 @@ makedocs(;
     pages=[
         "Overview" => "index.md",
         "API" => [
+            "api/types.md",
             "api/pauli_functions.md",
             "api/code_functions.md",
             "api/codegraph_functions.md",

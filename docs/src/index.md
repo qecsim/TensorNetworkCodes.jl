@@ -11,6 +11,7 @@ Documentation for [TensorNetworkCodes](https://github.com/dkt29/TensorNetworkCod
 ### API
 ```@contents
 Pages = [
+    "api/types.md",
     "api/pauli_functions.md",
     "api/code_functions.md",
     "api/codegraph_functions.md",
