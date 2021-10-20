@@ -194,7 +194,7 @@ output = Array{Array{Int64,1},1}()
 for σ in [1,2,3]
     
     for α in 1:length(stabilizers)
-        if do_they_commute([σ,σ],[stabilizers[α][i],stabilizers[α][j]]) != 0
+        if !pauli_are_commuting([[σ,σ],[stabilizers[α][i],stabilizers[α][j]]])
             @goto not_this_one
         end
     end
