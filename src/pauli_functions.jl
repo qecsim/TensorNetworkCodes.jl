@@ -130,7 +130,7 @@ function pauli_commutation(a::Int, b::Int)
     return a == 0 || b == 0 || a == b ? 0 : 1
 end
 function pauli_commutation(a::AbstractVector{Int}, b::AbstractVector{Int})
-    return mod(sum(pauli_commutation.(a, b)), 2)
+    return mod(sum(pauli_commutation(p1, p2) for (p1, p2) in zip(a, b); init=0), 2)
 end
 
 """
