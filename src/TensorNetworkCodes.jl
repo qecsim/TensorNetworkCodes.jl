@@ -24,8 +24,8 @@ include("simple/types.jl")
 export five_qubit_code,five_qubit_surface_code,steane_code
 include("simple/examples.jl")
 
-export num_qubits
-export permute, generate_pure_errors, verify_code
+export num_qubits, verify_code
+export permute, generate_pure_errors
 export distance, low_weight_stabilizers, are_physically_equivalent
 export purify_code, gauge_code, random_stabilizer_state, random_code
 include("simple/code_functions.jl")

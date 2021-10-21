@@ -8,6 +8,70 @@ function num_qubits(code::QuantumCode)
 end
 
 """
+    verify_code(code::QuantumCode, log_warn=true) -> Bool
+
+Return true if the code satisfied the properties of a valid code, or false otherwise. if the
+code is not valid and `log_warn` is true then a warning is logged with the specific reason.
+
+The following checks are performed:
+* Number of stabilizers, pure errors and logicals are consistent.
+* Stabilizers are independent and mutually commute.
+* Pure errors anticommute with corresponding stabilizers and commute with other stabilizers.
+* Logicals commute with stabilizers.
+
+The following checks are not yet performed:
+* Logical commutation relations.
+"""
+function verify_code(code::QuantumCode, log_warn=true)
+    n = num_qubits(code)
+    r = length(code.stabilizers)
+    p = length(code.pure_errors)
+    l = length(code.logicals)
+
+    # Check we have the right number of operators.
+    if p != r
+        log_warn && @warn "number of stabilizers and pure errors don't match!"
+        return false
+    end
+    if n != r + l / 2
+        log_warn && @warn "number of stabilizers and logicals don't add up!"
+        return false
+    end
+    # Check stabilizers are independent.
+    if !pauli_are_independent(code.stabilizers)
+        log_warn && @warn "stabilizers aren't independent!"
+        return false
+    end
+    # Check stabilizers mutually commute.
+    if !pauli_are_commuting(code.stabilizers)
+        log_warn && @warn "stabilizers don't commute!"
+        return false
+    end
+    # Check pure errors anticommute with corresponding stabilizers.
+    if !all(==(1), pauli_commutation.(code.stabilizers, code.pure_errors))
+        log_warn && @warn "pure errors don't anticommute with corresponding stabilizers!"
+        return false
+    end
+    # Check pure error do not anticommute with other stabilizers.
+    for α in 1:r, β in 1:r
+        if α != β && pauli_commutation(code.stabilizers[α], code.pure_errors[β]) == 1
+            log_warn && @warn "pure errors anticommute with the wrong stabilizers!"
+            return false
+        end
+    end
+    # Check logicals commute with stabilizers.
+    for logical in code.logicals
+        if !all(==(0), pauli_commutation.(code.stabilizers, Ref(logical)))
+            log_warn && @warn "logicals don't commute with stabilizers!"
+            return false
+        end
+    end
+    # TODO: check logical commutation relations.
+
+    return true
+end
+
+"""
     permute(code,permutation)
 
 Permutes physical qubits of a `SimpleCode` returning a new `SimpleCode`.
@@ -168,75 +232,6 @@ end
 
 
 
-"""
-    verify_code(code::QuantumCode)
-
-Checks most properties of a quantum error correcting code to make sure it's
-sensible, e.g., do the stabilizers commute.
-"""
-function verify_code(code::QuantumCode)
-
-    n = num_qubits(code)
-    r = length(code.stabilizers)
-    p = length(code.pure_errors)
-    l = length(code.logicals)
-
-
-    # Do we have the right number of operators?
-    if p != r
-        println("number of stabilizers and pure errors do not match!")
-        return false
-    end
-    if n != r + l / 2
-        println("number of operators do not add up!")
-        return false
-    end
-
-
-    # Do pure errors fulfil their role?
-    if pauli_commutation.(code.stabilizers, code.pure_errors) != ones(Int64, r)
-        println("pure errors don't anticommute with their corresponding
-            stabilizers!")
-        return false
-    end
-
-    for α in 1:r, β in 1:r
-        if α != β && pauli_commutation(code.stabilizers[α], code.pure_errors[β]) == 1
-            println("pure errors anticommute with the wrong stabilizers!")
-            return false
-        end
-    end
-
-
-    # Do stabilizers commute?
-    if !pauli_are_commuting(code.stabilizers)
-        println("stabilizers don't commute!")
-        return false
-    end
-
-
-    # Are stabilizers independent?  (This may be redundant)
-    if !pauli_are_independent(code.stabilizers)
-        println("stabilizers aren't independent!")
-        return false
-    end
-
-
-    # Do logicals commute with stabilizers?
-    for logical in code.logicals
-        operators = deepcopy(code.stabilizers)
-        push!(operators, logical)
-        if !pauli_are_commuting(operators)
-            println("logicals don't commute with stabilizers!")
-            return false
-        end
-    end
-
-    # Should check logical commutation relations also.
-
-
-    return true
-end
 
 
 

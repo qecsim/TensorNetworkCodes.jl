@@ -9,7 +9,44 @@ using Test
 end
 
 @testset "verify_code" begin
-    @test verify_code(random_code(6,2))
+    valid_code = random_code(6, 2)
+    @test verify_code(valid_code)
+
+    code_missing_pure_error = deepcopy(valid_code)
+    pop!(code_missing_pure_error.pure_errors)
+    @test !verify_code(code_missing_pure_error)
+
+    code_missing_logical = deepcopy(valid_code)
+    pop!(code_missing_logical.logicals)
+    @test !verify_code(code_missing_logical)
+
+    code_dependent_stabilizers = deepcopy(valid_code)
+    pop!(code_dependent_stabilizers.stabilizers)
+    push!(code_dependent_stabilizers.stabilizers, valid_code.stabilizers[1])
+    @test !verify_code(code_dependent_stabilizers)
+
+    code_noncommuting_stabilizers = deepcopy(valid_code)
+    code_noncommuting_stabilizers.stabilizers[2] = valid_code.pure_errors[1]
+    @test !verify_code(code_noncommuting_stabilizers)
+
+    code_wrongorder_pure_errors = deepcopy(valid_code)
+    pure_errors = code_wrongorder_pure_errors.pure_errors
+    pure_errors[1], pure_errors[2] = pure_errors[2], pure_errors[1]
+    @test !verify_code(code_wrongorder_pure_errors)
+
+    code_invalid_pure_errors = deepcopy(valid_code)
+    pure_errors = code_invalid_pure_errors.pure_errors
+    pure_errors[1] = pauli_product.(pure_errors[1], pure_errors[2])
+    @test !verify_code(code_invalid_pure_errors)
+
+    code_noncommuting_logicals = deepcopy(valid_code)
+    code_noncommuting_logicals.logicals[1] = valid_code.pure_errors[1]
+    @test !verify_code(code_noncommuting_logicals)
+
+    # test logging
+    log_pattern = (:warn, "number of stabilizers and pure errors don't match!")
+    @test_logs log_pattern verify_code(code_missing_pure_error, true)
+    @test_logs verify_code(code_missing_pure_error, false)
 end
 
 @testset "gauge_code" begin
