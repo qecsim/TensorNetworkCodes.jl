@@ -184,27 +184,34 @@ end
 
 
 function annoying_stabilizers(
-        stabilizers::Array{Array{Int64,1},1},
-        qubit_pair::Array{Int64,1})
+    stabilizers::Array{Array{Int64,1},1},
+    qubit_pair::Array{Int64,1})
 
-    i,j = qubit_pair
-    n = length(stabilizers[1])
-    output = Array{Array{Int64,1},1}()
+i,j = qubit_pair
+n = length(stabilizers[1])
+output = Array{Array{Int64,1},1}()
 
-    for σ in [1,2,3]
-        operator = zeros(Int64,n)
-        operator[i] = σ
-        operator[j] = σ
-
-        if pauli_are_commuting(vcat(stabilizers,[operator]))
-            push!(output,operator)
-        end
-        if length(output) == 2
-            break
+for σ in [1,2,3]
+    
+    for α in 1:length(stabilizers)
+        if !pauli_are_commuting([[σ,σ],[stabilizers[α][i],stabilizers[α][j]]])
+            @goto not_this_one
         end
     end
 
-    return output
+    operator = zeros(Int64,n)
+    operator[i] = σ
+    operator[j] = σ
+    push!(output,operator)
+
+    if length(output) == 2
+        break
+    end
+
+    @label not_this_one
+end
+
+return output
 end
 
 
@@ -248,8 +255,7 @@ function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
 
         stabilizers = make_ready(stabilizers,useful_ops,qubit_pair)
         logicals = make_ready(logicals,useful_ops,qubit_pair)
-#         pure_errors = make_ready(pure_errors,useful_ops,qubit_pair)
-#         fix_pure_errors!(pure_errors,stabilizers)
+        pure_errors = make_ready(pure_errors,useful_ops,qubit_pair)
     end
 
 
@@ -270,8 +276,7 @@ function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
     end
 
 
-#     remove_qubits!(pure_errors,qubit_pair)
-    pure_errors = generate_pure_errors(stabilizers)
+    remove_qubits!(pure_errors,qubit_pair)
 
     return SimpleCode(" ",stabilizers,logicals,pure_errors)
 end
