@@ -13,9 +13,9 @@ verify_code
 
 ```@docs
 distance_logicals
-pure_errors
-pure_error
-syndrome
+find_pure_error
+find_pure_errors
+find_syndrome
 ```
 
 ## Transformation

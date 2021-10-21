@@ -63,6 +63,44 @@ function distance_logicals(code::QuantumCode; max_distance=5)
 end
 
 """
+    find_pure_error(code::QuantumCode, syndrome)
+
+Return a pure error which corresponds to the syndrome for the code.
+
+The pure error is formed from a product of `code.pure_errors` and is not unique nor
+necessarily the lowest-weight error corresponding to the syndrome.
+
+# Examples
+```jldoctest
+julia> code = five_qubit_code();
+
+julia> error = [0, 1, 3, 0, 1];  # IXZIX
+
+julia> syndrome = get_syndrome(code, error)
+4-element Vector{Int64}:
+ 1
+ 0
+ 0
+ 1
+
+julia> pure_error = find_pure_error(code, syndrome)
+5-element Vector{Int64}:
+ 1
+ 1
+ 0
+ 0
+ 0
+
+julia> get_syndrome(code, pure_error) == syndrome
+true
+```
+"""
+function find_pure_error(code::QuantumCode, syndrome::AbstractVector{Int})
+    (length(code.pure_errors) == length(syndrome)) || error("invalid syndrome length")
+    return pauli_product_pow(code.pure_errors, syndrome)
+end
+
+"""
     num_qubits(code::QuantumCode) -> Int
 
 Return the number of physical qubits of the code.

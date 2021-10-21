@@ -19,35 +19,6 @@ end
 
 
 
-"""
-    get_pure_error(code,syndrome)
-
-Given a `syndrome` return the corresponding pure error, which is some
-(not unique) error that has the same syndrome.  This is formed from
-products of the `code.pure_errors`.
-"""
-function get_pure_error(code::QuantumCode,syndrome::Array{Int64,1})
-    pe = code.pure_errors
-    n = num_qubits(code)
-    r = length(pe)
-
-    if r != length(syndrome)
-        error("number of syndrome bits is not compatible with this code!")
-    end
-
-    output = zeros(Int64,n)
-    for α in 1:r
-        if syndrome[α] == 1
-            output = pauli_product.(output,pe[α])
-        end
-    end
-
-    return output
-end
-
-
-
-
 
 """
     min_weight_brute_force(code,syndrome,

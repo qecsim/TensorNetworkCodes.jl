@@ -6,7 +6,7 @@ using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor
 using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
 using ..TensorNetworkCodes: num_qubits
-using ..TensorNetworkCodes: get_syndrome, get_pure_error
+using ..TensorNetworkCodes: get_syndrome, find_pure_error
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
 using ITensors: Index, ITensor, array, hastags
@@ -163,7 +163,7 @@ function TN_decoder(
         bond_dim=10)
 
     # physical tensors
-    pure_error = get_pure_error(code,syndrome)
+    pure_error = find_pure_error(code,syndrome)
 
     coset_probabilities = array(
         contract(
@@ -216,7 +216,7 @@ function TN_decoding_success_prob(
         bond_dim=10)
 
     # physical tensors
-    pure_error = get_pure_error(code,syndrome)
+    pure_error = find_pure_error(code,syndrome)
 
     coset_probabilities = array(
         contract(

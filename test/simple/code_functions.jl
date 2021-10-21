@@ -14,6 +14,14 @@ using Test
     @test_throws ErrorException distance_logicals(five_qubit_code(); max_distance=2)
 end
 
+@testset "find_pure_error" begin
+    code = steane_code()
+    error = [0, 1, 3, 0, 0, 2, 0]
+    syndrome = get_syndrome(code, error)
+    pure_error = find_pure_error(code, syndrome)
+    @test get_syndrome(code, pure_error) == syndrome
+end
+
 @testset "num_qubits" begin
     @test num_qubits(five_qubit_code()) == 5
     @test num_qubits(steane_code()) == 7
