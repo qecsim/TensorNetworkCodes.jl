@@ -1,4 +1,68 @@
 """
+    distance_logicals(code::Quantum_code; max_distance=5) -> Int, Vector{Vector{Int}}
+
+Return the distance of the code and all minimum-weight logical operators.
+
+This method works by brute force. It searches for operators of increasing weight so it works
+well for low-distance codes but will be slow for high-distance codes. If during the search
+`max_distance` is exceeded then an `ErrorException` is thrown.
+
+# Examples
+```jldoctest
+julia> d, ls = distance_logicals(five_qubit_code());
+
+julia> d, length(ls), ls[1]  # distance, number and example of minimum-weight logicals
+(3, 30, [1, 2, 1, 0, 0])
+```
+"""
+function distance_logicals(code::QuantumCode; max_distance=5)
+    n = num_qubits(code)
+    r = length(code.stabilizers)
+
+    lowest_weight_logicals = Vector{Int}[]
+
+    if n == 0  # no qubits so distance is 0
+        return 0, lowest_weight_logicals
+    end
+    if n == r  # no logicals, so distance is n (or ∞?)
+        return n, lowest_weight_logicals
+    end
+
+    # find distance and lowest_weight_logicals
+    distance = n - 1
+    locations_iterator = combinations(1:n)
+    for locations in locations_iterator
+
+        L = length(locations)
+
+        if L > distance && length(lowest_weight_logicals) > 0  # we have finished
+            return distance, lowest_weight_logicals
+        end
+
+        if L > max_distance  # we have exceeded max_distance, so throw exception
+            error("distance > max_distance = $max_distance; stopping search")
+        end
+
+        for l in 1:4^L - 1
+            paulis = digits!(zeros(Int, L), l, base=4) # a nice iterator would be better
+
+            operator = zeros(Int, n)
+            for index in 1:L
+                operator[locations[index]] = paulis[index]
+            end
+
+            if all(==(0), pauli_commutation.(Ref(operator), code.stabilizers))
+                if (operator in code.logicals
+                        || any(==(1), pauli_commutation.(Ref(operator), code.logicals)))
+                    distance = L  # = pauli_weight(operator)
+                    push!(lowest_weight_logicals, operator)
+                end
+            end
+        end
+    end
+end
+
+"""
     num_qubits(code::QuantumCode) -> Int
 
 Return the number of physical qubits of the code.
@@ -237,124 +301,12 @@ end
 
 
 
-"""
-    distance(code::Quantum_code) -> Int64
-
-Find the distance of a code, i.e., the lowest weight of a nontrivial logical operator.
-This works by brute force, but it starts with low-weight operators, so it's good for
-low-distance codes.
-"""
-function distance(
-        logicals::Array{Array{Int64,1}},
-        stabilizers::Array{Array{Int64,1}};
-        max_distance=5)
-
-    kk = length(logicals)
-    n = length(stabilizers[1])
-    r = length(stabilizers)
-
-
-    if r == n
-        return n, [Int[]]  # no logicals, so distance is n (or ∞?)
-    end
-
-
-    distance = n - 1
-    lowest_weight_logicals = Array{Int64,1}[]
-    locations_iterator = combinations(1:n)
-
-    for locations in locations_iterator
-        L = length(locations)
-
-
-        if L > distance && length(lowest_weight_logicals) > 0
-            return distance, lowest_weight_logicals
-        end
-        if L > max_distance
-            println("Distance > " * string(max_distance) * ".  Stopping now!")
-            return nothing
-        end
-
-
-        for l in 1:4^L - 1
-            paulis = digits!(zeros(Int64, L), l, base=4) # a nice iterator would be better
-
-            operator = zeros(Int64, n)
-            for index in 1:L
-                operator[locations[index]] = paulis[index]
-            end
-
-
-            if pauli_commutation.(Ref(operator), stabilizers) == zeros(Int64, r)
-                if (pauli_commutation.(Ref(operator), logicals) != zeros(Int64, kk) ||
-                        operator ∈ logicals )
-                    distance = L  # = pauli_weight(operator)
-                    push!(lowest_weight_logicals, operator)
-                end
-            end
-        end
-    end
-end
-
-
-
-function distance(code::QuantumCode;max_distance=5)
-    if num_qubits(code) == 0
-        return 0
-    end
-
-    return distance(code.logicals, code.stabilizers;max_distance)
-end
 
 
 
 
 
-# Second method when you don't know logicals
-function distance(
-        stabilizers::Array{Array{Int64,1}};
-        max_distance=5)
 
-    n = length(stabilizers[1])
-    r = length(stabilizers)
-
-
-    if r == n
-        return n, [Int[]]  # no logicals, so distance is n (or ∞?)
-    end
-
-
-    distance = n
-    lowest_weight_logicals = Array{Int64,1}[]
-    locations_iterator = combinations(1:n)
-
-    for locations in locations_iterator
-        L = length(locations)
-
-        if L > max_distance
-            return "distance > " * string(max_distance)
-        end
-
-        if L > distance && length(lowest_weight_logicals) > 0
-            return distance, lowest_weight_logicals
-        end
-
-        for l in 1:4^L - 1
-            paulis = digits!(zeros(Int64, L), l, base=4) # a nice iterator would be better
-
-            operator = zeros(Int64, n)
-            for index in 1:L
-                operator[locations[index]] = paulis[index]
-            end
-
-            if (pauli_commutation.(Ref(operator), stabilizers) == zeros(Int64, r) &&
-                    pauli_are_independent(vcat(stabilizers, [operator])))
-                distance = L
-                push!(lowest_weight_logicals, operator)
-            end
-        end
-    end
-end
 
 
 
