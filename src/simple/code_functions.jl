@@ -72,7 +72,7 @@ function num_qubits(code::QuantumCode)
 end
 
 """
-    verify_code(code::QuantumCode, log_warn=true) -> Bool
+    verify_code(code::QuantumCode; log_warn=true) -> Bool
 
 Return true if the code satisfied the properties of a valid code, or false otherwise. if the
 code is not valid and `log_warn` is true then a warning is logged with the specific reason.
@@ -86,7 +86,7 @@ The following checks are performed:
 The following checks are not yet performed:
 * Logical commutation relations.
 """
-function verify_code(code::QuantumCode, log_warn=true)
+function verify_code(code::QuantumCode; log_warn=true)
     n = num_qubits(code)
     r = length(code.stabilizers)
     p = length(code.pure_errors)

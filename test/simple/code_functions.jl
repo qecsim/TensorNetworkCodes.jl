@@ -58,8 +58,8 @@ end
 
     # test logging
     log_pattern = (:warn, "number of stabilizers and pure errors don't match!")
-    @test_logs log_pattern verify_code(code_missing_pure_error, true)
-    @test_logs verify_code(code_missing_pure_error, false)
+    @test_logs log_pattern verify_code(code_missing_pure_error; log_warn=true)
+    @test_logs verify_code(code_missing_pure_error, log_warn=false)
 end
 
 @testset "gauge_code" begin
