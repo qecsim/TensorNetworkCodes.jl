@@ -1,4 +1,5 @@
 using TensorNetworkCodes
+using LinearAlgebra: I
 using Test
 
 @testset "find_distance_logicals" begin
@@ -26,6 +27,15 @@ end
     syndrome = find_syndrome(code, identity)
     @test all(==(0), syndrome)
     @test find_pure_error(code, syndrome) == identity
+end
+
+@testset "find_pure_errors" begin
+    # 5-qubit code stabilizers: XZZXI, IXZZX, XIXZZ, ZXIXZ
+    stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
+    pure_errors = find_pure_errors(stabilizers)
+    @test length(pure_errors) == length(stabilizers)
+    # test commutation relations
+    @test [pauli_commutation(s, p) for s in stabilizers, p in pure_errors] == I
 end
 
 @testset "num_qubits" begin

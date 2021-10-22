@@ -101,6 +101,158 @@ function find_pure_error(code::QuantumCode, syndrome::AbstractVector{Int})
 end
 
 """
+    _find_pure_errors_disordered(stabilizers::AbstractVector{<:AbstractVector{Int}})
+        -> Vector{Vector{Int}}
+
+Return pure errors corresponding to a list of stabilizers. The returned list of pure errors
+can be used (combined) to find a list of pure errors such that each pure error anticommutes
+with precisely one stabilizer; this can be achieved by passing the output of this method to
+[`_fix_pure_errors!`](@ref).
+
+See also [`_fix_pure_errors!`](@ref), [`find_pure_errors`](@ref).
+"""
+function _find_pure_errors_disordered(stabilizers::AbstractVector{<:AbstractVector{Int}})
+    pure_errors = Vector{Vector{Int}}()
+    r = length(stabilizers)
+    if r == 0  # empty stabilizers, so return empty pure_errors
+        return pure_errors
+    end
+    n = length(stabilizers[1])
+    remaining = collect(1:r)
+
+    for qubit in 1:r  # TODO: should be 1:n ?
+        paulis = [1,2,3]
+        indices = Int[]
+        for α in remaining
+            if stabilizers[α][qubit] in paulis
+                setdiff!(paulis, stabilizers[α][qubit])
+                push!(indices, α)
+            end
+            if length(paulis) == 1
+                new_pure_error1 = zeros(Int64, n)
+                new_pure_error2 = zeros(Int64, n)
+                new_pure_error1[qubit] = stabilizers[indices[end]][qubit]
+                new_pure_error2[qubit] = stabilizers[indices[end - 1]][qubit]
+                push!(pure_errors, new_pure_error1)
+                push!(pure_errors, new_pure_error2)
+                break
+            end
+            if α == remaining[end] && length(paulis) == 2
+                new_pure_error1 = zeros(Int64, n)
+                new_pure_error1[qubit] = paulis[1]
+                push!(pure_errors, new_pure_error1)
+            end
+        end
+
+        remaining = setdiff(remaining, indices)
+        for α in remaining
+            if stabilizers[α][qubit] == 0
+                continue
+            end
+            new_operator = pauli_product.(stabilizers[α], stabilizers[indices[1]])
+            if new_operator[qubit] == 0
+                stabilizers[α] = deepcopy(new_operator)
+                continue
+            end
+            if length(paulis) == 2
+                continue
+            end
+            new_operator = pauli_product.(stabilizers[α], stabilizers[indices[2]])
+            if new_operator[qubit] == 0
+                stabilizers[α] = deepcopy(new_operator)
+                continue
+            end
+            new_operator = pauli_product.(stabilizers[α], stabilizers[indices[1]])
+            new_operator = pauli_product.(new_operator, stabilizers[indices[2]])
+            if new_operator[qubit] == 0
+                stabilizers[α] = deepcopy(new_operator)
+                continue
+            end
+        end
+    end
+
+    return pure_errors
+end
+
+"""
+    _fix_pure_errors!(
+        pure_errors::AbstractVector{<:AbstractVector{Int}},
+        stabilizers::AbstractVector{<:AbstractVector{Int}}
+    )
+
+Reorder and take products of the pure errors so that each pure error anticommutes with
+precisely one stabilizer and the order of pure errors respects that of the stabilizers. An
+`ErrorException` is thrown if the function cannot succeed; for example if the stabilizers
+are not linearly independent.
+
+See also [`_find_pure_errors_disordered`](@ref), [`find_pure_errors`](@ref).
+"""
+function _fix_pure_errors!(
+    pure_errors::AbstractVector{<:AbstractVector{Int}},
+    stabilizers::AbstractVector{<:AbstractVector{Int}}
+)
+    r = length(pure_errors)
+
+    success = 0
+    for α in 1:r
+        for β in α:r
+            if pauli_commutation(pure_errors[β], stabilizers[α]) != 0
+                pure_errors[α], pure_errors[β] = pure_errors[β], pure_errors[α]
+                success += 1
+                break
+            end
+        end
+        for β in 1:r
+            if α != β && pauli_commutation(pure_errors[β], stabilizers[α]) != 0
+                pure_errors[β] = pauli_product.(pure_errors[α], pure_errors[β])
+            end
+        end
+    end
+
+    # Check if enough pure_errors were found
+    if success != r
+        error("pure errors cannot be fixed to correspond to stabilizers")
+    end
+end
+
+"""
+    find_pure_errors(stabilizers::AbstractVector{<:AbstractVector{Int}})
+        -> Vector{Vector{Int}}
+
+Return pure errors corresponding to a list of stabilizers, such that each pure error
+anticommutes with precisely one stabilizer and the order of pure errors respects that of the
+stabilizers.
+
+This function is efficient but does not give lowest weight pure errors (you cannot have both
+of these properties). An `ErrorException` is thrown if the function cannot succeed; for
+example if the stabilizers are not linearly independent.
+
+# Examples
+```jldoctest
+julia> stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]];
+
+julia> pure_errors = find_pure_errors(stabilizers)
+4-element Vector{Vector{Int64}}:
+ [3, 0, 0, 0, 0]
+ [1, 3, 0, 0, 0]
+ [3, 1, 0, 0, 0]
+ [1, 0, 0, 0, 0]
+
+julia> [pauli_commutation(s, p) for s in stabilizers, p in pure_errors]  # commutations
+4×4 Matrix{Int64}:
+ 1  0  0  0
+ 0  1  0  0
+ 0  0  1  0
+ 0  0  0  1
+```
+"""
+function find_pure_errors(stabilizers::Array{Array{Int64,1},1})
+    pure_errors = _find_pure_errors_disordered(stabilizers)
+    _fix_pure_errors!(pure_errors, stabilizers)
+    return pure_errors
+end
+
+"""
     find_syndrome(code::QuantumCode, error::AbstractVector{Int}) -> AbstractVector{Int}
 
 Return the syndrome yielded by the given error with the given code.
@@ -221,139 +373,9 @@ function permute(
     return output_code
 end
 
-"""
-    fix_pure_errors!(pure_errors,stabilizers)
-
-After modifying stabilizers (e.g, taking products to get a new generating
-set), pure_errors may not satisfy the correct anticommutation relations.
-This fixes this, returning true if it succeeded and false if it was not
-possible.
-"""
-function fix_pure_errors!(
-        pure_errors::Array{Array{Int64,1},1},
-        stabilizers::Array{Array{Int64,1},1})
-
-    success = 0
-    r = length(pure_errors)
-
-
-    for α in 1:r
-        for β in α:r
-            if pauli_commutation(pure_errors[β], stabilizers[α]) != 0
-                pure_errors[α], pure_errors[β] = pure_errors[β], pure_errors[α]
-                success += 1
-                break
-            end
-        end
-        for β in 1:r
-            if α != β && pauli_commutation(pure_errors[β], stabilizers[α]) != 0
-                pure_errors[β] = pauli_product.(pure_errors[α], pure_errors[β])
-            end
-        end
-    end
-
-
-    # Check if enough pure_errors were found
-    if success != r
-        return false
-    else
-        return true
-    end
-end
 
 
 
-
-
-"""
-    generate_disordered_pure_errors(stabilizers)
-
-This finds pure_errors corresponding to a set of stabilizers.  The
-pure errors don't necessarily have the same order as the stabilizers.
-"""
-function generate_disordered_pure_errors(stabilizers::Array{Array{Int64,1},1})
-
-    r = length(stabilizers)
-    n = length(stabilizers[1])
-    remaining = collect(1:r)
-    pure_errors = Array{Array{Int64,1},1}()
-
-    for qubit in 1:r
-        paulis = [1,2,3]
-        indices = Int[]
-        for α in remaining
-            if stabilizers[α][qubit] in paulis
-                setdiff!(paulis, stabilizers[α][qubit])
-                push!(indices, α)
-            end
-            if length(paulis) == 1
-
-                new_pure_error1 = zeros(Int64, n)
-                new_pure_error2 = zeros(Int64, n)
-                new_pure_error1[qubit] = stabilizers[indices[end]][qubit]
-                new_pure_error2[qubit] = stabilizers[indices[end - 1]][qubit]
-                push!(pure_errors, new_pure_error1)
-                push!(pure_errors, new_pure_error2)
-                break
-            end
-            if α == remaining[end] && length(paulis) == 2
-
-                new_pure_error1 = zeros(Int64, n)
-                new_pure_error1[qubit] = paulis[1]
-                push!(pure_errors, new_pure_error1)
-            end
-        end
-
-
-        remaining = setdiff(remaining, indices)
-        for α in remaining
-            if stabilizers[α][qubit] == 0
-                continue
-            end
-            new_operator = pauli_product.(stabilizers[α], stabilizers[indices[1]])
-            if new_operator[qubit] == 0
-                stabilizers[α] = deepcopy(new_operator)
-                continue
-            end
-            if length(paulis) == 2
-                continue
-            end
-            new_operator = pauli_product.(stabilizers[α], stabilizers[indices[2]])
-            if new_operator[qubit] == 0
-                stabilizers[α] = deepcopy(new_operator)
-                continue
-            end
-            new_operator = pauli_product.(stabilizers[α], stabilizers[indices[1]])
-            new_operator = pauli_product.(new_operator, stabilizers[indices[2]])
-            if new_operator[qubit] == 0
-                stabilizers[α] = deepcopy(new_operator)
-                continue
-            end
-        end
-    end
-
-    return pure_errors
-
-end
-
-
-
-
-
-"""
-    generate_pure_errors(stabilizers)
-
-This finds pure_errors corresponding to a set of stabilizers.  It is
-efficient but does not give lowest weight pure errors (you actually
-can't have both of these properties).
-"""
-function generate_pure_errors(stabilizers::Array{Array{Int64,1},1})
-
-    output = generate_disordered_pure_errors(stabilizers)
-    fix_pure_errors!(output, stabilizers)
-
-    return output
-end
 
 
 
@@ -472,7 +494,9 @@ function are_physically_equivalent(x::QuantumCode, y::QuantumCode)
     # of y, and no two logicals of x anticommute with the same logical of
     # x.
     new_logicals = deepcopy(x.logicals)
-    if !fix_pure_errors!(new_logicals, y.logicals)
+    try
+        _fix_pure_errors!(new_logicals, y.logicals)
+    catch
         return false
     end
 
@@ -519,7 +543,7 @@ function purify_code(code::SimpleCode)
     output_stabilizers = vcat(output_stabilizers, new_stabilizers)
     output_logicals = []
     output_pure_errors = vcat(output_pure_errors, new_pure_errors)
-    fix_pure_errors!(output_pure_errors, output_stabilizers)
+    _fix_pure_errors!(output_pure_errors, output_stabilizers)
 
     name = "Pureified " * code.name
 
@@ -583,7 +607,7 @@ function gauge_code(
     end
 
 
-    fix_pure_errors!(output_pure_errors, output_stabilizers)
+    _fix_pure_errors!(output_pure_errors, output_stabilizers)
     name = string(logical_power_list) * " gauged " * code.name
 
     return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
@@ -619,7 +643,7 @@ function random_stabilizer_state(n::Int64)
 
 
     # Next find pure_errors
-    pure_errors = generate_pure_errors(stabilizers)
+    pure_errors = find_pure_errors(stabilizers)
     logicals = []
 
     return SimpleCode(
