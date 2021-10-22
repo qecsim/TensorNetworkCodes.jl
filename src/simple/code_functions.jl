@@ -112,6 +112,8 @@ with precisely one stabilizer; this can be achieved by passing the output of thi
 See also [`_fix_pure_errors!`](@ref), [`find_pure_errors`](@ref).
 """
 function _find_pure_errors_disordered(stabilizers::AbstractVector{<:AbstractVector{Int}})
+#MSCE: comment line below to for original modified surface code example notebook
+    stabilizers = copy(stabilizers)  # avoid modifying incoming stabilizers
     pure_errors = Vector{Vector{Int}}()
     r = length(stabilizers)
     if r == 0  # empty stabilizers, so return empty pure_errors

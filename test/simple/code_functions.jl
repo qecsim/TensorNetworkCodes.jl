@@ -36,6 +36,12 @@ end
     @test length(pure_errors) == length(stabilizers)
     # test commutation relations
     @test [pauli_commutation(s, p) for s in stabilizers, p in pure_errors] == I
+
+    # test stabilizers are not modified by find_pure_errors
+    stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
+    stabilizers_copy = deepcopy(stabilizers)
+    find_pure_errors(stabilizers)
+    @test stabilizers == stabilizers_copy
 end
 
 @testset "num_qubits" begin

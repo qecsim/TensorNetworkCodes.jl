@@ -255,7 +255,7 @@ function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
 
         stabilizers = make_ready(stabilizers,useful_ops,qubit_pair)
         logicals = make_ready(logicals,useful_ops,qubit_pair)
-#TOFIX: comment line below to fix modified surface code example notebook
+#MSCE: comment line below to for original modified surface code example notebook
         pure_errors = make_ready(pure_errors,useful_ops,qubit_pair)
     end
 
@@ -277,9 +277,9 @@ function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
     end
 
 
-#TOFIX: comment line below to fix modified surface code example notebook
+#MSCE: comment line below to for original modified surface code example notebook
     remove_qubits!(pure_errors,qubit_pair)
-#TOFIX: uncomment line below to fix modified surface code example notebook
+#MSCE: uncomment line below to for original modified surface code example notebook
     # pure_errors = find_pure_errors(stabilizers)
 
     return SimpleCode(" ",stabilizers,logicals,pure_errors)
