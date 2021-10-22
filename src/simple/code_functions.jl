@@ -1,5 +1,5 @@
 """
-    distance_logicals(code::Quantum_code; max_distance=5) -> Int, Vector{Vector{Int}}
+    find_distance_logicals(code::Quantum_code; max_distance=5) -> Int, Vector{Vector{Int}}
 
 Return the distance of the code and all minimum-weight logical operators.
 
@@ -9,13 +9,13 @@ well for low-distance codes but will be slow for high-distance codes. If during 
 
 # Examples
 ```jldoctest
-julia> d, ls = distance_logicals(five_qubit_code());
+julia> d, ls = find_distance_logicals(five_qubit_code());
 
 julia> d, length(ls), ls[1]  # distance, number and example of minimum-weight logicals
 (3, 30, [1, 2, 1, 0, 0])
 ```
 """
-function distance_logicals(code::QuantumCode; max_distance=5)
+function find_distance_logicals(code::QuantumCode; max_distance=5)
     n = num_qubits(code)
     r = length(code.stabilizers)
 

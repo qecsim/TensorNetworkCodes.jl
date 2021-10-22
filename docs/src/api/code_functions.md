@@ -12,7 +12,7 @@ verify_code
 ## Evaluation
 
 ```@docs
-distance_logicals
+find_distance_logicals
 find_pure_error
 find_pure_errors
 find_syndrome

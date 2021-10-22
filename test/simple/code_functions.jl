@@ -1,17 +1,17 @@
 using TensorNetworkCodes
 using Test
 
-@testset "distance_logicals" begin
-    d, ls = distance_logicals(five_qubit_code())
+@testset "find_distance_logicals" begin
+    d, ls = find_distance_logicals(five_qubit_code())
     @test d == 3 && all(==(3), (pauli_weight(l) for l in ls))
 
-    d, ls = distance_logicals(steane_code())
+    d, ls = find_distance_logicals(steane_code())
     @test d == 3 && all(==(3), (pauli_weight(l) for l in ls))
 
-    d, ls = distance_logicals(five_qubit_surface_code())
+    d, ls = find_distance_logicals(five_qubit_surface_code())
     @test d == 2 && all(==(2), (pauli_weight(l) for l in ls))
 
-    @test_throws ErrorException distance_logicals(five_qubit_code(); max_distance=2)
+    @test_throws ErrorException find_distance_logicals(five_qubit_code(); max_distance=2)
 end
 
 @testset "find_pure_error/find_syndrome" begin
