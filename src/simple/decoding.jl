@@ -1,26 +1,4 @@
 """
-    get_syndrome(code,error_operator)
-
-Given an `error_operator` return the syndrome, which tells us which of
-`code.stabilizers` the error anticommutes with.
-"""
-function get_syndrome(code::QuantumCode,error_operator::Array{Int64,1})
-    g = code.stabilizers
-    n = num_qubits(code)
-
-    if n != length(error_operator)
-        error("size of error does not match size of code!")
-    end
-
-    return pauli_commutation.(g,Ref(error_operator))
-end
-
-
-
-
-
-
-"""
     min_weight_brute_force(code,syndrome,
     error_prob,error_model)
 
@@ -46,7 +24,7 @@ function min_weight_brute_force(
     for α in 0:4^n-1
         operator = digits!(zeros(Int64,n),α,base = 4)
         w = pauli_weight(operator)
-        if (get_syndrome(code,operator) == syndrome &&
+        if (find_syndrome(code,operator) == syndrome &&
                 w <= error_weight)
             error_weight = w
             error_guess = operator
@@ -96,7 +74,7 @@ function monte_carlo_simulation(
         success = 0
         for seed in 1:N
             initial_error = random_pauli_error(num_qubits(code),p,seed)
-            syndrome = get_syndrome(code,initial_error)
+            syndrome = find_syndrome(code,initial_error)
 
             correction = decoder(code,syndrome,p)
             effect_on_code = pauli_product.(initial_error,correction)

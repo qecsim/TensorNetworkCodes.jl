@@ -63,20 +63,20 @@ function distance_logicals(code::QuantumCode; max_distance=5)
 end
 
 """
-    find_pure_error(code::QuantumCode, syndrome)
+    find_pure_error(code::QuantumCode, syndrome::AbstractVector{Int}) -> AbstractVector{Int}
 
-Return a pure error which corresponds to the syndrome for the code.
+Return a pure error which yields the given syndrome with the given code.
 
 The pure error is formed from a product of `code.pure_errors` and is not unique nor
 necessarily the lowest-weight error corresponding to the syndrome.
+
+See also [`find_syndrome`](@ref).
 
 # Examples
 ```jldoctest
 julia> code = five_qubit_code();
 
-julia> error = [0, 1, 3, 0, 1];  # IXZIX
-
-julia> syndrome = get_syndrome(code, error)
+julia> syndrome = find_syndrome(code, [0, 1, 3, 0, 1])  # error = IXZIX
 4-element Vector{Int64}:
  1
  0
@@ -91,13 +91,38 @@ julia> pure_error = find_pure_error(code, syndrome)
  0
  0
 
-julia> get_syndrome(code, pure_error) == syndrome
+julia> find_syndrome(code, pure_error) == syndrome
 true
 ```
 """
 function find_pure_error(code::QuantumCode, syndrome::AbstractVector{Int})
     (length(code.pure_errors) == length(syndrome)) || error("invalid syndrome length")
     return pauli_product_pow(code.pure_errors, syndrome)
+end
+
+"""
+    find_syndrome(code::QuantumCode, error::AbstractVector{Int}) -> AbstractVector{Int}
+
+Return the syndrome yielded by the given error with the given code.
+
+The syndrome is a list of 1 and 0 of the same length as `code.stabilizers`, where 1
+indicates the error anticommutes with the corresponding stabilizer.
+
+See also [`find_pure_error`](@ref).
+
+# Examples
+```jldoctest
+julia> syndrome = find_syndrome(five_qubit_code(), [0, 1, 3, 0, 1])  # error = IXZIX
+4-element Vector{Int64}:
+ 1
+ 0
+ 0
+ 1
+```
+"""
+function find_syndrome(code::QuantumCode, error_operator::AbstractVector{Int})
+    num_qubits(code) == length(error_operator) || error("invalid error operator length")
+    return pauli_commutation.(code.stabilizers, Ref(error_operator))
 end
 
 """

@@ -14,12 +14,18 @@ using Test
     @test_throws ErrorException distance_logicals(five_qubit_code(); max_distance=2)
 end
 
-@testset "find_pure_error" begin
+@testset "find_pure_error/find_syndrome" begin
     code = steane_code()
     error = [0, 1, 3, 0, 0, 2, 0]
-    syndrome = get_syndrome(code, error)
+    syndrome = find_syndrome(code, error)
     pure_error = find_pure_error(code, syndrome)
-    @test get_syndrome(code, pure_error) == syndrome
+    @test find_syndrome(code, pure_error) == syndrome
+
+    #identity error
+    identity = zeros(Int, 7)
+    syndrome = find_syndrome(code, identity)
+    @test all(==(0), syndrome)
+    @test find_pure_error(code, syndrome) == identity
 end
 
 @testset "num_qubits" begin

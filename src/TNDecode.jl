@@ -6,7 +6,7 @@ using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor
 using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
 using ..TensorNetworkCodes: num_qubits
-using ..TensorNetworkCodes: get_syndrome, find_pure_error
+using ..TensorNetworkCodes: find_pure_error, find_syndrome
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
 using ITensors: Index, ITensor, array, hastags
@@ -258,7 +258,7 @@ function compare_code_success_empirical(
             error = random_pauli_error(n,error_prob)
 
             # code 1
-            syndrome1 = get_syndrome(code1,error)
+            syndrome1 = find_syndrome(code1,error)
 
             code1_correction = TN_decoder(
                 code1,
@@ -274,7 +274,7 @@ function compare_code_success_empirical(
             end
 
             # code 2
-            syndrome2 = get_syndrome(code2,error)
+            syndrome2 = find_syndrome(code2,error)
 
             code2_correction = TN_decoder(
                 code2,
@@ -324,7 +324,7 @@ function compare_code_success_predicted(
             error = random_pauli_error(n,error_prob)
 
             # code 1
-            syndrome1 = get_syndrome(code1,error)
+            syndrome1 = find_syndrome(code1,error)
 
             code1_succ = TN_decoding_success_prob(
                 code1,
@@ -337,7 +337,7 @@ function compare_code_success_predicted(
             data1[β] = code1_succ
 
             # code 2
-            syndrome2 = get_syndrome(code2,error)
+            syndrome2 = find_syndrome(code2,error)
 
             code2_succ = TN_decoding_success_prob(
                 code2,
