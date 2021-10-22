@@ -181,7 +181,7 @@ function pauli_product(a::Int, b::Int)
 end
 
 """
-    pauli_product_pow(operators, powers)
+    pauli_product_pow(operators, powers) -> Vector{Int}
 
 Return the product of the Pauli operators each raised to the corresponding power, where
 `operators` is an iterable of `AbstractVector{Int}` and `powers` is an iterable of `Int`.
