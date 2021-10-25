@@ -63,6 +63,30 @@ function find_distance_logicals(code::QuantumCode; max_distance=5)
 end
 
 """
+    _find_product_indices(
+        operators::AbstractVector{<:AbstractVector{Int}},
+        target_operator::AbstractVector{Int}
+    ) -> Vector{Int}
+
+Return the indices of the smallest number of operators that as a product give the target
+operator. If no such product exists an `ErrorException` is thrown.
+"""
+function _find_product_indices(operators, target_operator)
+    identity = zeros(Int, length(target_operator))
+    if target_operator == identity
+        return Int[]
+    end
+    for i in combinations(collect(enumerate(operators)))
+        ids, ops = collect(zip(i...))
+        op = reduce((a, b)->pauli_product.(a, b), ops; init=identity)
+        if op == target_operator
+            return collect(ids)
+        end
+    end
+    error("no product of operators yields operator")
+end
+
+"""
     find_pure_error(code::QuantumCode, syndrome::AbstractVector{Int}) -> AbstractVector{Int}
 
 Return a pure error which yields the given syndrome with the given code.
@@ -112,7 +136,6 @@ with precisely one stabilizer; this can be achieved by passing the output of thi
 See also [`_fix_pure_errors!`](@ref), [`find_pure_errors`](@ref).
 """
 function _find_pure_errors_disordered(stabilizers::AbstractVector{<:AbstractVector{Int}})
-#MSCE: comment line below to for original modified surface code example notebook
     stabilizers = copy(stabilizers)  # avoid modifying incoming stabilizers
     pure_errors = Vector{Vector{Int}}()
     r = length(stabilizers)
@@ -235,7 +258,7 @@ julia> stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 
 
 julia> pure_errors = find_pure_errors(stabilizers)
 4-element Vector{Vector{Int64}}:
- [3, 0, 0, 0, 0]
+ [0, 1, 0, 0, 0]
  [1, 3, 0, 0, 0]
  [3, 1, 0, 0, 0]
  [1, 0, 0, 0, 0]
@@ -351,6 +374,10 @@ function verify_code(code::QuantumCode; log_warn=true)
 
     return true
 end
+
+# REFACTORED ABOVE
+
+
 
 """
     permute(code,permutation)

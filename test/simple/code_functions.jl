@@ -1,4 +1,5 @@
 using TensorNetworkCodes
+using TensorNetworkCodes: _find_product_indices
 using LinearAlgebra: I
 using Test
 
@@ -13,6 +14,16 @@ using Test
     @test d == 2 && all(==(2), (pauli_weight(l) for l in ls))
 
     @test_throws ErrorException find_distance_logicals(five_qubit_code(); max_distance=2)
+end
+
+@testset "_find_product_indices" begin
+    operators = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
+    target = pauli_product_pow(operators, [1, 0, 1, 1])
+    target_indices = _find_product_indices(operators, target)
+    found = pauli_product(operators[target_indices])
+    @test found == target
+    # identity target
+    @test _find_product_indices(operators, [0, 0, 0, 0, 0]) == []
 end
 
 @testset "find_pure_error/find_syndrome" begin
@@ -32,16 +43,12 @@ end
 @testset "find_pure_errors" begin
     # 5-qubit code stabilizers: XZZXI, IXZZX, XIXZZ, ZXIXZ
     stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
-    pure_errors = find_pure_errors(stabilizers)
-    @test length(pure_errors) == length(stabilizers)
-    # test commutation relations
-    @test [pauli_commutation(s, p) for s in stabilizers, p in pure_errors] == I
-
-    # test stabilizers are not modified by find_pure_errors
-    stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]]
     stabilizers_copy = deepcopy(stabilizers)
-    find_pure_errors(stabilizers)
-    @test stabilizers == stabilizers_copy
+    pure_errors = find_pure_errors(stabilizers)
+    @test stabilizers == stabilizers_copy  # stabilizers not modified
+    # test commutation relations
+    @test length(pure_errors) == length(stabilizers)
+    @test [pauli_commutation(s, p) for s in stabilizers, p in pure_errors] == I
 end
 
 @testset "num_qubits" begin

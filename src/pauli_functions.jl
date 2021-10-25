@@ -181,6 +181,29 @@ function pauli_product(a::Int, b::Int)
 end
 
 """
+    pauli_product(operators) -> Vector{Int}
+
+Return the product of the Pauli operators, where `operators` is an iterable of
+`AbstractVector{Int}`.
+
+See also [`pauli_product_pow`](@ref).
+
+# Examples
+```jldoctest
+julia> ops = [[3, 3, 0], [0, 1, 1], [2, 0, 2]];  # ZZI, IXX, YIY
+
+julia> pauli_product(ops)
+3-element Vector{Int64}:
+ 1
+ 2
+ 3
+```
+"""
+function pauli_product(operators)
+    return reduce((a, b)->pauli_product.(a, b), operators)
+end
+
+"""
     pauli_product_pow(operators, powers) -> Vector{Int}
 
 Return the product of the Pauli operators each raised to the corresponding power, where
