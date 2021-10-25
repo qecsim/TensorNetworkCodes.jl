@@ -1,6 +1,7 @@
 # Code functions
 
-Basic, evaluation and transformation functions for codes and code fields.
+Basic and evaluation functions for [`QuantumCode`](@ref) and fields, and transformation
+functions for [`SimpleCode`](@ref).
 
 ## Basic
 
