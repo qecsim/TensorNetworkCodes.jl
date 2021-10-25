@@ -540,5 +540,3 @@ function verify_code(code::QuantumCode; log_warn=true)
 
     return true
 end
-
-# REFACTORED ABOVE

@@ -14,21 +14,21 @@ using ITensors: Index, ITensor, dim, hastags, inds
 using LightGraphs: Graph, add_edge!
 
 # exports
+export SimpleCode, QuantumCode
+include("simple/types.jl")
+
 export pauli_are_commuting, pauli_are_independent, pauli_commutation
 export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")
-
-# SimpleCode exports
-export SimpleCode, QuantumCode
-include("simple/types.jl")
-export five_qubit_code,five_qubit_surface_code,steane_code
-export random_code, random_stabilizer_state
-include("simple/examples.jl")
-
 export num_qubits, verify_code
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
 export gauge_code, permute_code, purify_code
-include("simple/code_functions.jl")
+include("code_functions.jl")
+
+# SimpleCode exports
+export five_qubit_code,five_qubit_surface_code,steane_code
+export random_code, random_stabilizer_state
+include("simple/examples.jl")
 export random_pauli_error
 include("simple/errors.jl")
 export min_weight_brute_force,do_nothing_decoder
