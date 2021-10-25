@@ -51,6 +51,26 @@ end
     @test [pauli_commutation(s, p) for s in stabilizers, p in pure_errors] == I
 end
 
+@testset "gauge_code" begin
+    code = five_qubit_code()
+    code_copy = deepcopy(code)
+    new_code = gauge_code(code, 1, 3)
+    # test code not modified
+    @test code.name == code_copy.name
+    @test code.stabilizers == code_copy.stabilizers
+    @test verify_code(code)
+    # test new_code modified as expected
+    @test new_code.name == "1/Z gauged $(code.name)"
+    @test num_qubits(new_code) == num_qubits(code)
+    @test new_code.stabilizers == vcat(code.stabilizers, [code.logicals[2]])
+    @test length(new_code.logicals) == 0
+    @test verify_code(new_code)
+    # test exceptions
+    @test_throws ErrorException gauge_code(five_qubit_code(), 2, 1)  # invalid logical qubit
+    @test_throws ErrorException gauge_code(five_qubit_code(), 1, 4)  # invalid pauli
+    @test_throws ErrorException gauge_code(five_qubit_code(), 1, 0)  # gauging with identity
+end
+
 @testset "num_qubits" begin
     @test num_qubits(five_qubit_code()) == 5
     @test num_qubits(steane_code()) == 7
@@ -85,6 +105,7 @@ end
     @test new_code.name == "Purified $(code.name)"
     @test num_qubits(new_code) == num_qubits(code) + length(code.logicals) / 2
     @test length(new_code.stabilizers) == num_qubits(new_code)
+    @test length(new_code.logicals) == 0
     @test verify_code(new_code)
 end
 
@@ -127,10 +148,4 @@ end
     log_pattern = (:warn, "number of stabilizers and pure errors don't match!")
     @test_logs log_pattern verify_code(code_missing_pure_error; log_warn=true)
     @test_logs verify_code(code_missing_pure_error, log_warn=false)
-end
-
-@testset "gauge_code" begin
-    new_code = five_qubit_surface_code()
-    new_code = gauge_code(new_code,[[0,1]],[1])
-    @test verify_code(new_code)
 end

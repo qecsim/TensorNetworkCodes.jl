@@ -303,6 +303,76 @@ function find_syndrome(code::QuantumCode, error_operator::AbstractVector{Int})
 end
 
 """
+    gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int) -> SimpleCode
+
+Given a simple code with ``k`` logicals on ``n`` physical qubits, return a new simple code
+with ``k - 1`` logicals on ``n`` physical qubits by adding a logical operator as a
+stabilizer, where `logical_qubit` indexes which logical qubit is gauged and `logical_pauli`
+indicates which logical Pauli is added to the stabilizers.
+
+A `ErrorException` is thrown if `logical_qubit` indexes a non-existant logical qubit, or if
+`logical_pauli` is not in `1:3` (logical identity does not fix a gauge).
+
+# Examples
+```jldoctest
+julia> code = five_qubit_code();
+
+julia> code.stabilizers
+4-element Vector{Vector{Int64}}:
+ [1, 3, 3, 1, 0]
+ [0, 1, 3, 3, 1]
+ [1, 0, 1, 3, 3]
+ [3, 1, 0, 1, 3]
+
+julia> code.logicals
+2-element Vector{Vector{Int64}}:
+ [1, 1, 1, 1, 1]
+ [3, 3, 3, 3, 3]
+
+julia> new_code = gauge_code(code, 1, 3);  # gauge logical qubit 1 using logical Z
+
+julia> new_code.stabilizers
+5-element Vector{Vector{Int64}}:
+ [1, 3, 3, 1, 0]
+ [0, 1, 3, 3, 1]
+ [1, 0, 1, 3, 3]
+ [3, 1, 0, 1, 3]
+ [3, 3, 3, 3, 3]
+
+julia> new_code.logicals
+Vector{Int64}[]
+```
+"""
+function gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int)
+    k = Int(length(code.logicals) / 2)
+    # preconditions
+    (logical_qubit in 1:k) || error("logical qubit index out of bounds!")
+    (logical_pauli in 0:3) || error("unknown logical pauli operator!")
+    (logical_pauli != 0) || error("logical identity doesn't fix a gauge!")
+    # new code fields
+    name = "$logical_qubit/$(pauli_rep_change(logical_pauli)) gauged $(code.name)"
+    output_stabilizers = deepcopy(code.stabilizers)
+    output_logicals = deepcopy(code.logicals)
+    output_pure_errors = deepcopy(code.pure_errors)
+    # remove gauged logicals
+    gauged_logicals = [
+        popat!(output_logicals, 2*logical_qubit-1),
+        popat!(output_logicals, 2*logical_qubit-1),
+    ]
+    # new stabilizer from gauged logicals
+    logical_powers = [[0, 0], [1, 0], [1, 1], [0, 1]][logical_pauli + 1]
+    new_stabilizer = pauli_product_pow(gauged_logicals, logical_powers)
+    push!(output_stabilizers, new_stabilizer)
+    # new pure error from gauged logicals
+    logical_powers = [[0, 0], [1, 1], [0, 1], [1, 1]][logical_pauli + 1]
+    new_pure_error = pauli_product_pow(gauged_logicals, logical_powers)
+    push!(output_pure_errors, new_pure_error)
+    _fix_pure_errors!(output_pure_errors, output_stabilizers)
+
+    return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
+end
+
+"""
     num_qubits(code::QuantumCode) -> Int
 
 Return the number of physical qubits of the code.
@@ -609,64 +679,7 @@ end
 
 
 
-"""
-    gauge_code(code,logical_power_list,which_logicals)
 
-Given a `SimpleCode` with `k` logicals on `n` physical qubits, returns
-a `SimpleCode` with `k - length(logical_power_list)/2` logicals on `n`
-physical qubits by adding logical operators as stabilizer.
-"""
-function gauge_code(
-        code::SimpleCode,
-        logical_power_list::Array{Array{Int64,1},1},
-        which_logicals::Array{Int64,1})
-
-    l = code.logicals
-    K = length(l)
-
-    if length(which_logicals) != length(logical_power_list)
-        error("incorrect number of powers!")
-    end
-    if [0,0] ∈ logical_power_list
-        error("this doesn't fix a gauge!")
-    end
-
-
-    output_stabilizers = deepcopy(code.stabilizers)
-    output_pure_errors = deepcopy(code.pure_errors)
-
-    for β in 1:length(which_logicals)
-        α = which_logicals[β]
-        logical_powers = copy(logical_power_list[β])
-        op_range = 2 * (α - 1) + 1:2 * (α)
-
-        new_stabilizer = pauli_product_pow(l[op_range], logical_powers)
-        if logical_powers[2] == 1
-            logical_powers[1] = mod(logical_powers[1] + 1, 2)
-        elseif logical_powers[1] == 1
-            logical_powers[2] = mod(logical_powers[2] + 1, 2)
-        end
-        new_pure_error = pauli_product_pow(l[op_range], logical_powers)
-
-        push!(output_stabilizers, new_stabilizer)
-        push!(output_pure_errors, new_pure_error)
-    end
-
-
-    output_logicals = Array{Int64,1}[]
-    for α in 1:Int(K / 2)
-        if !(α ∈ which_logicals)
-            push!(output_logicals, code.logicals[2 * (α - 1) + 1])
-            push!(output_logicals, code.logicals[2 * (α)])
-        end
-    end
-
-
-    _fix_pure_errors!(output_pure_errors, output_stabilizers)
-    name = string(logical_power_list) * " gauged " * code.name
-
-    return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
-end
 
 
 

@@ -26,9 +26,9 @@ include("simple/examples.jl")
 
 export num_qubits, verify_code
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
-export permute_code, purify_code
+export gauge_code, permute_code, purify_code
 export low_weight_stabilizers, are_physically_equivalent
-export gauge_code, random_stabilizer_state, random_code
+export random_stabilizer_state, random_code
 include("simple/code_functions.jl")
 export random_pauli_error
 include("simple/errors.jl")

@@ -99,19 +99,8 @@ end
 
 
 # Extends the method for `SimpleCodes`.
-function gauge_code(
-        code::TNCode,
-        logical_power_list::Array{Array{Int64,1},1},
-        which_logicals::Array{Int64,1})
-
+function gauge_code(code::TNCode, logical_qubit::Int, logical_pauli::Int)
     new_code = SimpleCode(code)
-    new_code = gauge_code(
-        new_code,
-        logical_power_list,
-        which_logicals)
-
-    return TNCode(
-        new_code,
-        code.code_graph,
-        code.seed_codes)
+    new_code = gauge_code(new_code, logical_qubit, logical_pauli)
+    return TNCode(new_code, code.code_graph, code.seed_codes)
 end
