@@ -22,12 +22,12 @@ include("pauli_functions.jl")
 export SimpleCode, QuantumCode
 include("simple/types.jl")
 export five_qubit_code,five_qubit_surface_code,steane_code
+export random_code, random_stabilizer_state
 include("simple/examples.jl")
 
 export num_qubits, verify_code
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
 export gauge_code, permute_code, purify_code
-export random_stabilizer_state, random_code
 include("simple/code_functions.jl")
 export random_pauli_error
 include("simple/errors.jl")
