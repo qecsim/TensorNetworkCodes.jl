@@ -58,6 +58,21 @@ end
     @test num_qubits(random_stabilizer_state(6)) == 6
 end
 
+@testset "permute_code" begin
+    code = five_qubit_code()
+    code_copy = deepcopy(code)
+    permutation = [5, 4, 3, 2, 1]
+    new_code = permute_code(code, permutation)
+    # test code not modified
+    @test code.name == code_copy.name
+    @test code.stabilizers == code_copy.stabilizers
+    @test verify_code(code)
+    # test new_code modified as expected
+    @test new_code.name == "$(code.name) $(permutation)"
+    @test new_code.stabilizers == getindex.(code.stabilizers, Ref(permutation))
+    @test verify_code(new_code)
+end
+
 @testset "verify_code" begin
     valid_code = random_code(6, 2)
     @test verify_code(valid_code)

@@ -68,7 +68,7 @@ function surface_code_bulk(L::Int64)
     x_small_surface = gauge_code(small_surface,[[1,0]],[1])
     z_small_surface = gauge_code(small_surface,[[0,1]],[1])
 
-    z_small_surface_rotated = TensorNetworkCodes.permute(z_small_surface,[2,5,3,1,4])  # this is rotated
+    z_small_surface_rotated = permute_code(z_small_surface,[2,5,3,1,4])  # this is rotated
     # z_small_surface_rotated = SimpleCode("Rotated small surface code",
     # z_small_surface_rot.stabilizers,
     # z_small_surface_rot.logicals,
@@ -113,7 +113,7 @@ function almost_surface_code_bulk(
     # operators to be stabilizers, resulting in stabilizers states
     x_small_surface = gauge_code(small_surface,[[1,0]],[1])
     z_small_surface = gauge_code(small_surface,[[0,1]],[1])
-    z_small_surface_rotated = TensorNetworkCodes.permute(z_small_surface,[2,5,3,1,4])  # this is rotated
+    z_small_surface_rotated = permute_code(z_small_surface,[2,5,3,1,4])  # this is rotated
 
 
     codes = [isodd(i) ? x_small_surface : z_small_surface_rotated

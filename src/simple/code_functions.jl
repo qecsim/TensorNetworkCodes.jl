@@ -312,6 +312,55 @@ function num_qubits(code::QuantumCode)
 end
 
 """
+    permute_code(code::SimpleCode, permutation) -> SimpleCode
+
+Returns a new simple code with the physical qubits permuted relative to the given code,
+according to the permutation.
+
+The `permutation` is expected in the format used for `Base.permute!` and it is applied to
+each stabilizer, logical and pure error of the code. No checking is done to verify that
+`permuation` is a valid.
+
+# Examples
+```jldoctest
+julia> code = five_qubit_code();
+
+julia> code.name
+"Five qubit code"
+
+julia> code.stabilizers
+4-element Vector{Vector{Int64}}:
+ [1, 3, 3, 1, 0]
+ [0, 1, 3, 3, 1]
+ [1, 0, 1, 3, 3]
+ [3, 1, 0, 1, 3]
+
+julia> new_code = permute_code(code, [2, 1, 3, 4, 5]);
+
+julia> new_code.name
+"Five qubit code [2, 1, 3, 4, 5]"
+
+julia> new_code.stabilizers
+4-element Vector{Vector{Int64}}:
+ [3, 1, 3, 1, 0]
+ [1, 0, 3, 3, 1]
+ [0, 1, 1, 3, 3]
+ [1, 3, 0, 1, 3]
+```
+"""
+function permute_code(code::SimpleCode, permutation)
+    output_code = SimpleCode("$(code.name) $(permutation)",
+        deepcopy(code.stabilizers),
+        deepcopy(code.logicals),
+        deepcopy(code.pure_errors)
+    )
+    permute!.(output_code.stabilizers, Ref(permutation))
+    permute!.(output_code.logicals, Ref(permutation))
+    permute!.(output_code.pure_errors, Ref(permutation))
+    return output_code
+end
+
+"""
     verify_code(code::QuantumCode; log_warn=true) -> Bool
 
 Return true if the code satisfied the properties of a valid code, or false otherwise. if the
@@ -379,28 +428,7 @@ end
 
 
 
-"""
-    permute(code,permutation)
 
-Permutes physical qubits of a `SimpleCode` returning a new `SimpleCode`.
-"""
-function permute(
-        code::SimpleCode,
-        permutation::Array{Int64})
-
-    output_code =
-    SimpleCode(code.name * " " * string(permutation),
-        deepcopy(code.stabilizers),
-        deepcopy(code.logicals),
-        deepcopy(code.pure_errors)
-    )
-
-    permute!.(output_code.stabilizers, Ref(permutation))
-    permute!.(output_code.logicals, Ref(permutation))
-    permute!.(output_code.pure_errors, Ref(permutation))
-
-    return output_code
-end
 
 
 
