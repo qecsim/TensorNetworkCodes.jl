@@ -314,7 +314,7 @@ end
 """
     permute_code(code::SimpleCode, permutation) -> SimpleCode
 
-Returns a new simple code with the physical qubits permuted relative to the given code,
+Return a new simple code with the physical qubits permuted relative to the given code,
 according to the permutation.
 
 The `permutation` is expected in the format used for `Base.permute!` and it is applied to
@@ -358,6 +358,53 @@ function permute_code(code::SimpleCode, permutation)
     permute!.(output_code.logicals, Ref(permutation))
     permute!.(output_code.pure_errors, Ref(permutation))
     return output_code
+end
+
+"""
+    purify_code(code::SimpleCode) -> SimpleCode
+
+Given a simple code with ``k`` logicals on ``n`` physical qubits, return a new simple code
+with ``0`` logicals on ``n + k`` physical qubits.
+
+# Examples
+```jldoctest
+julia> code = purify_code(five_qubit_code());
+
+julia> num_qubits(code), length(code.logicals)
+(6, 0)
+```
+"""
+function purify_code(code::SimpleCode)
+    g = code.stabilizers
+    l = code.logicals
+    K = length(l)
+    k = Int(K / 2)
+    n = num_qubits(code)
+
+    output_stabilizers = vcat.(Ref(zeros(Int, k)), g)
+    new_stabilizers = vcat.(Ref(zeros(Int, k)), l)
+    output_pure_errors = vcat.(Ref(zeros(Int, k)), code.pure_errors)
+    new_pure_errors = [zeros(Int, n + k) for _ in 1:K]
+
+    for α in 1:length(new_stabilizers)
+        if isodd(α)
+            β = Int((α + 1) ÷ 2)
+            new_stabilizers[α][β] = 1
+            new_pure_errors[α][β] = 3
+        elseif iseven(α)
+            β = Int(α ÷ 2)
+            new_stabilizers[α][β] = 3
+            new_pure_errors[α][β] = 1
+        end
+    end
+
+    name = "Purified $(code.name)"
+    output_stabilizers = vcat(output_stabilizers, new_stabilizers)
+    output_logicals = Vector{Int}[]
+    output_pure_errors = vcat(output_pure_errors, new_pure_errors)
+    _fix_pure_errors!(output_pure_errors, output_stabilizers)
+
+    return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
 end
 
 """
@@ -559,55 +606,6 @@ function are_physically_equivalent(x::QuantumCode, y::QuantumCode)
 
     return true
 end
-
-
-
-
-
-"""
-    purify_code(code)
-
-Given a `SimpleCode` with `k` logicals on `n` physical qubits, returns
-a `SimpleCode` with 0 logicals on `n+k` physical qubits.
-"""
-function purify_code(code::SimpleCode)
-    g = code.stabilizers
-    l = code.logicals
-    K = length(l)
-    k = Int(K / 2)
-    n = num_qubits(code)
-
-
-    output_stabilizers = vcat.(Ref(zeros(Int64, k)), g)
-    new_stabilizers = vcat.(Ref(zeros(Int64, k)), l)
-    output_pure_errors = vcat.(Ref(zeros(Int64, k)), code.pure_errors)
-    new_pure_errors = [zeros(Int64, n + k) for _ in 1:K]
-
-
-    for α in 1:length(new_stabilizers)
-        if isodd(α)
-            β = Int((α + 1) / 2)
-            new_stabilizers[α][β] = 1
-            new_pure_errors[α][β] = 3
-        elseif iseven(α)
-            β = Int(α / 2)
-            new_stabilizers[α][β] = 3
-            new_pure_errors[α][β] = 1
-        end
-    end
-
-
-    output_stabilizers = vcat(output_stabilizers, new_stabilizers)
-    output_logicals = []
-    output_pure_errors = vcat(output_pure_errors, new_pure_errors)
-    _fix_pure_errors!(output_pure_errors, output_stabilizers)
-
-    name = "Pureified " * code.name
-
-    return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
-end
-
-
 
 
 

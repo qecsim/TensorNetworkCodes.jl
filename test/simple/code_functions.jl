@@ -73,6 +73,21 @@ end
     @test verify_code(new_code)
 end
 
+@testset "purify_code" begin
+    code = five_qubit_code()
+    code_copy = deepcopy(code)
+    new_code = purify_code(code)
+    # test code not modified
+    @test code.name == code_copy.name
+    @test code.stabilizers == code_copy.stabilizers
+    @test verify_code(code)
+    # test new_code modified as expected
+    @test new_code.name == "Purified $(code.name)"
+    @test num_qubits(new_code) == num_qubits(code) + length(code.logicals) / 2
+    @test length(new_code.stabilizers) == num_qubits(new_code)
+    @test verify_code(new_code)
+end
+
 @testset "verify_code" begin
     valid_code = random_code(6, 2)
     @test verify_code(valid_code)
