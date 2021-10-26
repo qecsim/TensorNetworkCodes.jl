@@ -45,8 +45,7 @@ export code_plot,operator_plot
 include("core/plotting.jl")
 export combine_by_coordinates,contract,fusion,merge
 include("core/contract.jl")
-export surface_code,diamond_lattice_code,almost_surface_code,fully_random_code
-export checkerboard_code, funny_code
+export surface_code,rotated_surface_code,almost_rotated_surface_code
 include("core/surface.jl")
 
 # include submodules (not reexported)
