@@ -175,7 +175,15 @@ end
 """
     surface_code(L::Int64)
 
-Returns an LxL surface code `TensorNetworkCode`.
+Returns an (L+1) x L surface code `TensorNetworkCode`.
+
+# Examples
+```jldoctest
+julia> surf = surface_code(2);
+
+julia> dist = find_distance_logicals(surf)[1] # code distance
+3
+```
 """
 function surface_code(L::Int64)
 
@@ -185,7 +193,24 @@ end
 
 
 
+"""
+    almost_rotated_surface_code(
+    L::Int64,
+    input_seed_code::SimpleCode,
+    input_coords::Array{Int64}) -> TensorNetworkCode
 
+Generates a `TensorNetworkCode` that is almost the rotated surface
+code.  Requires the `input_seed_code` to have five qubits and to be
+in the bulk (`input_coords` with components not equal to 1 or L).
+
+# Examples
+```jldoctest
+julia> code = almost_rotated_surface_code(3,five_qubit_code(),[2,2]);
+
+julia> verify_code(code) # try this out and check we get a real code
+true
+```
+"""
 function almost_rotated_surface_code(
     L::Int64,
     input_seed_code::SimpleCode,
@@ -395,6 +420,13 @@ code_label_matrix[L,1] = "G"
 code_label_matrix[L,L] = "I"
 
 
+# Include input code
+if num_qubits(input_seed_code) != 5
+    error("input_seed_code does not have five physical qubits!")
+elseif 1 in input_coords || L in input_coords
+    error("location of input_seed_code needs to be in the bulk!")
+end
+
 input_tn_code = TensorNetworkCode(input_seed_code)
 coordinates = [[0,0],[0,1],[-1,0],[0,-1],[1,0],[0.3,0.3]]
 set_coords!(input_tn_code,coordinates)
@@ -424,7 +456,19 @@ end
 
 
 
+"""
+    rotated_surface_code(L::Int64) -> TensorNetworkCode
 
+Generates the LxL rotated surface code as a `TensorNetworkCode`.
+
+# Examples
+```jldoctest
+julia> rot = rotated_surface_code(3);
+
+julia> pauli_weight(rot.stabilizers[2]) # weight of a plaquette stabilizer
+4
+```
+"""
 function rotated_surface_code(L::Int64)
 
 stabilizers = [[0,1,1,0,1],[1,0,0,1,1],[3,3,0,0,3],[0,0,3,3,3]]
