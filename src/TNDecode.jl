@@ -1,7 +1,7 @@
 module TNDecode
 
 #imports
-using ..TensorNetworkCodes: TNCode
+using ..TensorNetworkCodes: TensorNetworkCode
 using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor
 using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
@@ -38,7 +38,7 @@ end
 
 Creates the `ITensor` describing the seed code at `node`.
 """
-function create_virtual_tensor(code::TNCode,node::Int64)
+function create_virtual_tensor(code::TensorNetworkCode,node::Int64)
 
     graph = code.code_graph
 
@@ -152,10 +152,11 @@ end
         error_model = "depolarizing",
         contraction_function = simple_contract)
 
-Decodes a `TNCode` given the `syndrome` and a choice of `TN_contraction_function`.
+Decodes a `TensorNetworkCode` given the `syndrome` and a choice of
+`TN_contraction_function`.
 """
 function TN_decoder(
-        code::TNCode,
+        code::TensorNetworkCode,
         syndrome::Array{Int64,1},
         error_prob::Float64;
         error_model = "depolarizing",
@@ -204,11 +205,11 @@ end
         contraction_function = basic_contract,
         bond_dim=10)
 
-For a `TNCode` given error `syndrome` and a choice of `contraction_function`,
+For a `TensorNetworkCode` given error `syndrome` and a choice of `contraction_function`,
 finds the probability of successfully decoding.
 """
 function TN_decoding_success_prob(
-        code::TNCode,
+        code::TensorNetworkCode,
         syndrome::Array{Int64,1},
         error_prob::Float64;
         error_model = "depolarizing",

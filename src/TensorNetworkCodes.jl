@@ -36,7 +36,7 @@ export monte_carlo_simulation
 include("simple/decoding.jl")
 
 # Core exports
-export TNCode,CodeGraph,num_nodes,nodes,edges,SimpleCode
+export TensorNetworkCode,CodeGraph,num_nodes,nodes,edges,SimpleCode
 export coords,node_types,node_indices,edge_types,edge_indices
 export set_coords!,set_node_types!,set_node_indices!,set_edge_types!,set_edge_indices!
 export shift_coords!

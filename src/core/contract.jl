@@ -625,13 +625,13 @@ end
 
 Takes the (disjoint) union of two error correcting codes.
 """
-function Base.merge(code1::TNCode,code2::TNCode)
+function Base.merge(code1::TensorNetworkCode,code2::TensorNetworkCode)
 
     new_code = merge(SimpleCode(code1),SimpleCode(code2))
     new_code_graph = merge(code1.code_graph,code2.code_graph)
     new_seed_codes = merge(code1.seed_codes,code2.seed_codes)
 
-    return TNCode(new_code,new_code_graph,new_seed_codes)
+    return TensorNetworkCode(new_code,new_code_graph,new_seed_codes)
 end
 
 
@@ -644,17 +644,17 @@ end
 If possible, implements fusion on pairs of qubits in `qubit_pairs` to return
 a new `QuantumCode` of the same type as the input.
 """
-function fusion(code::TNCode,qubit_pairs::Array{Array{Int64,1},1})
+function fusion(code::TensorNetworkCode,qubit_pairs::Array{Array{Int64,1},1})
 
     new_code = fusion(SimpleCode(code),qubit_pairs)
     new_code_graph = fusion(code.code_graph,qubit_pairs)
 
-    return TNCode(new_code,new_code_graph,code.seed_codes)
+    return TensorNetworkCode(new_code,new_code_graph,code.seed_codes)
 end
 
 
 
-fusion(code::TNCode,qubit_pair::Array{Int64,1}) =
+fusion(code::TensorNetworkCode,qubit_pair::Array{Int64,1}) =
 fusion(code,[qubit_pair])
 
 
@@ -662,14 +662,14 @@ fusion(code,[qubit_pair])
 
 
 """
-    contract(code1,code2,vertex_pairs) -> TNCode
+    contract(code1,code2,vertex_pairs) -> TensorNetworkCode
 
 Combines two `TN_codes` to give a new one by contracting each pair of indices
 corresponding to qubits in `qubit_pairs`.
 """
 function contract(
-        code1::TNCode,
-        code2::TNCode,
+        code1::TensorNetworkCode,
+        code2::TensorNetworkCode,
         qubit_pairs::Array{Array{Int64,1},1})
 
     qubit_pairs = [[qubit_pairs[m][1],qubit_pairs[m][2]+num_qubits(code1)]
@@ -685,12 +685,12 @@ end
 
 
 """
-    combine_by_coordinates(code1::TNCode,code2::TNCode)
+    combine_by_coordinates(code1::TensorNetworkCode,code2::TensorNetworkCode)
 
-Combines two `TNCode` by finding out which physical qubits live on
+Combines two `TensorNetworkCode` by finding out which physical qubits live on
 overlapping coordinates and contracting those.
 """
-function combine_by_coordinates(code1::TNCode,code2::TNCode)
+function combine_by_coordinates(code1::TensorNetworkCode,code2::TensorNetworkCode)
 
     graph1 = code1.code_graph
     graph2 = code2.code_graph

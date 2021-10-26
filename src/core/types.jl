@@ -1,7 +1,7 @@
 """
     CodeGraph
 
-Type containing all geometrical data needed by `TNCodes`
+Type containing all geometrical data needed by `TensorNetworkCodes`
 including coordinates and `ITensor` indices.
 """
 struct CodeGraph
@@ -21,7 +21,7 @@ end
 Type for a tensor-network quantum error correcting code,
 where we have an associated graph.
 """
-struct TNCode <: QuantumCode
+struct TensorNetworkCode <: QuantumCode
     stabilizers::Array{Array{Int64,1},1}
     logicals::Array{Array{Int64,1},1}
     pure_errors::Array{Array{Int64,1},1}
@@ -34,16 +34,16 @@ end
 
 
 """
-    num_nodes(code::TNCode)
+    num_nodes(code::TensorNetworkCode)
 
-Returns how many nodes are in the `TNCode`, which is the sum
+Returns how many nodes are in the `TensorNetworkCode`, which is the sum
 of the number of qubits and number of virtual tensors.
 """
 num_nodes(code_graph::CodeGraph) = length(code_graph.coords)
 
 
 
-num_nodes(code::TNCode) = num_nodes(code.code_graph)
+num_nodes(code::TensorNetworkCode) = num_nodes(code.code_graph)
 
 
 
@@ -53,9 +53,9 @@ num_nodes(code::TNCode) = num_nodes(code.code_graph)
 for data in [:coords,:node_types, :node_indices,
         :edge_types, :edge_indices]
     eval(quote
-#         access(code::TNCode,data::Symbol) = code.code_graph.$data
+#         access(code::TensorNetworkCode,data::Symbol) = code.code_graph.$data
         $data(code_graph::CodeGraph) = code_graph.$data
-        $data(code::TNCode) = code.code_graph.$data
+        $data(code::TensorNetworkCode) = code.code_graph.$data
     end)
 end
 
@@ -64,7 +64,7 @@ end
 for data = (:coords, :node_types, :node_indices)
     eval(quote
         $data(code_graph::CodeGraph,label::Int64) = code_graph.$data[label]
-        $data(code::TNCode,label::Int64) = code.code_graph.$data[label]
+        $data(code::TensorNetworkCode,label::Int64) = code.code_graph.$data[label]
     end)
 end
 
@@ -73,7 +73,7 @@ end
 for data = (:edge_types, :edge_indices)
     eval(quote
         $data(code_graph::CodeGraph,label::Set{Int64}) = code_graph.$data[label]
-        $data(code::TNCode,label::Set{Int64}) = code.code_graph.$data[label]
+        $data(code::TensorNetworkCode,label::Set{Int64}) = code.code_graph.$data[label]
     end)
 end
 
@@ -86,7 +86,7 @@ for data in [:coords,:node_types, :node_indices,
         :edge_types, :edge_indices]
     function_name = Symbol(:set_,data,:!)
     eval(quote
-        function $function_name(code::TNCode,new_data)
+        function $function_name(code::TensorNetworkCode,new_data)
             code.code_graph.$data = new_data
             return nothing
         end
@@ -102,7 +102,7 @@ end
 for data = (:coords, :node_types, :node_indices)
     function_name = Symbol(:set_,data,:!)
     eval(quote
-        function $function_name(code::TNCode,label::Int64,new_data)
+        function $function_name(code::TensorNetworkCode,label::Int64,new_data)
             code.code_graph.$data[label] = new_data
             return nothing
         end
@@ -118,7 +118,7 @@ end
 for data = (:edge_types, :edge_indices)
     function_name = Symbol(:set_,data,:!)
     eval(quote
-        function $function_name(code::TNCode,label::Set{Int64},new_data)
+        function $function_name(code::TensorNetworkCode,label::Set{Int64},new_data)
             code.code_graph.$data[label] = new_data
             return nothing
         end
@@ -137,7 +137,7 @@ end
     nodes(code)
 
 Returns an ordered list of nodes corresponding to qubits and
-virtual nodes for a `TNCode`.
+virtual nodes for a `TensorNetworkCode`.
 """
 function nodes(code_graph::CodeGraph)
     output = collect(keys(coords(code_graph)))
@@ -147,7 +147,7 @@ end
 
 
 
-nodes(code::TNCode) = nodes(code.code_graph)
+nodes(code::TensorNetworkCode) = nodes(code.code_graph)
 
 
 
@@ -156,7 +156,7 @@ nodes(code::TNCode) = nodes(code.code_graph)
 """
     edges(code)
 
-Returns a list of `CodeEdges` for a `TNCode`.
+Returns a list of `CodeEdges` for a `TensorNetworkCode`.
 """
 function edges(code_graph::CodeGraph)
     output = collect(keys(code_graph.edge_types))
@@ -165,19 +165,19 @@ end
 
 
 
-edges(code::TNCode) = edges(code.code_graph)
+edges(code::TensorNetworkCode) = edges(code.code_graph)
 
 
 
 
 
-# Constructors for TNCodes
-function TNCode(
+# Constructors for TensorNetworkCodes
+function TensorNetworkCode(
         code::SimpleCode,
         code_graph::CodeGraph,
         seed_codes::Dict{String,SimpleCode})
 
-    return TNCode(
+    return TensorNetworkCode(
     code.stabilizers,
     code.logicals,
     code.pure_errors,
@@ -190,8 +190,8 @@ end
 
 
 
-# Most useful constructor for TNCodes
-function TNCode(code::SimpleCode)
+# Most useful constructor for TensorNetworkCodes
+function TensorNetworkCode(code::SimpleCode)
 
     n = num_qubits(code)
 
@@ -246,7 +246,7 @@ function TNCode(code::SimpleCode)
         edge_indices)
 
 
-    return TNCode(
+    return TensorNetworkCode(
         code.stabilizers,
         code.logicals,
         code.pure_errors,
@@ -259,9 +259,9 @@ end
 
 
 """
-     SimpleCode(code::TNCode) -> SimpleCode
+     SimpleCode(code::TensorNetworkCode) -> SimpleCode
 """
-function SimpleCode(code::TNCode)
+function SimpleCode(code::TensorNetworkCode)
 
     return SimpleCode(
         "",
@@ -281,7 +281,7 @@ Assigns coordinates to each node of a `TN_code` including both physical
 and virtual nodes.
 """
 function set_coords!(
-        code::TNCode,
+        code::TensorNetworkCode,
         new_coords::Vector{Vector{T}}) where T <: Real
 
     if num_nodes(code) != length(new_coords)
@@ -305,7 +305,7 @@ end
 Shifts coordinates of all nodes of a `TN_code`.
 """
 function shift_coords!(
-        code::TNCode,
+        code::TensorNetworkCode,
         shift::Array{T,1}) where T <: Real
 
     for node in nodes(code)

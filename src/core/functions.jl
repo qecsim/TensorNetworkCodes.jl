@@ -99,8 +99,8 @@ end
 
 
 # Extends the method for `SimpleCodes`.
-function gauge_code(code::TNCode, logical_qubit::Int, logical_pauli::Int)
+function gauge_code(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
     new_code = SimpleCode(code)
     new_code = gauge_code(new_code, logical_qubit, logical_pauli)
-    return TNCode(new_code, code.code_graph, code.seed_codes)
+    return TensorNetworkCode(new_code, code.code_graph, code.seed_codes)
 end

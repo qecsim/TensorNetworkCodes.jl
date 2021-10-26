@@ -44,7 +44,7 @@ function new_graph(code_graph::CodeGraph)
 end
 
 
-new_graph(code::TNCode) = new_graph(code.code_graph)
+new_graph(code::TensorNetworkCode) = new_graph(code.code_graph)
 
 
 
@@ -52,12 +52,12 @@ new_graph(code::TNCode) = new_graph(code.code_graph)
 
 
 """
-    code_plot(code::TNCode)
+    code_plot(code::TensorNetworkCode)
 
-Plots a `TNcode`, with physical qubit nodes coloured red and virtual
+Plots a `TensorNetworkCode`, with physical qubit nodes coloured red and virtual
 tensors coloured green.
 """
-function code_plot(code::TNCode;use_coords=true)
+function code_plot(code::TensorNetworkCode;use_coords=true)
     Nodes = nodes(code.code_graph)
     graph = new_graph(code)
 
@@ -111,14 +111,14 @@ end
 
 """
     operator_plot(
-        code::TNCode,
+        code::TensorNetworkCode,
         operator::Array{Int64,1};
         use_coords = true)
 
-Plots `TNCode` operator(s).
+Plots `TensorNetworkCode` operator(s).
 """
 function operator_plot(
-        code::TNCode,
+        code::TensorNetworkCode,
         operator::Array{Int64,1};
         use_coords = true)
 
@@ -177,7 +177,7 @@ end
 
 
 operator_plot(
-    code::TNCode,
+    code::TensorNetworkCode,
     operators::Array{Array{Int64,1},1};
     use_coords = true) =
 operator_plot.(Ref(code),operators;use_coords)

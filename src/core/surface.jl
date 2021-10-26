@@ -1,10 +1,10 @@
 """
-    diamond_lattice_code(codes::Matrix{TNCode})
+    diamond_lattice_code(codes::Matrix{TensorNetworkCode})
 
-Takes a matrix of `TNCodes` and returns a big `TNCode` with all
+Takes a matrix of `TensorNetworkCodes` and returns a big `TensorNetworkCode` with all
 constituent codes contracted in a diamond lattice.
 """
-function diamond_lattice_code(codes::Matrix{TNCode})
+function diamond_lattice_code(codes::Matrix{TensorNetworkCode})
 
     L,W = size(codes)
     coords = [[0,0],[3,-3],[3,3],[0,0.5],[-3,-3],[-3,3]]
@@ -43,7 +43,7 @@ end
 
 
 diamond_lattice_code(codes::Matrix{SimpleCode}) =
-diamond_lattice_code(TNCode.(codes))
+diamond_lattice_code(TensorNetworkCode.(codes))
 
 
 
@@ -52,7 +52,7 @@ diamond_lattice_code(TNCode.(codes))
 """
     surface_code_bulk(L::Int64)
 
-Generates the bulk `TNCode` for the surface code.
+Generates the bulk `TensorNetworkCode` for the surface code.
 """
 function surface_code_bulk(L::Int64)
 
@@ -146,7 +146,7 @@ conditions, which this code does.
 """
 function boundary_fusion(
         L::Int64,
-        bulk_code::TNCode)
+        bulk_code::TensorNetworkCode)
 
 
     # Repitition codes
@@ -154,8 +154,8 @@ function boundary_fusion(
     [[1,0,0],[0,0,1],[3,0,0]])
     z_repitition_zero = SimpleCode("Z repitition code",[[1,1,0],[0,1,1],[3,3,3]],[],
     [[3,0,0],[0,0,3],[1,0,0]])
-    z_rep = TNCode(z_repitition_zero)
-    x_rep = TNCode(x_repitition_zero)
+    z_rep = TensorNetworkCode(z_repitition_zero)
+    x_rep = TensorNetworkCode(x_repitition_zero)
 
 
     # depending on the side (top,left, etc), we choose different coordinates
@@ -243,7 +243,7 @@ end
 """
     surface_code(L::Int64)
 
-Returns an LxL surface code `TNCode`.
+Returns an LxL surface code `TensorNetworkCode`.
 """
 function surface_code(L::Int64)
 
@@ -276,7 +276,7 @@ end
 """
     fully_random_code(L)
 
-Returns a `TNCode` with the same tensor network as the surface code
+Returns a `TensorNetworkCode` with the same tensor network as the surface code
 but with the bulk tensors replaced by random code tensors.
 """
 function fully_random_code(L::Int64)
@@ -298,9 +298,9 @@ end
 
 function checkerboard_code(
         L::Int64,
-        x::TNCode,
-        z::TNCode,
-        centre_code::TNCode)
+        x::TensorNetworkCode,
+        z::TensorNetworkCode,
+        centre_code::TensorNetworkCode)
 
     codes = [isodd(i) ? z : x
         for i in 1:2*L-1, j in 1:L]
@@ -323,16 +323,16 @@ function funny_code(L::Int64)
     # five-qubit code).
     stabilizers = [[0,0,2,2,1],[1,0,3,0,3],[0,2,1,0,2],[2,0,0,1,2],[3,3,0,0,1]]
     logicals = []
-    z = TNCode(SimpleCode("z",stabilizers,logicals))
+    z = TensorNetworkCode(SimpleCode("z",stabilizers,logicals))
 
     stabilizers = [[0,0,2,2,3],[2,0,0,3,2],[1,1,0,0,3],[0,2,3,0,2],[0,3,0,1,1]]
-    x = TNCode(SimpleCode("x",stabilizers,logicals))
+    x = TensorNetworkCode(SimpleCode("x",stabilizers,logicals))
 
 
     # Finally the only code with a logical qubit is `centre` below.
     stabilizers = [[0,0,2,2,1],[0,2,1,0,2],[2,0,0,1,2],[3,3,0,0,1]]
     logicals = [[1,0,3,0,3],[3,0,0,2,0]]
-    centre_code = TNCode(SimpleCode("centre",stabilizers,logicals))
+    centre_code = TensorNetworkCode(SimpleCode("centre",stabilizers,logicals))
 
 
     return checkerboard_code(L,x,z,centre_code)
