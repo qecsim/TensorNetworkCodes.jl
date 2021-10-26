@@ -8,6 +8,8 @@ be used as a seed code in a [`TensorNetworkCode`](@ref), which has an associated
 ```@docs
 QuantumCode
 SimpleCode
+SimpleCode()
+SimpleCode(name, stabilizers, logicals)
 TensorNetworkCode
 CodeGraph
 ```

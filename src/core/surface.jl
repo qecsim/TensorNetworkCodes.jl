@@ -322,20 +322,17 @@ function funny_code(L::Int64)
     # The big code is built from three smaller codes (all based on the usual
     # five-qubit code).
     stabilizers = [[0,0,2,2,1],[1,0,3,0,3],[0,2,1,0,2],[2,0,0,1,2],[3,3,0,0,1]]
-    pure_errors = find_pure_errors(stabilizers)
     logicals = []
-    z = TNCode(SimpleCode("z",stabilizers,logicals,pure_errors))
+    z = TNCode(SimpleCode("z",stabilizers,logicals))
 
     stabilizers = [[0,0,2,2,3],[2,0,0,3,2],[1,1,0,0,3],[0,2,3,0,2],[0,3,0,1,1]]
-    pure_errors = find_pure_errors(stabilizers)
-    x = TNCode(SimpleCode("x",stabilizers,logicals,pure_errors))
+    x = TNCode(SimpleCode("x",stabilizers,logicals))
 
 
     # Finally the only code with a logical qubit is `centre` below.
     stabilizers = [[0,0,2,2,1],[0,2,1,0,2],[2,0,0,1,2],[3,3,0,0,1]]
-    pure_errors = find_pure_errors(stabilizers)
     logicals = [[1,0,3,0,3],[3,0,0,2,0]]
-    centre_code = TNCode(SimpleCode("centre",stabilizers,logicals,pure_errors))
+    centre_code = TNCode(SimpleCode("centre",stabilizers,logicals))
 
 
     return checkerboard_code(L,x,z,centre_code)

@@ -89,16 +89,12 @@ function random_stabilizer_state(n::Int64)
         push!(stabilizers, new_stabilizer)
     end
 
-
-    # Next find pure_errors
-    pure_errors = find_pure_errors(stabilizers)
     logicals = []
 
     return SimpleCode(
         "random stabilizer state",
         stabilizers,
-        logicals,
-        pure_errors)
+        logicals)
 end
 
 
