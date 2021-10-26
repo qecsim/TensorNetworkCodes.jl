@@ -10,6 +10,8 @@ QuantumCode
 SimpleCode
 SimpleCode()
 SimpleCode(name, stabilizers, logicals)
-TensorNetworkCode
+SimpleCode(::TensorNetworkCode)
 CodeGraph
+TensorNetworkCode
+TensorNetworkCode(::SimpleCode)
 ```

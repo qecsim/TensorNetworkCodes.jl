@@ -14,9 +14,8 @@ using ITensors: Index, ITensor, dim, hastags, inds
 using LightGraphs: Graph, add_edge!
 
 # exports
-export SimpleCode, QuantumCode
+export QuantumCode, SimpleCode, CodeGraph, TensorNetworkCode
 include("simple/types.jl")
-
 export pauli_are_commuting, pauli_are_independent, pauli_commutation
 export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")
@@ -36,7 +35,7 @@ export monte_carlo_simulation
 include("simple/decoding.jl")
 
 # Core exports
-export TensorNetworkCode,CodeGraph,num_nodes,nodes,edges,SimpleCode
+export num_nodes,nodes,edges
 export coords,node_types,node_indices,edge_types,edge_indices
 export set_coords!,set_node_types!,set_node_indices!,set_edge_types!,set_edge_indices!
 export shift_coords!
