@@ -23,6 +23,10 @@ export num_qubits, verify_code
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
 export gauge_code, permute_code, purify_code
 include("code_functions.jl")
+export edges, nodes, num_nodes, shift_coords!
+export coords, edge_indices, edge_types, node_indices, node_types
+export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_node_types!
+include("code_graph_functions.jl")
 
 # SimpleCode exports
 export five_qubit_code,five_qubit_surface_code,steane_code
@@ -35,11 +39,6 @@ export monte_carlo_simulation
 include("simple/decoding.jl")
 
 # Core exports
-export num_nodes,nodes,edges
-export coords,node_types,node_indices,edge_types,edge_indices
-export set_coords!,set_node_types!,set_node_indices!,set_edge_types!,set_edge_indices!
-export shift_coords!
-include("core/types.jl")
 export identity_coset,all_cosets,gauge_code,code_to_tensor,code_to_Itensor
 include("core/functions.jl")
 export code_plot,operator_plot
