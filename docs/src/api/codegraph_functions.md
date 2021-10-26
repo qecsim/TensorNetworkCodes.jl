@@ -3,6 +3,18 @@
 Functions to access and manipulate the [`CodeGraph`](@ref) associated with a
 [`TensorNetworkCode`](@ref).
 
+## Introductory notes
+
+* Node labels are of type `Int` with negative and positive integers representing
+    virtual nodes and physical qubits, respectively.
+* Edge labels are of type `Set{Int}` and contain two elements corresponding to the
+    labels of the nodes that the edge links.
+* Node coordinates are of type `Vector{<:Real}` and contain two elements corresponding
+    to 2-dimensional Cartesian coordinates.
+* Node types are of type `String` and can take the values: "physical", ... TODO
+* Edge types are of type `String` and can take the values: "physical", "bond", ... TODO
+* Node and edge indices are of type `ITensor.Index`, ... TODO
+
 ## Specialized functions
 ```@docs
 edges
