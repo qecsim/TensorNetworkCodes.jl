@@ -15,7 +15,7 @@ using LightGraphs: Graph, add_edge!
 
 # exports
 export QuantumCode, SimpleCode, CodeGraph, TensorNetworkCode
-include("simple/types.jl")
+include("types.jl")
 export pauli_are_commuting, pauli_are_independent, pauli_commutation
 export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")

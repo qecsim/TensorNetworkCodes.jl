@@ -226,5 +226,3 @@ function SimpleCode(code::TensorNetworkCode)
     #TODO: add name="" as parameter?
     return SimpleCode("", code.stabilizers, code.logicals, code.pure_errors)
 end
-
-# REFACTORED ABOVE
