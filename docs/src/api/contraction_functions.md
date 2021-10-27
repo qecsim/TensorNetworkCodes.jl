@@ -1,6 +1,7 @@
 # Contraction functions
 
-TODO
+Functions to contact codes using the primitives of combining codes and fusing physical
+qubits.
 
 ```@docs
 combine
