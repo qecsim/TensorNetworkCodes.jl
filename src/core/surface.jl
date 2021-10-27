@@ -207,7 +207,7 @@ in the bulk (`input_coords` with components not equal to 1 or L).
 ```jldoctest
 julia> code = almost_rotated_surface_code(3,five_qubit_code(),[2,2]);
 
-julia> verify_code(code) # try this out and check we get a real code
+julia> verify(code) # try this out and check we get a real code
 true
 ```
 """

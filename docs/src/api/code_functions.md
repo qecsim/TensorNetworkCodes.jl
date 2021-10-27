@@ -8,7 +8,7 @@ Functions for code properties or verification.
 
 ```@docs
 num_qubits
-verify_code
+verify
 ```
 
 ## Evaluation

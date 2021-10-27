@@ -19,7 +19,7 @@ include("types.jl")
 export pauli_are_commuting, pauli_are_independent, pauli_commutation
 export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")
-export num_qubits, verify_code
+export num_qubits, verify
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
 export gauge, permute, purify
 include("code_functions.jl")

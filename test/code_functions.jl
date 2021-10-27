@@ -12,47 +12,47 @@ using Test
     @test num_qubits(random_stabilizer_state(6)) == 6
 end
 
-@testset "verify_code" begin
+@testset "verify" begin
     # test valid code
     valid_code = random_code(6, 2)
-    @test verify_code(valid_code)
+    @test verify(valid_code)
 
     # test invalid codes
     code_missing_pure_error = deepcopy(valid_code)
     pop!(code_missing_pure_error.pure_errors)
-    @test !verify_code(code_missing_pure_error, log_warn=false)
+    @test !verify(code_missing_pure_error, log_warn=false)
 
     code_missing_logical = deepcopy(valid_code)
     pop!(code_missing_logical.logicals)
-    @test !verify_code(code_missing_logical, log_warn=false)
+    @test !verify(code_missing_logical, log_warn=false)
 
     code_dependent_stabilizers = deepcopy(valid_code)
     pop!(code_dependent_stabilizers.stabilizers)
     push!(code_dependent_stabilizers.stabilizers, valid_code.stabilizers[1])
-    @test !verify_code(code_dependent_stabilizers, log_warn=false)
+    @test !verify(code_dependent_stabilizers, log_warn=false)
 
     code_noncommuting_stabilizers = deepcopy(valid_code)
     code_noncommuting_stabilizers.stabilizers[2] = valid_code.pure_errors[1]
-    @test !verify_code(code_noncommuting_stabilizers, log_warn=false)
+    @test !verify(code_noncommuting_stabilizers, log_warn=false)
 
     code_wrongorder_pure_errors = deepcopy(valid_code)
     pure_errors = code_wrongorder_pure_errors.pure_errors
     pure_errors[1], pure_errors[2] = pure_errors[2], pure_errors[1]
-    @test !verify_code(code_wrongorder_pure_errors, log_warn=false)
+    @test !verify(code_wrongorder_pure_errors, log_warn=false)
 
     code_invalid_pure_errors = deepcopy(valid_code)
     pure_errors = code_invalid_pure_errors.pure_errors
     pure_errors[1] = pauli_product.(pure_errors[1], pure_errors[2])
-    @test !verify_code(code_invalid_pure_errors, log_warn=false)
+    @test !verify(code_invalid_pure_errors, log_warn=false)
 
     code_noncommuting_logicals = deepcopy(valid_code)
     code_noncommuting_logicals.logicals[1] = valid_code.pure_errors[1]
-    @test !verify_code(code_noncommuting_logicals, log_warn=false)
+    @test !verify(code_noncommuting_logicals, log_warn=false)
 
     # test logging
     log_pattern = (:warn, "number of stabilizers and pure errors don't match!")
-    @test_logs log_pattern verify_code(code_missing_pure_error; log_warn=true)
-    @test_logs verify_code(code_missing_pure_error; log_warn=false)
+    @test_logs log_pattern verify(code_missing_pure_error; log_warn=true)
+    @test_logs verify(code_missing_pure_error; log_warn=false)
 end
 
 # EVALUATION FUNCTIONS
@@ -115,13 +115,13 @@ end
     # test code not modified
     @test code.name == code_copy.name
     @test code.stabilizers == code_copy.stabilizers
-    @test verify_code(code)
+    @test verify(code)
     # test new_code modified as expected
     @test new_code.name == "1/Z gauged $(code.name)"
     @test num_qubits(new_code) == num_qubits(code)
     @test new_code.stabilizers == vcat(code.stabilizers, [code.logicals[2]])
     @test length(new_code.logicals) == 0
-    @test verify_code(new_code)
+    @test verify(new_code)
     # test exceptions
     @test_throws ErrorException gauge(five_qubit_code(), 2, 1)  # invalid logical qubit
     @test_throws ErrorException gauge(five_qubit_code(), 1, 4)  # invalid pauli
@@ -130,7 +130,7 @@ end
     # tn code
     tn_code = TensorNetworkCode(five_qubit_code())
     tn_new_code = gauge(tn_code, 1, 3)
-    @test verify_code(tn_new_code)
+    @test verify(tn_new_code)
     @test tn_new_code.stabilizers == new_code.stabilizers
     @test tn_new_code.logicals == new_code.logicals
 end
@@ -143,11 +143,11 @@ end
     # test code not modified
     @test code.name == code_copy.name
     @test code.stabilizers == code_copy.stabilizers
-    @test verify_code(code)
+    @test verify(code)
     # test new_code modified as expected
     @test new_code.name == "$(code.name) $(permutation)"
     @test new_code.stabilizers == getindex.(code.stabilizers, Ref(permutation))
-    @test verify_code(new_code)
+    @test verify(new_code)
 end
 
 @testset "purify" begin
@@ -157,11 +157,11 @@ end
     # test code not modified
     @test code.name == code_copy.name
     @test code.stabilizers == code_copy.stabilizers
-    @test verify_code(code)
+    @test verify(code)
     # test new_code modified as expected
     @test new_code.name == "Purified $(code.name)"
     @test num_qubits(new_code) == num_qubits(code) + length(code.logicals) / 2
     @test length(new_code.stabilizers) == num_qubits(new_code)
     @test length(new_code.logicals) == 0
-    @test verify_code(new_code)
+    @test verify(new_code)
 end

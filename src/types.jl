@@ -13,7 +13,7 @@ for each logical qubit, and `pure_errors` (or destabilizers) are operators the a
 with the corresponding stabilizer generator and commute with all other stabilizer
 generators. Each of `stabilizers`, `logicals` and `pure_errors` are collections of
 multi-qubit Pauli operators, see [Pauli functions](@ref). The relationships between the
-operators can be checked using [`verify_code`](@ref).
+operators can be checked using [`verify`](@ref).
 
 !!! note
 
@@ -74,7 +74,7 @@ julia> code.pure_errors
  [3, 1, 0, 0, 0]
  [1, 0, 0, 0, 0]
 
-julia> verify_code(code)
+julia> verify(code)
 true
 ```
 """
@@ -163,7 +163,7 @@ julia> simple_code = five_qubit_code();
 
 julia> tn_code = TensorNetworkCode(simple_code);
 
-julia> verify_code(tn_code)
+julia> verify(tn_code)
 true
 ```
 """
