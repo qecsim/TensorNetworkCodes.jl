@@ -3,6 +3,60 @@ using TensorNetworkCodes: _find_product_indices
 using LinearAlgebra: I
 using Test
 
+# BASIC FUNCTIONS
+
+@testset "num_qubits" begin
+    @test num_qubits(five_qubit_code()) == 5
+    @test num_qubits(steane_code()) == 7
+    @test num_qubits(random_code(4, 1)) == 4
+    @test num_qubits(random_stabilizer_state(6)) == 6
+end
+
+@testset "verify_code" begin
+    # test valid code
+    valid_code = random_code(6, 2)
+    @test verify_code(valid_code)
+
+    # test invalid codes
+    code_missing_pure_error = deepcopy(valid_code)
+    pop!(code_missing_pure_error.pure_errors)
+    @test !verify_code(code_missing_pure_error, log_warn=false)
+
+    code_missing_logical = deepcopy(valid_code)
+    pop!(code_missing_logical.logicals)
+    @test !verify_code(code_missing_logical, log_warn=false)
+
+    code_dependent_stabilizers = deepcopy(valid_code)
+    pop!(code_dependent_stabilizers.stabilizers)
+    push!(code_dependent_stabilizers.stabilizers, valid_code.stabilizers[1])
+    @test !verify_code(code_dependent_stabilizers, log_warn=false)
+
+    code_noncommuting_stabilizers = deepcopy(valid_code)
+    code_noncommuting_stabilizers.stabilizers[2] = valid_code.pure_errors[1]
+    @test !verify_code(code_noncommuting_stabilizers, log_warn=false)
+
+    code_wrongorder_pure_errors = deepcopy(valid_code)
+    pure_errors = code_wrongorder_pure_errors.pure_errors
+    pure_errors[1], pure_errors[2] = pure_errors[2], pure_errors[1]
+    @test !verify_code(code_wrongorder_pure_errors, log_warn=false)
+
+    code_invalid_pure_errors = deepcopy(valid_code)
+    pure_errors = code_invalid_pure_errors.pure_errors
+    pure_errors[1] = pauli_product.(pure_errors[1], pure_errors[2])
+    @test !verify_code(code_invalid_pure_errors, log_warn=false)
+
+    code_noncommuting_logicals = deepcopy(valid_code)
+    code_noncommuting_logicals.logicals[1] = valid_code.pure_errors[1]
+    @test !verify_code(code_noncommuting_logicals, log_warn=false)
+
+    # test logging
+    log_pattern = (:warn, "number of stabilizers and pure errors don't match!")
+    @test_logs log_pattern verify_code(code_missing_pure_error; log_warn=true)
+    @test_logs verify_code(code_missing_pure_error; log_warn=false)
+end
+
+# EVALUATION FUNCTIONS
+
 @testset "find_distance_logicals" begin
     d, ls = find_distance_logicals(five_qubit_code())
     @test d == 3 && all(==(3), (pauli_weight(l) for l in ls))
@@ -51,7 +105,10 @@ end
     @test [pauli_commutation(s, p) for s in stabilizers, p in pure_errors] == I
 end
 
+# TRANSFORMATION FUNCTIONS
+
 @testset "gauge_code" begin
+    # simple code
     code = five_qubit_code()
     code_copy = deepcopy(code)
     new_code = gauge_code(code, 1, 3)
@@ -69,13 +126,13 @@ end
     @test_throws ErrorException gauge_code(five_qubit_code(), 2, 1)  # invalid logical qubit
     @test_throws ErrorException gauge_code(five_qubit_code(), 1, 4)  # invalid pauli
     @test_throws ErrorException gauge_code(five_qubit_code(), 1, 0)  # gauging with identity
-end
 
-@testset "num_qubits" begin
-    @test num_qubits(five_qubit_code()) == 5
-    @test num_qubits(steane_code()) == 7
-    @test num_qubits(random_code(4, 1)) == 4
-    @test num_qubits(random_stabilizer_state(6)) == 6
+    # tn code
+    tn_code = TensorNetworkCode(five_qubit_code())
+    tn_new_code = gauge_code(tn_code, 1, 3)
+    @test verify_code(tn_new_code)
+    @test tn_new_code.stabilizers == new_code.stabilizers
+    @test tn_new_code.logicals == new_code.logicals
 end
 
 @testset "permute_code" begin
@@ -107,47 +164,4 @@ end
     @test length(new_code.stabilizers) == num_qubits(new_code)
     @test length(new_code.logicals) == 0
     @test verify_code(new_code)
-end
-
-@testset "verify_code" begin
-    # test valid code
-    valid_code = random_code(6, 2)
-    @test verify_code(valid_code)
-
-    # test invalid codes
-    code_missing_pure_error = deepcopy(valid_code)
-    pop!(code_missing_pure_error.pure_errors)
-    @test !verify_code(code_missing_pure_error, log_warn=false)
-
-    code_missing_logical = deepcopy(valid_code)
-    pop!(code_missing_logical.logicals)
-    @test !verify_code(code_missing_logical, log_warn=false)
-
-    code_dependent_stabilizers = deepcopy(valid_code)
-    pop!(code_dependent_stabilizers.stabilizers)
-    push!(code_dependent_stabilizers.stabilizers, valid_code.stabilizers[1])
-    @test !verify_code(code_dependent_stabilizers, log_warn=false)
-
-    code_noncommuting_stabilizers = deepcopy(valid_code)
-    code_noncommuting_stabilizers.stabilizers[2] = valid_code.pure_errors[1]
-    @test !verify_code(code_noncommuting_stabilizers, log_warn=false)
-
-    code_wrongorder_pure_errors = deepcopy(valid_code)
-    pure_errors = code_wrongorder_pure_errors.pure_errors
-    pure_errors[1], pure_errors[2] = pure_errors[2], pure_errors[1]
-    @test !verify_code(code_wrongorder_pure_errors, log_warn=false)
-
-    code_invalid_pure_errors = deepcopy(valid_code)
-    pure_errors = code_invalid_pure_errors.pure_errors
-    pure_errors[1] = pauli_product.(pure_errors[1], pure_errors[2])
-    @test !verify_code(code_invalid_pure_errors, log_warn=false)
-
-    code_noncommuting_logicals = deepcopy(valid_code)
-    code_noncommuting_logicals.logicals[1] = valid_code.pure_errors[1]
-    @test !verify_code(code_noncommuting_logicals, log_warn=false)
-
-    # test logging
-    log_pattern = (:warn, "number of stabilizers and pure errors don't match!")
-    @test_logs log_pattern verify_code(code_missing_pure_error; log_warn=true)
-    @test_logs verify_code(code_missing_pure_error; log_warn=false)
 end

@@ -1,3 +1,81 @@
+# BASIC FUNCTIONS
+
+"""
+    num_qubits(code::QuantumCode) -> Int
+
+Return the number of physical qubits of the code.
+"""
+function num_qubits(code::QuantumCode)
+    return length(code.stabilizers) == 0 ? 0 : length(code.stabilizers[1])
+end
+
+"""
+    verify_code(code::QuantumCode; log_warn=true) -> Bool
+
+Return true if the code satisfied the properties of a valid code, or false otherwise. if the
+code is not valid and `log_warn` is true then a warning is logged with the specific reason.
+
+The following checks are performed:
+* Number of stabilizers, pure errors and logicals are consistent.
+* Stabilizers are independent and mutually commute.
+* Pure errors anticommute with corresponding stabilizers and commute with other stabilizers.
+* Logicals commute with stabilizers.
+
+The following checks are not yet performed:
+* Logical commutation relations.
+"""
+function verify_code(code::QuantumCode; log_warn=true)
+    n = num_qubits(code)
+    r = length(code.stabilizers)
+    p = length(code.pure_errors)
+    l = length(code.logicals)
+
+    # Check we have the right number of operators.
+    if p != r
+        log_warn && @warn "number of stabilizers and pure errors don't match!"
+        return false
+    end
+    if n != r + l / 2
+        log_warn && @warn "number of stabilizers and logicals don't add up!"
+        return false
+    end
+    # Check stabilizers are independent.
+    if !pauli_are_independent(code.stabilizers)
+        log_warn && @warn "stabilizers aren't independent!"
+        return false
+    end
+    # Check stabilizers mutually commute.
+    if !pauli_are_commuting(code.stabilizers)
+        log_warn && @warn "stabilizers don't commute!"
+        return false
+    end
+    # Check pure errors anticommute with corresponding stabilizers.
+    if !all(==(1), pauli_commutation.(code.stabilizers, code.pure_errors))
+        log_warn && @warn "pure errors don't anticommute with corresponding stabilizers!"
+        return false
+    end
+    # Check pure error do not anticommute with other stabilizers.
+    for α in 1:r, β in 1:r
+        if α != β && pauli_commutation(code.stabilizers[α], code.pure_errors[β]) == 1
+            log_warn && @warn "pure errors anticommute with the wrong stabilizers!"
+            return false
+        end
+    end
+    # Check logicals commute with stabilizers.
+    for logical in code.logicals
+        if !all(==(0), pauli_commutation.(code.stabilizers, Ref(logical)))
+            log_warn && @warn "logicals don't commute with stabilizers!"
+            return false
+        end
+    end
+    # TODO: check logical commutation relations.
+
+    return true
+end
+
+
+# EVALUATION FUNCTIONS
+
 """
     find_distance_logicals(code::Quantum_code; max_distance=5) -> Int, Vector{Vector{Int}}
 
@@ -302,13 +380,19 @@ function find_syndrome(code::QuantumCode, error_operator::AbstractVector{Int})
     return pauli_commutation.(code.stabilizers, Ref(error_operator))
 end
 
+
+# TRANSFORMATION FUNCTIONS
+
 """
     gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int) -> SimpleCode
 
-Given a simple code with ``k`` logicals on ``n`` physical qubits, return a new simple code
-with ``k - 1`` logicals on ``n`` physical qubits by adding a logical operator as a
-stabilizer, where `logical_qubit` indexes which logical qubit is gauged and `logical_pauli`
-indicates which logical Pauli is added to the stabilizers.
+    gauge_code(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
+        -> TensorNetworkCode
+
+Given a code with ``k`` logicals on ``n`` physical qubits, return a new code with ``k - 1``
+logicals on ``n`` physical qubits by adding a logical operator as a stabilizer, where
+`logical_qubit` indexes which logical qubit is gauged and `logical_pauli` indicates which
+logical Pauli is added to the stabilizers.
 
 A `ErrorException` is thrown if `logical_qubit` indexes a non-existant logical qubit, or if
 `logical_pauli` is not in `1:3` (logical identity does not fix a gauge).
@@ -371,14 +455,10 @@ function gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int)
 
     return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
 end
-
-"""
-    num_qubits(code::QuantumCode) -> Int
-
-Return the number of physical qubits of the code.
-"""
-function num_qubits(code::QuantumCode)
-    return length(code.stabilizers) == 0 ? 0 : length(code.stabilizers[1])
+function gauge_code(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
+    new_code = SimpleCode(code)
+    new_code = gauge_code(new_code, logical_qubit, logical_pauli)
+    return TensorNetworkCode(new_code, code.code_graph, code.seed_codes)
 end
 
 """
@@ -475,68 +555,4 @@ function purify_code(code::SimpleCode)
     _fix_pure_errors!(output_pure_errors, output_stabilizers)
 
     return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
-end
-
-"""
-    verify_code(code::QuantumCode; log_warn=true) -> Bool
-
-Return true if the code satisfied the properties of a valid code, or false otherwise. if the
-code is not valid and `log_warn` is true then a warning is logged with the specific reason.
-
-The following checks are performed:
-* Number of stabilizers, pure errors and logicals are consistent.
-* Stabilizers are independent and mutually commute.
-* Pure errors anticommute with corresponding stabilizers and commute with other stabilizers.
-* Logicals commute with stabilizers.
-
-The following checks are not yet performed:
-* Logical commutation relations.
-"""
-function verify_code(code::QuantumCode; log_warn=true)
-    n = num_qubits(code)
-    r = length(code.stabilizers)
-    p = length(code.pure_errors)
-    l = length(code.logicals)
-
-    # Check we have the right number of operators.
-    if p != r
-        log_warn && @warn "number of stabilizers and pure errors don't match!"
-        return false
-    end
-    if n != r + l / 2
-        log_warn && @warn "number of stabilizers and logicals don't add up!"
-        return false
-    end
-    # Check stabilizers are independent.
-    if !pauli_are_independent(code.stabilizers)
-        log_warn && @warn "stabilizers aren't independent!"
-        return false
-    end
-    # Check stabilizers mutually commute.
-    if !pauli_are_commuting(code.stabilizers)
-        log_warn && @warn "stabilizers don't commute!"
-        return false
-    end
-    # Check pure errors anticommute with corresponding stabilizers.
-    if !all(==(1), pauli_commutation.(code.stabilizers, code.pure_errors))
-        log_warn && @warn "pure errors don't anticommute with corresponding stabilizers!"
-        return false
-    end
-    # Check pure error do not anticommute with other stabilizers.
-    for α in 1:r, β in 1:r
-        if α != β && pauli_commutation(code.stabilizers[α], code.pure_errors[β]) == 1
-            log_warn && @warn "pure errors anticommute with the wrong stabilizers!"
-            return false
-        end
-    end
-    # Check logicals commute with stabilizers.
-    for logical in code.logicals
-        if !all(==(0), pauli_commutation.(code.stabilizers, Ref(logical)))
-            log_warn && @warn "logicals don't commute with stabilizers!"
-            return false
-        end
-    end
-    # TODO: check logical commutation relations.
-
-    return true
 end
