@@ -419,6 +419,18 @@ code_label_matrix[1,L] = "C"
 code_label_matrix[L,1] = "G"
 code_label_matrix[L,L] = "I"
 
+# Centre code
+stabilizers = [[0,1,1,0,1],[1,0,0,1,1],[3,3,0,0,3],[0,0,3,3,3]]
+logicals = [[3,0,3,0,3],[0,1,0,1,1]]
+code = SimpleCode("central",stabilizers,logicals)
+central = TensorNetworkCode(code)
+coordinates = [[0,0],[0,1],[-1,0],[0,-1],[1,0],[0.3,0.3]]
+set_coords!(central,coordinates)
+code_dictionary["central"] = central
+# Add to the code label matrix
+centre = ceil(Int,L/2)
+code_label_matrix[centre,centre] = "central"
+
 
 # Include input code
 if num_qubits(input_seed_code) != 5
