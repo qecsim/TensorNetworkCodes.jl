@@ -384,9 +384,9 @@ end
 # TRANSFORMATION FUNCTIONS
 
 """
-    gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int) -> SimpleCode
+    gauge(code::SimpleCode, logical_qubit::Int, logical_pauli::Int) -> SimpleCode
 
-    gauge_code(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
+    gauge(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
         -> TensorNetworkCode
 
 Given a code with ``k`` logicals on ``n`` physical qubits, return a new code with ``k - 1``
@@ -413,7 +413,7 @@ julia> code.logicals
  [1, 1, 1, 1, 1]
  [3, 3, 3, 3, 3]
 
-julia> new_code = gauge_code(code, 1, 3);  # gauge logical qubit 1 using logical Z
+julia> new_code = gauge(code, 1, 3);  # gauge logical qubit 1 using logical Z
 
 julia> new_code.stabilizers
 5-element Vector{Vector{Int64}}:
@@ -427,7 +427,7 @@ julia> new_code.logicals
 Vector{Int64}[]
 ```
 """
-function gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int)
+function gauge(code::SimpleCode, logical_qubit::Int, logical_pauli::Int)
     k = Int(length(code.logicals) / 2)
     # preconditions
     (logical_qubit in 1:k) || error("logical qubit index out of bounds!")
@@ -455,14 +455,14 @@ function gauge_code(code::SimpleCode, logical_qubit::Int, logical_pauli::Int)
 
     return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
 end
-function gauge_code(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
+function gauge(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
     new_code = SimpleCode(code)
-    new_code = gauge_code(new_code, logical_qubit, logical_pauli)
+    new_code = gauge(new_code, logical_qubit, logical_pauli)
     return TensorNetworkCode(new_code, code.code_graph, code.seed_codes)
 end
 
 """
-    permute_code(code::SimpleCode, permutation) -> SimpleCode
+    permute(code::SimpleCode, permutation) -> SimpleCode
 
 Return a new simple code with the physical qubits permuted relative to the given code,
 according to the permutation.
@@ -485,7 +485,7 @@ julia> code.stabilizers
  [1, 0, 1, 3, 3]
  [3, 1, 0, 1, 3]
 
-julia> new_code = permute_code(code, [2, 1, 3, 4, 5]);
+julia> new_code = permute(code, [2, 1, 3, 4, 5]);
 
 julia> new_code.name
 "Five qubit code [2, 1, 3, 4, 5]"
@@ -498,7 +498,7 @@ julia> new_code.stabilizers
  [1, 3, 0, 1, 3]
 ```
 """
-function permute_code(code::SimpleCode, permutation)
+function permute(code::SimpleCode, permutation)
     output_code = SimpleCode("$(code.name) $(permutation)",
         deepcopy(code.stabilizers),
         deepcopy(code.logicals),
@@ -511,20 +511,20 @@ function permute_code(code::SimpleCode, permutation)
 end
 
 """
-    purify_code(code::SimpleCode) -> SimpleCode
+    purify(code::SimpleCode) -> SimpleCode
 
 Given a simple code with ``k`` logicals on ``n`` physical qubits, return a new simple code
 with ``0`` logicals on ``n + k`` physical qubits.
 
 # Examples
 ```jldoctest
-julia> code = purify_code(five_qubit_code());
+julia> code = purify(five_qubit_code());
 
 julia> num_qubits(code), length(code.logicals)
 (6, 0)
 ```
 """
-function purify_code(code::SimpleCode)
+function purify(code::SimpleCode)
     g = code.stabilizers
     l = code.logicals
     K = length(l)

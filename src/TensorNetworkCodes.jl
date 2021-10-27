@@ -21,7 +21,7 @@ export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weig
 include("pauli_functions.jl")
 export num_qubits, verify_code
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
-export gauge_code, permute_code, purify_code
+export gauge, permute, purify
 include("code_functions.jl")
 export edges, nodes, num_nodes, shift_coords!
 export coords, edge_indices, edge_types, node_indices, node_types
@@ -41,7 +41,7 @@ export monte_carlo_simulation
 include("simple/decoding.jl")
 
 # Core exports
-export identity_coset,all_cosets,gauge_code,code_to_tensor,code_to_Itensor
+export identity_coset,all_cosets,code_to_tensor,code_to_Itensor
 include("core/functions.jl")
 export code_plot,operator_plot
 include("core/plotting.jl")

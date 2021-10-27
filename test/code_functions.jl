@@ -107,11 +107,11 @@ end
 
 # TRANSFORMATION FUNCTIONS
 
-@testset "gauge_code" begin
+@testset "gauge" begin
     # simple code
     code = five_qubit_code()
     code_copy = deepcopy(code)
-    new_code = gauge_code(code, 1, 3)
+    new_code = gauge(code, 1, 3)
     # test code not modified
     @test code.name == code_copy.name
     @test code.stabilizers == code_copy.stabilizers
@@ -123,23 +123,23 @@ end
     @test length(new_code.logicals) == 0
     @test verify_code(new_code)
     # test exceptions
-    @test_throws ErrorException gauge_code(five_qubit_code(), 2, 1)  # invalid logical qubit
-    @test_throws ErrorException gauge_code(five_qubit_code(), 1, 4)  # invalid pauli
-    @test_throws ErrorException gauge_code(five_qubit_code(), 1, 0)  # gauging with identity
+    @test_throws ErrorException gauge(five_qubit_code(), 2, 1)  # invalid logical qubit
+    @test_throws ErrorException gauge(five_qubit_code(), 1, 4)  # invalid pauli
+    @test_throws ErrorException gauge(five_qubit_code(), 1, 0)  # gauging with identity
 
     # tn code
     tn_code = TensorNetworkCode(five_qubit_code())
-    tn_new_code = gauge_code(tn_code, 1, 3)
+    tn_new_code = gauge(tn_code, 1, 3)
     @test verify_code(tn_new_code)
     @test tn_new_code.stabilizers == new_code.stabilizers
     @test tn_new_code.logicals == new_code.logicals
 end
 
-@testset "permute_code" begin
+@testset "permute" begin
     code = five_qubit_code()
     code_copy = deepcopy(code)
     permutation = [5, 4, 3, 2, 1]
-    new_code = permute_code(code, permutation)
+    new_code = permute(code, permutation)
     # test code not modified
     @test code.name == code_copy.name
     @test code.stabilizers == code_copy.stabilizers
@@ -150,10 +150,10 @@ end
     @test verify_code(new_code)
 end
 
-@testset "purify_code" begin
+@testset "purify" begin
     code = five_qubit_code()
     code_copy = deepcopy(code)
-    new_code = purify_code(code)
+    new_code = purify(code)
     # test code not modified
     @test code.name == code_copy.name
     @test code.stabilizers == code_copy.stabilizers

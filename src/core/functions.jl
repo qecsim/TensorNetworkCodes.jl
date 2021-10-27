@@ -5,7 +5,7 @@ Returns a tensor (array) describing the logical cosets of the code.
 """
 function code_to_tensor(code::QuantumCode)
 
-    alt_code = purify_code(code)
+    alt_code = purify(code)
     n = num_qubits(alt_code)
     g = alt_code.stabilizers
 

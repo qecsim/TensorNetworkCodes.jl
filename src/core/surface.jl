@@ -62,11 +62,11 @@ function _surface_code_bulk(L::Int64)
 
     # Other constituent codes are made by choosing certain logical
     # operators to be stabilizers, resulting in stabilizers states
-    x_small_surface = gauge_code(small_surface, 1, 1)
-    z_small_surface = gauge_code(small_surface, 1, 3)
+    x_small_surface = gauge(small_surface, 1, 1)
+    z_small_surface = gauge(small_surface, 1, 3)
 
     # this one is rotated:
-    z_small_surface_rotated = permute_code(z_small_surface,[2,5,3,1,4])
+    z_small_surface_rotated = permute(z_small_surface,[2,5,3,1,4])
 
     code_matrix = [isodd(i) ? x_small_surface : z_small_surface_rotated
         for i in 1:2*L-1, j in 1:L]

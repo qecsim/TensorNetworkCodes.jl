@@ -27,9 +27,9 @@ find_syndrome
 Functions to gauge, permute and purify codes.
 
 ```@docs
-gauge_code
-permute_code
-purify_code
+gauge
+permute
+purify
 ```
 
 ## Contraction
