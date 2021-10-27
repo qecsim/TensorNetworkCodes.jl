@@ -420,13 +420,13 @@ end
 
 
 """
-    combine(graph1,graph2)
+    _combine(graph1,graph2)
 
 Combines two `CodeGraphs` with physical and virtual nodes and
 preserves their metadata (`type`, `indices`, `coords` and 'qubit'
 labels).
 """
-function combine(code_graph1::CodeGraph, code_graph2::CodeGraph)
+function _combine(code_graph1::CodeGraph, code_graph2::CodeGraph)
 
     n1 = num_nodes(code_graph1)
     Labels = nodes(code_graph1)
@@ -528,12 +528,12 @@ end
 
 
 """
-    fusion(code_graph,qubit_pair)
+    _fusion(code_graph,qubit_pair)
 
 Returns a `CodeGraph` after fusion is performed on the qubits in
 `qubit_pair`.
 """
-function fusion(code_graph::CodeGraph, qubit_pair::Array{Int64,1})
+function _fusion(code_graph::CodeGraph, qubit_pair::Array{Int64,1})
 
     new_edge_types = deepcopy(code_graph.edge_types)
     new_node_indices = deepcopy(code_graph.node_indices)
@@ -595,11 +595,11 @@ end
 
 
 # Another method with multiple `qubit_pairs`.
-function fusion(code_graph::CodeGraph, qubit_pairs::Array{Array{Int64,1},1})
+function _fusion(code_graph::CodeGraph, qubit_pairs::Array{Array{Int64,1},1})
 
     output_graph = code_graph
     for qubit_pair in qubit_pairs
-        output_graph = fusion(output_graph, qubit_pair)
+        output_graph = _fusion(output_graph, qubit_pair)
     end
 
     return output_graph
@@ -620,7 +620,7 @@ Takes the (disjoint) union of two error correcting codes.
 function combine(code1::TensorNetworkCode, code2::TensorNetworkCode)
 
     new_code = combine(SimpleCode(code1), SimpleCode(code2))
-    new_code_graph = combine(code1.code_graph, code2.code_graph)
+    new_code_graph = _combine(code1.code_graph, code2.code_graph)
     new_seed_codes = merge(code1.seed_codes, code2.seed_codes)
 
     return TensorNetworkCode(new_code, new_code_graph, new_seed_codes)
@@ -639,7 +639,7 @@ a new `QuantumCode` of the same type as the input.
 function fusion(code::TensorNetworkCode, qubit_pairs::Array{Array{Int64,1},1})
 
     new_code = fusion(SimpleCode(code), qubit_pairs)
-    new_code_graph = fusion(code.code_graph, qubit_pairs)
+    new_code_graph = _fusion(code.code_graph, qubit_pairs)
 
     return TensorNetworkCode(new_code, new_code_graph, code.seed_codes)
 end
