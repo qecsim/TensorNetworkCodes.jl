@@ -95,7 +95,7 @@ See also [`TensorNetworkCode`](@ref).
 !!! note
 
     `CodeGraph` is not typically accessed directly but rather created, read and updated
-    using [Code graph functions](@ref) and [Contraction functions](@ref).
+    using [Transformation](@ref), [Contraction](@ref) and [Code graph functions](@ref).
 """
 struct CodeGraph
     coords::Dict{Int,Vector{T}} where T <: Real
@@ -125,7 +125,8 @@ See also [`CodeGraph`](@ref).
 !!! note
 
     The `code_graph` and `seed_codes` fields are not typically accessed directly but rather
-    read and updated using [Code graph functions](@ref) and [Contraction functions](@ref).
+    read and updated using [Transformation](@ref), [Contraction](@ref) and
+    [Code graph functions](@ref).
 """
 struct TensorNetworkCode <: QuantumCode
     stabilizers::Vector{Vector{Int}}
