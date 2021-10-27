@@ -13,13 +13,13 @@ function _diamond_lattice_code(code_matrix::Matrix{TensorNetworkCode})
     [(isodd(l) ? [0,0] : [6,0]) + [12*(w-1),6*(l-1)]
         for l in 1:L, w in 1:W]
 
-    # Starting coords for each node (first is virtual & the rest are 
+    # Starting coords for each node (first is virtual & the rest are
     # physical qubits) in a seed code
     coords = [[0,0],[3,-3],[3,3],[0,0.5],[-3,-3],[-3,3]]
 
     output_code = code_matrix[1,1]
     set_coords!(output_code,coords)
-    
+
     # contract on the rest of the codes in code_matrix
     for α in 1:L,β in 1:W
         if (α == 1 && β == 1) || (iseven(α) && β == W)
@@ -31,7 +31,7 @@ function _diamond_lattice_code(code_matrix::Matrix{TensorNetworkCode})
         shift = coord_shifts[α,β]
         shift_coords!(next_seed_code,shift)
 
-        output_code = combine_by_coordinates(output_code,next_seed_code)
+        output_code = contract_by_coords(output_code,next_seed_code)
 
         if num_qubits(output_code) == 0
             return output_code
@@ -141,28 +141,28 @@ function _boundary_fusion(L::Int64,bulk_code::TensorNetworkCode)
     for l in 1:L-1
         l==1 ? shift = [6,0] : shift = [12,0]
         shift_coords!(code,shift)
-        output = combine_by_coordinates(output,code)
+        output = contract_by_coords(output,code)
     end
 
     code = bottom_x_rep
     for l in 1:L-1
         l == 1 ? shift = [6,12*(L-1)] : shift = [12,0]
         shift_coords!(code, shift)
-        output = combine_by_coordinates(output,code)
+        output = contract_by_coords(output,code)
     end
 
     code = left_z_rep
     for l in 1:L-1
         l==1 ? shift = [0,6] : shift = [0,12]
         shift_coords!(code, shift)
-        output = combine_by_coordinates(output,code)
+        output = contract_by_coords(output,code)
     end
 
     code = right_z_rep
     for l in 1:L-1
         l==1 ? shift = [12*(L-1),6] : shift = [0,12]
         shift_coords!(code, shift)
-        output = combine_by_coordinates(output,code)
+        output = contract_by_coords(output,code)
     end
 
     return output
@@ -305,7 +305,7 @@ code = SimpleCode("E",stabilizers,logicals)
 E = TensorNetworkCode(code)
 coordinates = [[0,0],[0,1],[-1,0],[0,-1],[1,0],[0.3,0.3]]
 set_coords!(E,coordinates)
-code_dictionary["E"] = E 
+code_dictionary["E"] = E
 
 # Er
 stabilizers = [[0,3,3,0,3],[3,0,0,3,3],[1,1,0,0,1],[0,0,1,1,1],[3,3,0,0,0]]
@@ -443,9 +443,9 @@ for i in 1:L
             continue
         end
         code = deepcopy(code_dictionary[code_label_matrix[i,j]])
-        shift = [Float64(j-1)*2,Float64(i-1)*2] 
+        shift = [Float64(j-1)*2,Float64(i-1)*2]
         shift_coords!(code,shift)
-        output_code = combine_by_coordinates(output_code,code)           
+        output_code = contract_by_coords(output_code,code)
     end
 end
 

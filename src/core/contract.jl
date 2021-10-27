@@ -1,14 +1,13 @@
 """
-    remove_qubits!(operators,qubits_to_remove)
+    _remove_qubits!(operators, qubits_to_remove)
 
-Given a set of operators, remove entries corresponding to qubits
-being removed.
+Given a set of operators, remove entries corresponding to qubits being removed.
 """
-function remove_qubits!(operators::Array{Array{Int64,1}},
+function _remove_qubits!(operators::Array{Array{Int64,1}},
         qubits_to_remove::Array{Int64,1})
 
     for α in 1:length(operators)
-        deleteat!(operators[α],sort!(qubits_to_remove))
+        deleteat!(operators[α], sort!(qubits_to_remove))
     end
 end
 
@@ -17,13 +16,13 @@ end
 
 
 """
-    merge(code1,code2)
+    combine(code1,code2)
 
-Merges two `SimpleCodes`.  Physically equivalent to preparing two
+Combines two `SimpleCodes`.  Physically equivalent to preparing two
 codes on different sets of qubits.  Mathematically, this is the
 tensor product of two codes.
 """
-function Base.merge(code1::SimpleCode,code2::SimpleCode)
+function combine(code1::SimpleCode, code2::SimpleCode)
 
     n1 = num_qubits(code1)
     n2 = num_qubits(code2)
@@ -33,28 +32,28 @@ function Base.merge(code1::SimpleCode,code2::SimpleCode)
     pure_errors = Array{Int64,1}[]
 
     for stabilizer in code1.stabilizers
-        push!(stabilizers,vcat(stabilizer,zeros(Int,n2)))
+        push!(stabilizers, vcat(stabilizer, zeros(Int, n2)))
     end
     for stabilizer in code2.stabilizers
-        push!(stabilizers,vcat(zeros(Int,n1),stabilizer))
+        push!(stabilizers, vcat(zeros(Int, n1), stabilizer))
     end
 
     for logical in code1.logicals
-        push!(logicals,vcat(logical,zeros(Int,n2)))
+        push!(logicals, vcat(logical, zeros(Int, n2)))
     end
     for logical in code2.logicals
-        push!(logicals,vcat(zeros(Int,n1),logical))
+        push!(logicals, vcat(zeros(Int, n1), logical))
     end
 
     for pure_error in code1.pure_errors
-        push!(pure_errors,vcat(pure_error,zeros(Int,n2)))
+        push!(pure_errors, vcat(pure_error, zeros(Int, n2)))
     end
     for pure_error in code2.pure_errors
-        push!(pure_errors,vcat(zeros(Int,n1),pure_error))
+        push!(pure_errors, vcat(zeros(Int, n1), pure_error))
     end
 
 
-    return SimpleCode("",stabilizers,logicals,pure_errors)
+    return SimpleCode("", stabilizers, logicals, pure_errors)
 end
 
 
@@ -62,12 +61,12 @@ end
 
 
 """
-    is_ready(operator,qubit_pair)
+    _is_ready(operator,qubit_pair)
 
 Checks if `operator` is ready for fusion on `qubit_pair`, i.e.,
 does `operator` have the same Paulis on both qubits.
 """
-function is_ready(operator::Array{Int64,1},qubit_pair::Array{Int64,1})
+function _is_ready(operator::Array{Int64,1}, qubit_pair::Array{Int64,1})
     if operator[qubit_pair[1]] == operator[qubit_pair[2]]
         return true
     else
@@ -80,55 +79,54 @@ end
 
 
 """
-    make_ready(operator,useful_ops,qubit_pair)
+    _make_ready(operator,useful_ops,qubit_pair)
 
 Makes an `operator` ready for fusion on `qubit_pair`, i.e.,
 multiplies a combination of operators in `useful_ops` until the
 resulting operator has the same Paulis on both qubits in `qubit_pair`.
 """
-function make_ready(
+function _make_ready(
         operator::Array{Int64,1},
         useful_ops::Array{Array{Int64,1}},
         qubit_pair::Array{Int64,1})
 
-    if is_ready(operator,qubit_pair)
+    if _is_ready(operator, qubit_pair)
         return operator
     end
 
     for useful_op in useful_ops
-        new_operator = pauli_product.(operator,useful_op)
-        if is_ready(new_operator,qubit_pair)
+        new_operator = pauli_product.(operator, useful_op)
+        if _is_ready(new_operator, qubit_pair)
             return new_operator
         end
     end
 
     if length(useful_ops) == 2
-        operator2 = pauli_product.(useful_ops[1],useful_ops[2])
-        new_operator = pauli_product.(operator,operator2)
-        if is_ready(new_operator,qubit_pair)
+        operator2 = pauli_product.(useful_ops[1], useful_ops[2])
+        new_operator = pauli_product.(operator, operator2)
+        if _is_ready(new_operator, qubit_pair)
             return new_operator
         end
     end
 end
-
-
-
-make_ready(operators::Array{Array{Int64,1},1},useful_ops::Array{Array{Int64,1}},
-        qubit_pair::Array{Int64,1}) =
-make_ready.(operators,Ref(useful_ops),Ref(qubit_pair))
+_make_ready(
+    operators::Array{Array{Int64,1},1},
+    useful_ops::Array{Array{Int64,1}},
+    qubit_pair::Array{Int64,1}
+) = _make_ready.(operators, Ref(useful_ops), Ref(qubit_pair))
 
 
 
 
 
 """
-    find_useful_stabilizer_indices(stabilizers,qubit_pair)
+    _find_useful_stabilizer_indices(stabilizers,qubit_pair)
 
 Finds two `stabilizers` that can be used to make other operators
 ready for fusion.  Basically it returns two operators that are independent
 from each other and XX, YY, ZZ on the qubits in `qubit_pair`.
 """
-function find_useful_stabilizer_indices(stabilizers::Array{Array{Int64,1},1},
+function _find_useful_stabilizer_indices(stabilizers::Array{Array{Int64,1},1},
         qubit_pair::Array{Int64,1})
 
     indices = Int64[]
@@ -140,16 +138,16 @@ function find_useful_stabilizer_indices(stabilizers::Array{Array{Int64,1},1},
         end
 
         if length(indices) == 0
-            push!(indices,α)
+            push!(indices, α)
             continue
         end
 
         if length(indices) == 1
             useful_operator = stabilizers[indices[1]]
-            new_operator = pauli_product.(operator,useful_operator)
+            new_operator = pauli_product.(operator, useful_operator)
 
             if new_operator[qubit_pair[1]] != new_operator[qubit_pair[2]]
-                push!(indices,α)
+                push!(indices, α)
                 return indices
             end
         end
@@ -162,12 +160,12 @@ end
 
 
 
-function update_qubit_pairs!(code1::QuantumCode,qubit_pairs::Array{Array{Int64,1},1})
+function _update_qubit_pairs!(code1::QuantumCode, qubit_pairs::Array{Array{Int64,1},1})
 
     num_pairs = length(qubit_pairs)
     for α in 1:num_pairs
         for x in 1:2
-            for β in 1:α-1
+            for β in 1:α - 1
                 if qubit_pairs[β][1] <= qubit_pairs[α][x]
                     qubit_pairs[α][x] -= 1
                 end
@@ -183,35 +181,35 @@ end
 
 
 
-function annoying_stabilizers(
+function _annoying_stabilizers(
     stabilizers::Array{Array{Int64,1},1},
     qubit_pair::Array{Int64,1})
 
-i,j = qubit_pair
-n = length(stabilizers[1])
-output = Array{Array{Int64,1},1}()
+    i, j = qubit_pair
+    n = length(stabilizers[1])
+    output = Array{Array{Int64,1},1}()
 
-for σ in [1,2,3]
+    for σ in [1,2,3]
 
-    for α in 1:length(stabilizers)
-        if !pauli_are_commuting([[σ,σ],[stabilizers[α][i],stabilizers[α][j]]])
-            @goto not_this_one
+        for α in 1:length(stabilizers)
+            if !pauli_are_commuting([[σ,σ],[stabilizers[α][i],stabilizers[α][j]]])
+                @goto not_this_one
+            end
         end
+
+        operator = zeros(Int64, n)
+        operator[i] = σ
+        operator[j] = σ
+        push!(output, operator)
+
+        if length(output) == 2
+            break
+        end
+
+        @label not_this_one
     end
 
-    operator = zeros(Int64,n)
-    operator[i] = σ
-    operator[j] = σ
-    push!(output,operator)
-
-    if length(output) == 2
-        break
-    end
-
-    @label not_this_one
-end
-
-return output
+    return output
 end
 
 
@@ -227,74 +225,74 @@ after measuring XX and ZZ on the qubits in `qubit_pair`.
 Returns a `SimpleCode` with two fewer physical qubits but the same number
 of logical qubits.
 """
-function fusion(code::SimpleCode,qubit_pair::Array{Int64,1})
+function fusion(code::SimpleCode, qubit_pair::Array{Int64,1})
 
     stabilizers = deepcopy(code.stabilizers)
     pure_errors = deepcopy(code.pure_errors)
     logicals = deepcopy(code.logicals)
 
 
-    annoying_ops = annoying_stabilizers(stabilizers,qubit_pair)
+    annoying_ops = _annoying_stabilizers(stabilizers, qubit_pair)
     if length(annoying_ops) != 0
         println("There were annoying operators!")
     end
     for logical in logicals
-        if !pauli_are_commuting(vcat(annoying_ops,[logical]))
+        if !pauli_are_commuting(vcat(annoying_ops, [logical]))
             println("Can't contract!")
             return SimpleCode()
         end
     end
 
 
-    useful_inds = find_useful_stabilizer_indices(stabilizers,qubit_pair)
+    useful_inds = _find_useful_stabilizer_indices(stabilizers, qubit_pair)
     if length(useful_inds) != 0
         sort!(useful_inds)
         useful_ops = [stabilizers[ind] for ind in useful_inds]
-        deleteat!(stabilizers,sort!(useful_inds))
-        deleteat!(pure_errors,sort!(useful_inds))
+        deleteat!(stabilizers, sort!(useful_inds))
+        deleteat!(pure_errors, sort!(useful_inds))
 
-        stabilizers = make_ready(stabilizers,useful_ops,qubit_pair)
-        logicals = make_ready(logicals,useful_ops,qubit_pair)
-        pure_errors = make_ready(pure_errors,useful_ops,qubit_pair)
+        stabilizers = _make_ready(stabilizers, useful_ops, qubit_pair)
+        logicals = _make_ready(logicals, useful_ops, qubit_pair)
+        pure_errors = _make_ready(pure_errors, useful_ops, qubit_pair)
     end
 
 
-    remove_qubits!(stabilizers,qubit_pair)
+    _remove_qubits!(stabilizers, qubit_pair)
     if length(logicals) != 0
-        remove_qubits!(logicals,qubit_pair)
+        _remove_qubits!(logicals, qubit_pair)
     end
 
 
     if length(useful_inds) != 2
         new_stabilizers = Array{Int64,1}[]
         for α in 1:length(stabilizers)
-            if pauli_are_independent(vcat(new_stabilizers,[stabilizers[α]]))
-                push!(new_stabilizers,stabilizers[α])
+            if pauli_are_independent(vcat(new_stabilizers, [stabilizers[α]]))
+                push!(new_stabilizers, stabilizers[α])
             end
         end
         stabilizers = new_stabilizers
     end
 
 
-    remove_qubits!(pure_errors,qubit_pair)
+    _remove_qubits!(pure_errors, qubit_pair)
 
-    return SimpleCode(" ",stabilizers,logicals,pure_errors)
+    return SimpleCode(" ", stabilizers, logicals, pure_errors)
 end
 
 
 
-function fusion(code::SimpleCode,qubit_pairs::Array{Array{Int64,1},1})
+function fusion(code::SimpleCode, qubit_pairs::Array{Array{Int64,1},1})
 
     output_code = deepcopy(code)
     # qubit labels change after each fusion, so must account
     # for this:
-    update_qubit_pairs!(code,qubit_pairs)
+    _update_qubit_pairs!(code, qubit_pairs)
 
     for qubit_pair in qubit_pairs
         if num_qubits(output_code)  == 0
             return SimpleCode()
         end
-        output_code = fusion(output_code,qubit_pair)
+        output_code = fusion(output_code, qubit_pair)
     end
 
     return output_code
@@ -309,14 +307,11 @@ end
 
 
 # maybe don't bother including types
-function update_keys(
+function _update_keys(
         dict::Dict{Int64,T},
-        new_keys::Dict{Int64,Int64}) where T <: Union{
-    Int64,
-    Vector{Float64},
-    String,Vector{Index{Int64}}}
+        new_keys::Dict{Int64,Int64}) where T <: Union{Int64,Vector{Float64},String,Vector{Index{Int64}}}
 
-    value_type = typeof(dict[findfirst(x->true,dict)])  # this is lame
+    value_type = typeof(dict[findfirst(x -> true, dict)])  # this is lame
     new_dict = Dict{Int64,value_type}()
 
     for old_key in keys(new_keys)
@@ -328,14 +323,11 @@ function update_keys(
 end
 
 
-function update_keys(
+function _update_keys(
         dict::Dict{Set{Int64},T},
-        new_keys::Dict{Set{Int64},Set{Int64}}) where T <: Union{
-    Int64,
-    Vector{Float64},
-    String,Vector{Index{Int64}}}
+        new_keys::Dict{Set{Int64},Set{Int64}}) where T <: Union{Int64,Vector{Float64},String,Vector{Index{Int64}}}
 
-    value_type = typeof(dict[findfirst(x->true,dict)])  # this is lame
+    value_type = typeof(dict[findfirst(x -> true, dict)])  # this is lame
     new_dict = Dict{Set{Int64},value_type}()
 
     for old_key in keys(new_keys)
@@ -351,7 +343,7 @@ end
 
 
 """
-    shift_keys(code_graph,n_qubits,n_vert)
+    _shift_keys(code_graph,n_qubits,n_vert)
 
 When merging two `Graphs`, the second `Graph` has all its edges
 relabelled.  So to merge two `CodeGraphs`, it is necessary to preemptively
@@ -362,34 +354,34 @@ allow for this.
 and `n` are the number of vertices and qubits respectively of the first
 `CodeGraph` to be merged.
 """
-function shift_keys(code_graph::CodeGraph,n_qubits::Int64,n_vert::Int64)
+function _shift_keys(code_graph::CodeGraph, n_qubits::Int64, n_vert::Int64)
 
     new_coords = Dict{Int64,Vector{Float64}}()
     new_node_types = Dict{Int64,String}()
     new_edge_types = Dict{Set{Int64},String}()
-    new_node_indices = Dict{Int64,Vector{Index{Int64}} }()
-    new_edge_indices = Dict{Set{Int64},Vector{Index{Int64}} }()
+    new_node_indices = Dict{Int64,Vector{Index{Int64}}}()
+    new_edge_indices = Dict{Set{Int64},Vector{Index{Int64}}}()
 
 
     n_virtual = n_vert - n_qubits
 
 
     # Update node data
-    for (key,value) in coords(code_graph)
+    for (key, value) in coords(code_graph)
         if key > 0
             new_coords[key + n_qubits] = value
         else
             new_coords[key - n_virtual] = value
         end
     end
-    for (key,value) in node_types(code_graph)
+    for (key, value) in node_types(code_graph)
         if key > 0
             new_node_types[key + n_qubits] = value
         else
             new_node_types[key - n_virtual] = value
         end
     end
-    for (key,value) in node_indices(code_graph)
+    for (key, value) in node_indices(code_graph)
         if key < 0
             new_node_indices[key - n_virtual] = value
         end
@@ -410,8 +402,8 @@ function shift_keys(code_graph::CodeGraph,n_qubits::Int64,n_vert::Int64)
 
         new_edge = Set(new_edge)
 
-        new_edge_types[new_edge] = edge_types(code_graph,old_edge)
-        new_edge_indices[new_edge] = edge_indices(code_graph,old_edge)
+        new_edge_types[new_edge] = edge_types(code_graph, old_edge)
+        new_edge_indices[new_edge] = edge_indices(code_graph, old_edge)
     end
 
 
@@ -428,25 +420,25 @@ end
 
 
 """
-    merge(graph1,graph2)
+    combine(graph1,graph2)
 
-Merges two `CodeGraphs` with physical and virtual nodes and
+Combines two `CodeGraphs` with physical and virtual nodes and
 preserves their metadata (`type`, `indices`, `coords` and 'qubit'
 labels).
 """
-function Base.merge(code_graph1::CodeGraph,code_graph2::CodeGraph)
+function combine(code_graph1::CodeGraph, code_graph2::CodeGraph)
 
     n1 = num_nodes(code_graph1)
     Labels = nodes(code_graph1)
-    n_qubits1 = length(filter(x->x>0,Labels))
+    n_qubits1 = length(filter(x -> x > 0, Labels))
 
-    new_code_graph2 = shift_keys(code_graph2,n_qubits1,n1)
+    new_code_graph2 = _shift_keys(code_graph2, n_qubits1, n1)
 
-    coords = merge(code_graph1.coords,new_code_graph2.coords)
-    node_types = merge(code_graph1.node_types,new_code_graph2.node_types)
-    edge_types = merge(code_graph1.edge_types,new_code_graph2.edge_types)
-    node_indices = merge(code_graph1.node_indices,new_code_graph2.node_indices)
-    edge_indices = merge(code_graph1.edge_indices,new_code_graph2.edge_indices)
+    coords = merge(code_graph1.coords, new_code_graph2.coords)
+    node_types = merge(code_graph1.node_types, new_code_graph2.node_types)
+    edge_types = merge(code_graph1.edge_types, new_code_graph2.edge_types)
+    node_indices = merge(code_graph1.node_indices, new_code_graph2.node_indices)
+    edge_indices = merge(code_graph1.edge_indices, new_code_graph2.edge_indices)
 
 
     return CodeGraph(
@@ -462,11 +454,11 @@ end
 
 
 """
-    rem_node(code_graph,label)
+    _remove_node(code_graph,label)
 
 Removes a node from a `CodeGraph`; returns a new `CodeGraph`.
 """
-function rem_node(code_graph::CodeGraph,label::Int64)
+function _remove_node(code_graph::CodeGraph, label::Int64)
 
     # Remove graph vertex and update values in `nodes`
 #     # A little annoying because of how rem_vertex! works
@@ -486,17 +478,17 @@ function rem_node(code_graph::CodeGraph,label::Int64)
     new_labels = Dict{Int64,Int64}()
     for old_label in old_labels
         if old_label < label
-           new_labels[old_label] = old_label
+            new_labels[old_label] = old_label
         elseif old_label > label
            new_labels[old_label] = old_label - 1
         end
     end
 
 
-    new_coords = update_keys(code_graph.coords,new_labels)
-    new_node_types = update_keys(code_graph.node_types,new_labels)
-    filter!(x->x.first<0,new_labels)
-    new_node_indices = update_keys(code_graph.node_indices,new_labels)
+    new_coords = _update_keys(code_graph.coords, new_labels)
+    new_node_types = _update_keys(code_graph.node_types, new_labels)
+    filter!(x -> x.first < 0, new_labels)
+    new_node_indices = _update_keys(code_graph.node_indices, new_labels)
 
 
     # Update dictionaries with edges as keys
@@ -519,8 +511,8 @@ function rem_node(code_graph::CodeGraph,label::Int64)
         new_edges[old_edge] = new_edge
     end
 
-    new_edge_types = update_keys(code_graph.edge_types,new_edges)
-    new_edge_indices = update_keys(code_graph.edge_indices,new_edges)
+    new_edge_types = _update_keys(code_graph.edge_types, new_edges)
+    new_edge_indices = _update_keys(code_graph.edge_indices, new_edges)
 
 
     return CodeGraph(
@@ -541,7 +533,7 @@ end
 Returns a `CodeGraph` after fusion is performed on the qubits in
 `qubit_pair`.
 """
-function fusion(code_graph::CodeGraph,qubit_pair::Array{Int64,1})
+function fusion(code_graph::CodeGraph, qubit_pair::Array{Int64,1})
 
     new_edge_types = deepcopy(code_graph.edge_types)
     new_node_indices = deepcopy(code_graph.node_indices)
@@ -551,11 +543,11 @@ function fusion(code_graph::CodeGraph,qubit_pair::Array{Int64,1})
     # Find new edge
     edges_to_remove = edges(code_graph)
     edges_to_remove =
-    filter(x->length(intersect(qubit_pair,x))!=0,edges_to_remove)
+    filter(x -> length(intersect(qubit_pair, x)) != 0, edges_to_remove)
 
-    virtual1 = setdiff(edges_to_remove[1],qubit_pair)
-    virtual2 = setdiff(edges_to_remove[2],qubit_pair)
-    new_edge = union(virtual1,virtual2)
+    virtual1 = setdiff(edges_to_remove[1], qubit_pair)
+    virtual2 = setdiff(edges_to_remove[2], qubit_pair)
+    new_edge = union(virtual1, virtual2)
 
     if length(new_edge) == 1
         println("Self contraction occurred.  Contraction algorithms may not work!")
@@ -564,7 +556,7 @@ function fusion(code_graph::CodeGraph,qubit_pair::Array{Int64,1})
 
     # Add edge data
     new_edge_types[new_edge] = "bond"
-    new_index = Index(4,"bond")
+    new_index = Index(4, "bond")
     new_edge_indices[new_edge] = [new_index]
 
 
@@ -591,9 +583,9 @@ function fusion(code_graph::CodeGraph,qubit_pair::Array{Int64,1})
 
 
     sort!(qubit_pair)
-    qubit_pair[2] = qubit_pair[2]-1
+    qubit_pair[2] = qubit_pair[2] - 1
     for qubit in qubit_pair
-        output = rem_node(output,qubit)
+        output = _remove_node(output, qubit)
     end
 
 
@@ -603,11 +595,11 @@ end
 
 
 # Another method with multiple `qubit_pairs`.
-function fusion(code_graph::CodeGraph,qubit_pairs::Array{Array{Int64,1},1})
+function fusion(code_graph::CodeGraph, qubit_pairs::Array{Array{Int64,1},1})
 
     output_graph = code_graph
     for qubit_pair in qubit_pairs
-        output_graph = fusion(output_graph,qubit_pair)
+        output_graph = fusion(output_graph, qubit_pair)
     end
 
     return output_graph
@@ -621,17 +613,17 @@ end
 
 
 """
-    merge(code1,code2) -> typeof(code1)
+    combine(code1,code2) -> typeof(code1)
 
 Takes the (disjoint) union of two error correcting codes.
 """
-function Base.merge(code1::TensorNetworkCode,code2::TensorNetworkCode)
+function combine(code1::TensorNetworkCode, code2::TensorNetworkCode)
 
-    new_code = merge(SimpleCode(code1),SimpleCode(code2))
-    new_code_graph = merge(code1.code_graph,code2.code_graph)
-    new_seed_codes = merge(code1.seed_codes,code2.seed_codes)
+    new_code = combine(SimpleCode(code1), SimpleCode(code2))
+    new_code_graph = combine(code1.code_graph, code2.code_graph)
+    new_seed_codes = merge(code1.seed_codes, code2.seed_codes)
 
-    return TensorNetworkCode(new_code,new_code_graph,new_seed_codes)
+    return TensorNetworkCode(new_code, new_code_graph, new_seed_codes)
 end
 
 
@@ -644,18 +636,17 @@ end
 If possible, implements fusion on pairs of qubits in `qubit_pairs` to return
 a new `QuantumCode` of the same type as the input.
 """
-function fusion(code::TensorNetworkCode,qubit_pairs::Array{Array{Int64,1},1})
+function fusion(code::TensorNetworkCode, qubit_pairs::Array{Array{Int64,1},1})
 
-    new_code = fusion(SimpleCode(code),qubit_pairs)
-    new_code_graph = fusion(code.code_graph,qubit_pairs)
+    new_code = fusion(SimpleCode(code), qubit_pairs)
+    new_code_graph = fusion(code.code_graph, qubit_pairs)
 
-    return TensorNetworkCode(new_code,new_code_graph,code.seed_codes)
+    return TensorNetworkCode(new_code, new_code_graph, code.seed_codes)
 end
 
 
 
-fusion(code::TensorNetworkCode,qubit_pair::Array{Int64,1}) =
-fusion(code,[qubit_pair])
+fusion(code::TensorNetworkCode,qubit_pair::Array{Int64,1}) = fusion(code, [qubit_pair])
 
 
 
@@ -672,11 +663,11 @@ function contract(
         code2::TensorNetworkCode,
         qubit_pairs::Array{Array{Int64,1},1})
 
-    qubit_pairs = [[qubit_pairs[m][1],qubit_pairs[m][2]+num_qubits(code1)]
+    qubit_pairs = [[qubit_pairs[m][1],qubit_pairs[m][2] + num_qubits(code1)]
             for m in 1:length(qubit_pairs)]
 
-    output_code = merge(code1,code2)
-    output_code = fusion(output_code,qubit_pairs)
+    output_code = combine(code1, code2)
+    output_code = fusion(output_code, qubit_pairs)
 
 end
 
@@ -685,12 +676,12 @@ end
 
 
 """
-    combine_by_coordinates(code1::TensorNetworkCode,code2::TensorNetworkCode)
+    contract_by_coords(code1::TensorNetworkCode,code2::TensorNetworkCode)
 
 Combines two `TensorNetworkCode` by finding out which physical qubits live on
 overlapping coordinates and contracting those.
 """
-function combine_by_coordinates(code1::TensorNetworkCode,code2::TensorNetworkCode)
+function contract_by_coords(code1::TensorNetworkCode, code2::TensorNetworkCode)
 
     graph1 = code1.code_graph
     graph2 = code2.code_graph
@@ -702,17 +693,17 @@ function combine_by_coordinates(code1::TensorNetworkCode,code2::TensorNetworkCod
             continue
         end
 
-        coord1 = coords(graph1,label1)
-        coord2 = coords(graph2,label2)
+        coord1 = coords(graph1, label1)
+        coord2 = coords(graph2, label2)
         if coord1 ≈ coord2
-            push!(qubit_pairs,[label1,label2])
+            push!(qubit_pairs, [label1,label2])
         end
     end
 
 
     if length(qubit_pairs) == 0
-       return merge(code1,code2)
+        return combine(code1, code2)
     end
 
-    return contract(code1,code2,qubit_pairs)
+    return contract(code1, code2, qubit_pairs)
 end

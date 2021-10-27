@@ -27,6 +27,8 @@ export edges, nodes, num_nodes, shift_coords!
 export coords, edge_indices, edge_types, node_indices, node_types
 export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_node_types!
 include("code_graph_functions.jl")
+export combine, contract, contract_by_coords, fusion
+include("core/contract.jl")
 
 # SimpleCode exports
 export five_qubit_code,five_qubit_surface_code,steane_code
@@ -43,8 +45,6 @@ export identity_coset,all_cosets,gauge_code,code_to_tensor,code_to_Itensor
 include("core/functions.jl")
 export code_plot,operator_plot
 include("core/plotting.jl")
-export combine_by_coordinates,contract,fusion,merge
-include("core/contract.jl")
 export surface_code,rotated_surface_code,almost_rotated_surface_code
 include("core/surface.jl")
 
