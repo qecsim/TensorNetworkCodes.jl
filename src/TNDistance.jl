@@ -17,8 +17,8 @@ export tn_distance, tn_operator_weights
 """
     OperatorWeights(stabilizer_weights,all_operator_weights)
 
-Stores operator weight distribution for stabilizers, all code operators
-(stabilizers + all logical representatives), as well as distance.  Fields:
+Stores operator weight distribution for stabilizers and all code operators
+(stabilizers + all logical representatives).  Also stores distance.  Fields:
 
     stabilizer_weights::Array{Int64,1}
     all_operator_weights::Array{Int64,1}
@@ -194,7 +194,7 @@ of each weight, as well as the number of logical representatives
 ```jldoctest
 julia> code = TensorNetworkCode(five_qubit_code());
 
-julia> code = contract(code,code,[[1,1],[3,3]]);
+julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]);
 
 julia> tn_operator_weights(code)
 OperatorWeights([1, 0, 0, 0, 9, 0, 6], [1, 0, 9, 24, 99, 72, 51], 2)
@@ -227,9 +227,9 @@ Returns the code distance calculated by contracting a tensor network.
 ```jldoctest
 julia> code = TensorNetworkCode(steane_code());
 
-julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]);
+julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]); # contract two copies
 
-julia> tn_distance(code)
+julia> tn_distance(code) # this code has poor distance!
 2
 ```
 """
@@ -245,11 +245,11 @@ function tn_distance(
 end
 
 """
-    operator_weights_plot(weights)
+    operator_weights_plot(weights::OperatorWeights;truncate_to = length(weights.stabilizer_weights))
 
-Plots a bar plot of the number of operators of each weight.
-This includes all code operators, all stabilizers, and all
-non-identity logicals.
+Plots a bar plot (on a log scale) of the number of operators of each weight.
+This includes all code operators (logicals plus stabilizers) and all stabilizers plotted
+separately.
 """
 function operator_weights_plot(
         weights::OperatorWeights;
