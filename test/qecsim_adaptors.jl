@@ -35,13 +35,11 @@ end
     qs_code = QecsimTNCode(tn_code)
     @test validate(qs_code) === nothing  # no error
     @test isequal(nkd(qs_code), (5, 1, missing))
-    println(typeof(nkd(qs_code)))
     @test label(qs_code) == "QecsimTNCode: [5,1,missing]"
     # kwargs distance, label
     tn_code = TensorNetworkCode(steane_code())
     qs_code = QecsimTNCode(tn_code; distance=3, label="Steane")
     @test validate(qs_code) === nothing  # no error
     @test isequal(nkd(qs_code), (7, 1, 3))
-    println(typeof(nkd(qs_code)))
     @test label(qs_code) == "Steane"
 end
