@@ -93,3 +93,39 @@ function all_cosets(tensor::ITensor)
 
     return tensor
 end
+
+"""
+    physical_tensor(index,error_prob,pauli)
+
+Returns a one leg `ITensor` describing the error on one site.
+"""
+function physical_tensor(
+        index::Index{Int64},
+        error_prob::Float64,
+        pauli::Int64)
+
+    array = fill(error_prob/3,4)
+    array[pauli + 1] = 1 - error_prob
+
+    return ITensor(array,index)
+end
+
+"""
+    create_virtual_tensor(graph,node)
+
+Creates the `ITensor` describing the seed code at `node`.
+"""
+function create_virtual_tensor(code::TensorNetworkCode,node::Int64)
+
+    indices = node_indices(code,node)
+    code_type = node_types(code,node)
+    seed_code = code.seed_codes[code_type]
+
+    k = num_qubits(seed_code) - length(seed_code.stabilizers)
+    logical_indices = [Index(4,"logical") for α in 1:k]
+
+    return code_to_Itensor(
+        seed_code,
+        logical_indices,
+        indices)
+end

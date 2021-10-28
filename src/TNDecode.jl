@@ -17,45 +17,6 @@ export basic_contract, MPS_MPO_contract, TN_decoder
 export compare_code_success_empirical, compare_code_success_predicted
 export TN_decoding_success_prob
 
-"""
-    physical_tensor(index,error_prob,pauli)
-
-Returns a one leg `ITensor` describing the error on one site.
-"""
-function physical_tensor(
-        index::Index{Int64},
-        error_prob::Float64,
-        pauli::Int64)
-
-    array = fill(error_prob/3,4)
-    array[pauli + 1] = 1 - error_prob
-
-    return ITensor(array,index)
-end
-
-"""
-    create_virtual_tensor(graph,node)
-
-Creates the `ITensor` describing the seed code at `node`.
-"""
-function create_virtual_tensor(code::TensorNetworkCode,node::Int64)
-
-    graph = code.code_graph
-
-    indices = node_indices(code,node)
-    code_type = node_types(code,node)
-    seed_code = code.seed_codes[code_type]
-
-    k = num_qubits(seed_code) - length(seed_code.stabilizers)
-    logical_indices = [Index(4,"logical") for α in 1:k]
-
-    return code_to_Itensor(
-        seed_code,
-        logical_indices,
-        indices)
-
-end
-
 ########## Should be in core/types.jl
 function physical_neighbours(code,node)
 
