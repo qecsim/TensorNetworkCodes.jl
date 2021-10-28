@@ -192,6 +192,8 @@ of each weight, as well as the number of logical representatives
 
 # Examples
 ```jldoctest
+julia> using TensorNetworkCodes.TNDistance
+
 julia> code = TensorNetworkCode(five_qubit_code());
 
 julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]);
@@ -225,6 +227,8 @@ Returns the code distance calculated by contracting a tensor network.
 
 # Examples
 ```jldoctest
+julia> using TensorNetworkCodes.TNDistance
+
 julia> code = TensorNetworkCode(steane_code());
 
 julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]); # contract two copies

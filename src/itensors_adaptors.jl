@@ -1,9 +1,10 @@
 """
-    code_to_tensor(code)
+    _code_to_tensor(code::QuantumCode) -> Array{Float64,N} where N
 
-Returns a tensor (array) describing the logical cosets of the code.
+Given a [`QuantumCode`](@ref), returns a tensor describing the 
+logical cosets of the code.
 """
-function code_to_tensor(code::QuantumCode)
+function _code_to_tensor(code::QuantumCode)
 
     alt_code = purify(code)
     n = num_qubits(alt_code)
@@ -29,9 +30,25 @@ end
 
 
 """
-    code_to_Itensor(code,indices)
+    code_to_Itensor(code::QuantumCode,logical_indices::Array{Index{Int64},1},physical_indices::Array{Index{Int64},1})
+    -> ITensor
 
-Returns an `ITensor` with indices describing the logical cosets of the code.
+Returns an `ITensor` describing the logical cosets of the code.  Indices 
+(`Index{Int64}`) correspond to logical and physical qubits of the code.
+
+# Examples
+```jldoctest
+julia> using ITensors;
+
+julia> logical_indices = [Index(4,"logical")];
+
+julia> physical_indices = [Index(4,"physical") for _ in 1:5];
+
+julia> tensor = code_to_Itensor(five_qubit_surface_code(),logical_indices,physical_indices);
+
+julia> dims(tensor) # tensor has six legs
+(4, 4, 4, 4, 4, 4)
+```
 """
 function code_to_Itensor(code::QuantumCode,
         logical_indices::Array{Index{Int64},1},
@@ -43,7 +60,7 @@ function code_to_Itensor(code::QuantumCode,
         error("incorrect number of indices!")
     end
 
-    tensor = code_to_tensor(code)
+    tensor = _code_to_tensor(code)
     indices = vcat(logical_indices,physical_indices)
 
     return ITensor(tensor,indices...)
@@ -54,10 +71,24 @@ end
 
 
 """
-    identity_coset(tensor)
+    identity_coset(tensor::ITensor) -> ITensor
 
 Given an `ITensor` descibing a code, return the `ITensor` describing
 only the identity coset, i.e., the stabilizer group.
+
+# Examples
+```jldoctest
+julia> using ITensors;
+
+julia> logical_indices = [Index(4,"logical")];
+
+julia> physical_indices = [Index(4,"physical") for _ in 1:7];
+
+julia> tensor = code_to_Itensor(steane_code(),logical_indices,physical_indices);
+
+julia> sum(identity_coset(tensor)) # stabilizer group has 64 elements
+64.0
+```
 """
 function identity_coset(tensor::ITensor)
     indices = inds(tensor)
@@ -77,10 +108,11 @@ end
 
 
 """
-    all_cosets(tensor)
+    all_cosets(tensor::ITensor) -> ITensor
 
 Given an `ITensor` descibing a code, return the `ITensor` describing
-all the cosets by summing over all logical indices.
+all the cosets by summing over all logical indices.  Works similarly to 
+[`identity_coset`](@ref).
 """
 function all_cosets(tensor::ITensor)
     indices = inds(tensor)
@@ -95,9 +127,34 @@ function all_cosets(tensor::ITensor)
 end
 
 """
-    physical_tensor(index,error_prob,pauli)
+    physical_tensor(index::Index{Int64},error_prob::Float64,pauli::Int64) -> ITensor
 
-Returns a one leg `ITensor` describing the error on one site.
+Returns a one leg `ITensor` describing the error on one physical qubit.
+Assumes depolarizing noise as the error model.  `pauli` permutes the values
+(useful for making decoders to account for pure_errors).
+
+# Examples
+```jldoctest
+julia> using ITensors;
+
+julia> index = Index(4,"physical");
+
+julia> pauli = 0;
+
+julia> error_prob = 0.3;
+
+julia> a = array(physical_tensor(index,error_prob,pauli));
+
+julia> println(round.(a,digits=1))
+[0.7, 0.1, 0.1, 0.1]
+
+julia> pauli = 2;
+
+julia> a = array(physical_tensor(index,error_prob,pauli));
+
+julia> println(round.(a,digits=1))
+[0.1, 0.1, 0.7, 0.1]
+```
 """
 function physical_tensor(
         index::Index{Int64},
@@ -111,9 +168,10 @@ function physical_tensor(
 end
 
 """
-    create_virtual_tensor(graph,node)
+    create_virtual_tensor(code::TensorNetworkCode,node::Int64) -> ITensor
 
-Creates the `ITensor` describing the seed code at `node`.
+Creates the `ITensor` describing the seed code at `node`.  Necessary for, e.g.,
+tensor-network decoding or distance calculation.
 """
 function create_virtual_tensor(code::TensorNetworkCode,node::Int64)
 
