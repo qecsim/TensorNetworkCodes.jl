@@ -15,10 +15,19 @@ export operator_weights_plot
 export tn_distance, tn_operator_weights
 
 """
-    OperatorWeights
+    OperatorWeights(stabilizer_weights,all_operator_weights)
 
 Stores operator weight distribution for stabilizers, all code operators
 (stabilizers + all logical representatives), as well as distance.
+
+Fields:
+
+    stabilizer_weights::Array{Int64,1}
+    all_operator_weights::Array{Int64,1}
+    distance::Int64
+
+Note that since julia is 1-indexed `stabilizer_weights[j]`` gives the number of
+stabilizers of weight j-1.
 """
 struct OperatorWeights
     stabilizer_weights::Array{Int64,1}
@@ -101,7 +110,8 @@ end
 """
     tn_weights(code;cosets=all_cosets)
 
-Returns a tensor describing the weights of all operators in the `cosets` of
+Returns a tensor describing the weights of all operators in the `cosets` (either
+`all_cosets` or `identity_coset`) of
 the code.  (`cosets` is applied to each `seed_code` separately.)
 """
 function tn_weights(
@@ -170,7 +180,7 @@ function tn_weights(
 end
 
 """
-   tn_operator_weights(code)
+    tn_operator_weights(code)
 
 Returns `OperatorWeights` which includes the number of stabilizers
 of each weight, as well as the number of logical representatives
