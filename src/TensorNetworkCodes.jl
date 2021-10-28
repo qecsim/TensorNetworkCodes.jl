@@ -44,7 +44,8 @@ include("simple/decoding.jl")
 
 # Core exports
 export identity_coset,all_cosets,code_to_tensor,code_to_Itensor
-include("core/functions.jl")
+export physical_tensor,create_virtual_tensor
+include("itensors_adaptors.jl")
 export code_plot,operator_plot
 include("core/plotting.jl")
 export surface_code,rotated_surface_code,almost_rotated_surface_code

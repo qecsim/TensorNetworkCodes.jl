@@ -12,16 +12,9 @@ Calculate distances and distributions of logical operator and stabilizer weights
 TNDistance.OperatorWeights
 ```
 
-## Tensor tools
-```@docs
-TNDistance.simple_weight_tensor
-TNDistance.addition_tensor
-TNDistance.tn_weights
-```
-
 ## Distance and Operator Weight functions
 ```@docs
-TNDistance.tn_distance
 TNDistance.tn_operator_weights
+TNDistance.tn_distance
 TNDistance.operator_weights_plot
 ```
