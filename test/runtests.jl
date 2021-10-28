@@ -7,6 +7,7 @@ using SafeTestsets
     @safetestset "code_functions.jl" begin include("code_functions.jl") end
     @safetestset "code_graph_functions.jl" begin include("code_graph_functions.jl") end
     @safetestset "contraction_functions.jl" begin include("contraction_functions.jl") end
+    @safetestset "qecsim_adaptors.jl" begin include("qecsim_adaptors.jl") end
     # Simple tests
     # Core tests
     @safetestset "core/surface.jl" begin include("core/surface.jl") end
