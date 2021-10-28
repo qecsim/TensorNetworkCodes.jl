@@ -6,6 +6,6 @@ TODO
 CurrentModule = TensorNetworkCodes.TNDistance
 ```
 ```@docs
-TNDistance.TN_distance
-TNDistance.TN_operator_weights
+TNDistance.tn_distance
+TNDistance.tn_operator_weights
 ```

@@ -12,7 +12,7 @@ using StatsPlots: groupedbar
 #exports
 export OperatorWeights
 export operator_weights_plot
-export TN_distance, TN_operator_weights
+export tn_distance, tn_operator_weights
 
 """
     OperatorWeights
@@ -99,12 +99,12 @@ function addition_tensor(in_index1,in_index2)
 end
 
 """
-    TN_weights(code;cosets=all_cosets)
+    tn_weights(code;cosets=all_cosets)
 
 Returns a tensor describing the weights of all operators in the `cosets` of
 the code.  (`cosets` is applied to each `seed_code` separately.)
 """
-function TN_weights(
+function tn_weights(
         code::TensorNetworkCode;
         cosets=all_cosets,
         truncate_to=num_qubits(code)+1)
@@ -170,22 +170,22 @@ function TN_weights(
 end
 
 """
-   TN_operator_weights(code)
+   tn_operator_weights(code)
 
 Returns `OperatorWeights` which includes the number of stabilizers
 of each weight, as well as the number of logical representatives
 (excluding identity) of each weight, as well as the code distance.
 """
-function TN_operator_weights(
+function tn_operator_weights(
         code::TensorNetworkCode;
         truncate_to=num_qubits(code)+1)
 
-    stabilizer_weights = array(TN_weights(
+    stabilizer_weights = array(tn_weights(
             code,
             cosets=identity_coset,
         truncate_to=truncate_to))
 
-    all_operator_weights = array(TN_weights(
+    all_operator_weights = array(tn_weights(
             code,
             cosets=all_cosets,
             truncate_to=truncate_to))
@@ -194,15 +194,15 @@ function TN_operator_weights(
 end
 
 """
-   TN_distance(code)
+   tn_distance(code)
 
 Returns the code distance calculated by contracting a tensor network.
 """
-function TN_distance(
+function tn_distance(
         code::TensorNetworkCode;
         truncate_to=num_qubits(code)+1)
 
-    op_weights = TN_operator_weights(
+    op_weights = tn_operator_weights(
         code::TensorNetworkCode;
         truncate_to=truncate_to)
 
