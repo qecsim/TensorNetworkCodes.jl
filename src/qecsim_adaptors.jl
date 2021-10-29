@@ -1,9 +1,37 @@
 """
     QecsimTNCode <: Qecsim.StabilizerCode
 
-    QecsimTNCode(code::TensorNetworkCode; name=nothing, distance=missing)
+    QecsimTNCode(code::TensorNetworkCode; distance=missing, label=nothing)
 
-TODO
+Qecsim stabilizer code implementation based on a tensor-network code.
+
+Pauli operators such as `stabilizers` and `logicals` are converted to Qecsim's format on
+construction. These are available via Qecsim API methods of the same name. The Qecsim `nkd`
+method returns calculated values for `n` (number of physical qubits) and `k` (number of
+logical qubits) and the given `distance` for `d`, if provided, otherwise `missing`. The
+Qecsim `label` method returns the given `label`, if provided, otherwise the label is
+constructed from `[n,k,d]`.
+
+Public fields:
+
+    tn_code::TensorNetworkCode  # the given tensor-network code
+
+# Examples
+```jldoctest
+julia> using Qecsim: label, nkd, validate
+
+julia> tn_code = TensorNetworkCode(five_qubit_code());
+
+julia> qs_code = QecsimTNCode(tn_code; distance=3);
+
+julia> label(qs_code)
+"QecsimTNCode: [5,1,3]"
+
+julia> nkd(qs_code)
+(5, 1, 3)
+
+julia> validate(qs_code)  # no error indicates success
+```
 """
 struct QecsimTNCode <: StabilizerCode
     _stabilizers::BitMatrix
