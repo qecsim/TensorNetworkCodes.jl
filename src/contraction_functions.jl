@@ -47,6 +47,7 @@ function combine(code1::SimpleCode, code2::SimpleCode)
     return SimpleCode("", stabilizers, logicals, pure_errors)
 end
 function combine(code1::TensorNetworkCode, code2::TensorNetworkCode)
+    code2 = (code1 === code2) ? deepcopy(code2) : code2  # copy if codes identical
 
     new_code = combine(SimpleCode(code1), SimpleCode(code2))
     new_code_graph = _combine(code1.code_graph, code2.code_graph)
@@ -598,6 +599,8 @@ julia> fusion(combine(code1, code2), [[1, 7], [2, 12]]);  # equivalent code
 ```
 """
 function contract(code1::TensorNetworkCode, code2::TensorNetworkCode, qubit_pairs)
+    code2 = (code1 === code2) ? deepcopy(code2) : code2  # copy if codes identical
+
     n = num_qubits(code1)
     qubit_pair_list = [[pair[1], pair[2] + n] for pair in qubit_pairs]
 

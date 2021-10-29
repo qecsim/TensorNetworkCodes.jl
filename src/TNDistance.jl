@@ -196,7 +196,7 @@ julia> using TensorNetworkCodes.TNDistance
 
 julia> code = TensorNetworkCode(five_qubit_code());
 
-julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]);
+julia> code = contract(code,code,[[1,1],[3,3]]);
 
 julia> tn_operator_weights(code)
 OperatorWeights([1, 0, 0, 0, 9, 0, 6], [1, 0, 9, 24, 99, 72, 51], 2)
@@ -231,7 +231,7 @@ julia> using TensorNetworkCodes.TNDistance
 
 julia> code = TensorNetworkCode(steane_code());
 
-julia> code = contract(code,deepcopy(code),[[1,1],[3,3]]); # contract two copies
+julia> code = contract(code,code,[[1,1],[3,3]]); # contract two copies
 
 julia> tn_distance(code) # this code has poor distance!
 2
