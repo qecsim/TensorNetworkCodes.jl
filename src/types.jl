@@ -60,6 +60,7 @@ Construct a simple code with pure errors evaluated using [`find_pure_errors`](@r
 An `ErrorException` is thrown if the pure errors cannot be evaluated; for example, if the
 stabilizers are not linearly independent.
 
+# Examples
 ```jldoctest
 julia> code = SimpleCode(
            "5-qubit code",
@@ -158,6 +159,7 @@ code.
 
 See also [`SimpleCode`](@ref).
 
+# Examples
 ```jldoctest
 julia> simple_code = five_qubit_code();
 
