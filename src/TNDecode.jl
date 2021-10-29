@@ -3,7 +3,7 @@ module TNDecode
 #imports
 using ..TensorNetworkCodes: TensorNetworkCode
 using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
-using ..TensorNetworkCodes: code_to_Itensor
+using ..TensorNetworkCodes: code_to_Itensor, create_virtual_tensor, physical_tensor
 using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
 using ..TensorNetworkCodes: num_qubits
 using ..TensorNetworkCodes: find_pure_error, find_syndrome
