@@ -133,21 +133,20 @@ function tn_decode(
         error("decoder not set up for multiple logicals yet!")
     end
 
+    # find best coset index
     coset_probabilities = abs.(coset_probabilities)
+    best_coset_idx = argmax(coset_probabilities)
 
-    best_coset = argmax(coset_probabilities) - 1
-    powers = [0,0]
-    if best_coset in [1,2]
-        powers[1] = 1
-    end
-    if best_coset in [3,2]
-        powers[2] = 1
-    end
-
+    # evaluate correction
+    best_logical = best_coset_idx - 1  # logical in format 0=I, 1=X, 2=Y, 3=Z
+    powers = Int[best_logical in (1, 2), best_logical in (2, 3)]  # convert to bsf
     correction = pauli_product_pow(code.logicals, powers)
     correction = pauli_product.(correction, pure_error)
 
-    return correction
+    # evaluate success probability
+    predicted_success_rate = coset_probabilities[best_coset_idx] / sum(coset_probabilities)
+
+    return correction, predicted_success_rate
 end
 
 

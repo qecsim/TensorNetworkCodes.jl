@@ -63,10 +63,12 @@ end
     qs_result = decode(qs_decoder, qs_code, qs_syndrome; p=p)
     @test bsp(stabilizers(qs_code), qs_result.recovery) == qs_syndrome
     @test !any(bsp(stabilizers(qs_code), xor.(qs_error, qs_result.recovery)))
+    @test 0 <= qs_result.custom_values[1] <= 1 # success probability
     # direct test of decoder (approx. contraction)
     qs_result = decode(QecsimTNDecoder(1), qs_code, qs_syndrome; p=p)
     @test bsp(stabilizers(qs_code), qs_result.recovery) == qs_syndrome
     @test !any(bsp(stabilizers(qs_code), xor.(qs_error, qs_result.recovery)))
+    @test 0 <= qs_result.custom_values[1] <= 1 # success probability
     # test via run_once
     qec_run_once(qs_code, qs_error_model, qs_decoder, p)  # no error
 end

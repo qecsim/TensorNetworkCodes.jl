@@ -95,7 +95,12 @@ contraction, otherwise chi defines the bond dimension used in MPS/MPO contractio
 
 An `ArgumentError` is thrown if chi is not null or positive. The Qecsim `label` method
 returns a label constructed from `chi`. The Qecsim `decode` method expects the keyword
-argument `p` for error probability, which defaults to `0.1`.
+argument `p` for error probability, which defaults to `0.1`, and returns a `DecodeResult`
+object with `custom_values` containing the success probability. The success probability is
+defined as the ratio of the probability of the mostly-likely logical coset to the sum of the
+probabilities of all logical cosets, for example:
+
+    DecodeResult.custom_values = [0.92] # e.g. where 0.92 is the success probability
 
 !!! note
     Currently `TNDecode` only supports codes that can be laid out on a square lattice.
@@ -116,10 +121,13 @@ julia> label(decoder)
 "QecsimTNDecoder (chi=4)"
 
 julia> result = qec_run_once(code, error_model, decoder, 0.1, MersenneTwister(11))
-RunResult{Nothing}(true, 1, Bool[0, 0], nothing)
+RunResult{Vector{Float64}}(true, 1, Bool[0, 0], [0.9249813981321254])
 
-julia> result.success
+julia> success_flag = result.success
 true
+
+julia> success_probability = result.custom_values[1]
+0.9249813981321254
 ```
 """
 struct QecsimTNDecoder <: Decoder
@@ -142,10 +150,10 @@ function Model.decode(
     chi = decoder.chi
     tn_syndrome::Vector{Int} = syndrome  # promote to Vector{Int}
     tn_contract_fn = isnothing(chi) ? TNDecode.basic_contract : TNDecode.mps_contract
-    tn_recovery = TNDecode.tn_decode(
+    tn_recovery, predicted_success_rate = TNDecode.tn_decode(
         code.tn_code, tn_syndrome, p;
         contract_fn=tn_contract_fn, bond_dim=chi
     )
     recovery = _tnpauli_to_bsf(tn_recovery)
-    return DecodeResult(recovery=recovery)
+    return DecodeResult(recovery=recovery, custom_values=[predicted_success_rate])
 end
