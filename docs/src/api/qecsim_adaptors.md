@@ -4,4 +4,5 @@ TODO
 
 ```@docs
 QecsimTNCode
+QecsimTNDecoder
 ```

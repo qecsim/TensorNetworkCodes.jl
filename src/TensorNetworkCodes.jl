@@ -29,8 +29,6 @@ export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_n
 include("code_graph_functions.jl")
 export combine, contract, contract_by_coords, fusion
 include("contraction_functions.jl")
-export QecsimTNCode
-include("qecsim_adaptors.jl")
 
 # SimpleCode exports
 export five_qubit_code,five_qubit_surface_code,steane_code
@@ -51,8 +49,15 @@ include("core/plotting.jl")
 export surface_code,rotated_surface_code,almost_rotated_surface_code
 include("core/surface.jl")
 
-# include submodules (not reexported)
+# include submodules (module exported but not members)
+export TNDecode
 include("TNDecode.jl")
+export TNDistance
 include("TNDistance.jl")
+
+# should QecsimAdaptors be a submodule or should all submodules be included in root?
+export QecsimTNCode, QecsimTNDecoder
+include("qecsim_adaptors.jl")
+
 
 end

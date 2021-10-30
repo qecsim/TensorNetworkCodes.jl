@@ -85,5 +85,58 @@ function _bsf_to_tnpauli(bs::AbstractMatrix{Bool})
     return _bsf_to_tnpauli.(b for b in eachrow(bs))
 end
 
+"""
+    QecsimTNDecoder <: Decoder
 
-struct QecsimTNDecoder <: Decoder end
+    QecsimTNDecoder(chi::Union{Nothing,Integer}=nothing)
+
+Qesim decoder implementation based on `TNDecode`. A null value of `chi` corresponds to exact
+contraction, otherwise chi defines the bond dimension used in MPS/MPO contraction.
+
+An `ArgumentError` is thrown if chi is not null or positive.
+
+!!! note
+    Currently `TNDecode` only supports codes that can be laid out on a square lattice.
+
+# Examples
+```jldoctest
+julia> using Qecsim, Qecsim.GenericModels
+
+julia> using Random:MersenneTwister  # use RNG for reproducible example
+
+julia> code = QecsimTNCode(rotated_surface_code(3); distance=3);
+
+julia> error_model = DepolarizingErrorModel();
+
+julia> decoder = QecsimTNDecoder();
+
+julia> result = qec_run_once(code, error_model, decoder, 0.1, MersenneTwister(11))
+RunResult{Nothing}(true, 1, Bool[0, 0], nothing)
+
+julia> result.success
+true
+```
+"""
+struct QecsimTNDecoder <: Decoder
+    chi::Union{Nothing,Int}
+    function QecsimTNDecoder(chi=nothing)
+        if !(isnothing(chi) || chi > 0)
+            throw(ArgumentError("QecsimTNDecoder supports `nothing` or positive `chi`."))
+        end
+        return new(chi)
+    end
+end
+function Model.decode(
+    decoder::QecsimTNDecoder, code::QecsimTNCode, syndrome::AbstractVector{Bool};
+    p=0.1, kwargs...
+)
+    chi = decoder.chi
+    tn_syndrome::Vector{Int} = syndrome  # promote to Vector{Int}
+    tn_contract_fn = isnothing(chi) ? TNDecode.basic_contract : TNDecode.mps_contract
+    tn_recovery = TNDecode.tn_decode(
+        code.tn_code, tn_syndrome, p;
+        contract_fn=tn_contract_fn, bond_dim=chi
+    )
+    recovery = _tnpauli_to_bsf(tn_recovery)
+    return DecodeResult(recovery=recovery)
+end

@@ -1,4 +1,5 @@
 using Qecsim
+using Qecsim.GenericModels: DepolarizingErrorModel, NaiveDecoder
 using TensorNetworkCodes
 using TensorNetworkCodes: _bsf_to_tnpauli, _tnpauli_to_bsf
 using Test
@@ -42,4 +43,25 @@ end
     @test validate(qs_code) === nothing  # no error
     @test isequal(nkd(qs_code), (7, 1, 3))
     @test label(qs_code) == "Steane"
+end
+
+@testset "QecsimTNDecoder" begin
+    # models
+    tn_code = rotated_surface_code(3)
+    qs_code = QecsimTNCode(tn_code; distance=3, label="Rotated Surface 3")
+    qs_error_model = DepolarizingErrorModel()
+    qs_decoder = QecsimTNDecoder()
+    p = 0.1
+    # direct test of decoder (exact contraction)
+    qs_error = generate(qs_error_model, qs_code, p)
+    qs_syndrome = bsp(stabilizers(qs_code), qs_error)
+    qs_result = decode(qs_decoder, qs_code, qs_syndrome; p=p)
+    @test bsp(stabilizers(qs_code), qs_result.recovery) == qs_syndrome
+    @test !any(bsp(stabilizers(qs_code), xor.(qs_error, qs_result.recovery)))
+    # direct test of decoder (approx. contraction)
+    qs_result = decode(QecsimTNDecoder(1), qs_code, qs_syndrome; p=p)
+    @test bsp(stabilizers(qs_code), qs_result.recovery) == qs_syndrome
+    @test !any(bsp(stabilizers(qs_code), xor.(qs_error, qs_result.recovery)))
+    # test via run_once
+    qec_run_once(qs_code, qs_error_model, qs_decoder, p)  # no error
 end

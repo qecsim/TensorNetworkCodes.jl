@@ -9,16 +9,17 @@ using ..TensorNetworkCodes: num_qubits
 using ..TensorNetworkCodes: find_pure_error, find_syndrome
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
-using ITensors: Index, ITensor, array, hastags
+using ITensors: Index, ITensor, MPO, MPS, array, hastags
 using Statistics: mean, stdm
 
 #exports
-export basic_contract, MPS_MPO_contract, TN_decoder
+export basic_contract, mps_contract, tn_decode
+export TN_decoder
 export compare_code_success_empirical, compare_code_success_predicted
 export TN_decoding_success_prob
 
 ########## Should be in core/types.jl
-function physical_neighbours(code,node)
+function _physical_neighbours(code,node)
 
     all_edges = edges(code)
     neighbour_edges = filter(x->node in x,all_edges)
@@ -45,12 +46,12 @@ function basic_contract(imatrix; bond_dim = 10)
 end
 
 """
-    MPS_MPO_contract
+    mps_contract
 
 Given a matrix of ITensors (`imatrix`), contracts approximately by
 treating the first row as an MPS and the subsequent rows as MPOs.
 """
-function MPS_MPO_contract(imatrix; bond_dim = 10)
+function mps_contract(imatrix; bond_dim = 10)
     ψ = MPS(imatrix[1,:])
     for j in 2:size(imatrix)[1]-1
         Σ = MPO(imatrix[j,:])
@@ -66,7 +67,7 @@ function MPS_MPO_contract(imatrix; bond_dim = 10)
 end
 
 """
-    contract(
+    _contract(
         code,
         pure_error::Array{Int64,1},
         error_prob::Float64;
@@ -76,7 +77,7 @@ end
 Contracts the tensor network described by `code_graph`.  Uses any
 specified `contraction_function`.
 """
-function contract(
+function _contract(
         code,
         pure_error::Array{Int64,1},
         error_prob::Float64;
@@ -90,7 +91,7 @@ function contract(
         node =  -(L*(i-1) + j)
         tensor = create_virtual_tensor(code,node)
 
-        neighbours = physical_neighbours(code,node)
+        neighbours = _physical_neighbours(code,node)
         for neighbour in neighbours
             indices = edge_indices(code,Set([node,neighbour]))
             α = findfirst(x->hastags(x,"physical"),indices)
@@ -104,6 +105,51 @@ function contract(
     return contraction_function(imatrix,bond_dim=bond_dim)
 
 end
+
+"""
+    tn_decode(
+        code::TensorNetworkCode, syndrome::AbstractVector{Int}, error_probability::Real;
+        contract_fn=basic_contract, bond_dim=10
+    ) -> Vector{Int}
+
+TODO: functions that return contract function with parameters such as bond_dim.
+TODO: doc
+"""
+function tn_decode(
+    code::TensorNetworkCode, syndrome::AbstractVector{Int}, error_probability;
+    contract_fn=basic_contract, bond_dim=10
+)
+    pure_error = find_pure_error(code,syndrome)
+
+    coset_probabilities = array(_contract(
+        code,
+        pure_error,
+        error_probability;
+        contraction_function=contract_fn,
+        bond_dim=bond_dim)
+    )
+
+    if length(coset_probabilities) != 4
+        error("decoder not set up for multiple logicals yet!")
+    end
+
+    coset_probabilities = abs.(coset_probabilities)
+
+    best_coset = argmax(coset_probabilities) - 1
+    powers = [0,0]
+    if best_coset in [1,2]
+        powers[1] = 1
+    end
+    if best_coset in [3,2]
+        powers[2] = 1
+    end
+
+    correction = pauli_product_pow(code.logicals, powers)
+    correction = pauli_product.(correction, pure_error)
+
+    return correction
+end
+
 
 """
     TN_decoder(
@@ -128,7 +174,7 @@ function TN_decoder(
     pure_error = find_pure_error(code,syndrome)
 
     coset_probabilities = array(
-        contract(
+        _contract(
         code,
         pure_error,
         error_prob;
@@ -181,7 +227,7 @@ function TN_decoding_success_prob(
     pure_error = find_pure_error(code,syndrome)
 
     coset_probabilities = array(
-        contract(
+        _contract(
         code,
         pure_error,
         error_prob;
@@ -242,7 +288,7 @@ function compare_code_success_empirical(
                 code2,
                 syndrome2,
                 error_prob;
-                contraction_function = MPS_MPO_contract,
+                contraction_function = mps_contract,
                 bond_dim=χ)
 
             effect_on_code = pauli_product.(error,code2_correction)
