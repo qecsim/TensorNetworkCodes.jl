@@ -93,7 +93,9 @@ end
 Qesim decoder implementation based on `TNDecode`. A null value of `chi` corresponds to exact
 contraction, otherwise chi defines the bond dimension used in MPS/MPO contraction.
 
-An `ArgumentError` is thrown if chi is not null or positive.
+An `ArgumentError` is thrown if chi is not null or positive. The Qecsim `label` method
+returns a label constructed from `chi`. The Qecsim `decode` method expects the keyword
+argument `p` for error probability, which defaults to `0.1`.
 
 !!! note
     Currently `TNDecode` only supports codes that can be laid out on a square lattice.
@@ -108,7 +110,10 @@ julia> code = QecsimTNCode(rotated_surface_code(3); distance=3);
 
 julia> error_model = DepolarizingErrorModel();
 
-julia> decoder = QecsimTNDecoder();
+julia> decoder = QecsimTNDecoder(4);
+
+julia> label(decoder)
+"QecsimTNDecoder (chi=4)"
 
 julia> result = qec_run_once(code, error_model, decoder, 0.1, MersenneTwister(11))
 RunResult{Nothing}(true, 1, Bool[0, 0], nothing)
@@ -125,6 +130,10 @@ struct QecsimTNDecoder <: Decoder
         end
         return new(chi)
     end
+end
+function Model.label(decoder::QecsimTNDecoder)
+    chi = decoder.chi
+    return isnothing(chi) ? "QecsimTNDecoder" : "QecsimTNDecoder (chi=$(chi))"
 end
 function Model.decode(
     decoder::QecsimTNDecoder, code::QecsimTNCode, syndrome::AbstractVector{Bool};

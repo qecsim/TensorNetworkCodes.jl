@@ -46,6 +46,11 @@ end
 end
 
 @testset "QecsimTNDecoder" begin
+    # field test
+    @test label(QecsimTNDecoder()) == "QecsimTNDecoder"
+    @test label(QecsimTNDecoder(1)) == "QecsimTNDecoder (chi=1)"
+    # invalid parameters
+    @test_throws ArgumentError QecsimTNDecoder(-1)
     # models
     tn_code = rotated_surface_code(3)
     qs_code = QecsimTNCode(tn_code; distance=3, label="Rotated Surface 3")
