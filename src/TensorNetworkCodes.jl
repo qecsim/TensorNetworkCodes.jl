@@ -1,8 +1,5 @@
 module TensorNetworkCodes
 
-# imports
-using Qecsim
-
 # SimpleCode imports
 using Combinatorics: combinations
 using Random: MersenneTwister, RandomDevice, rand
@@ -49,15 +46,9 @@ include("core/plotting.jl")
 export surface_code,rotated_surface_code,almost_rotated_surface_code
 include("core/surface.jl")
 
-# include submodules (module exported but not members)
-export TNDecode
+# include submodules (not exported)
 include("TNDecode.jl")
-export TNDistance
 include("TNDistance.jl")
-
-# should QecsimAdaptors be a submodule or should all submodules be included in root?
-export QecsimTNCode, QecsimTNDecoder
-include("qecsim_adaptors.jl")
-
+include("QecsimAdaptors.jl")
 
 end

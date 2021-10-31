@@ -8,7 +8,7 @@ using SafeTestsets
     @safetestset "code_graph_functions.jl" begin include("code_graph_functions.jl") end
     @safetestset "contraction_functions.jl" begin include("contraction_functions.jl") end
     @safetestset "itensors_adaptors.jl" begin include("itensors_adaptors.jl") end
-    @safetestset "qecsim_adaptors.jl" begin include("qecsim_adaptors.jl") end
+    @safetestset "QecsimAdaptors.jl" begin include("QecsimAdaptors.jl") end
     @safetestset "TNDistance.jl" begin include("TNDistance.jl") end
     # Simple tests
     # Core tests

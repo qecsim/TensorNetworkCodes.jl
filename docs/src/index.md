@@ -18,7 +18,7 @@ Pages = [
     "api/plotting_functions.md",
     "api/example_codes.md",
     "api/itensors_adaptors.md",
-    "api/qecsim_adaptors.md",
+    "api/QecsimAdaptors.md",
     "api/TNDecode.md",
     "api/TNDistance.md",
     "api/index.md",

@@ -1,4 +1,22 @@
 """
+Adaptors for using tensor-network codes within the
+[Qecsim](https://github.com/dkt29/Qecsim.jl) framework.
+
+Code, [`QecsimTNCode`](@ref), and decoder, [`QecsimTNDecoder`](@ref), implementations are
+provided to be used with Qecsim error models for QEC simulations using the Qecsim `App`
+module.
+"""
+module QecsimAdaptors
+
+#imports
+using ..TensorNetworkCodes: TensorNetworkCode, num_qubits
+using ..TNDecode: basic_contract, mps_contract, tn_decode
+using Qecsim
+
+#exports
+export QecsimTNCode, QecsimTNDecoder
+
+"""
     QecsimTNCode <: Qecsim.StabilizerCode
 
     QecsimTNCode(code::TensorNetworkCode; distance=missing, label=nothing)
@@ -18,6 +36,8 @@ Public fields:
 
 # Examples
 ```jldoctest
+julia> using TensorNetworkCodes.QecsimAdaptors
+
 julia> using Qecsim: label, nkd, validate
 
 julia> tn_code = TensorNetworkCode(five_qubit_code());
@@ -90,8 +110,9 @@ end
 
     QecsimTNDecoder(chi::Union{Nothing,Integer}=nothing)
 
-Qesim decoder implementation based on `TNDecode`. A null value of `chi` corresponds to exact
-contraction, otherwise chi defines the bond dimension used in MPS/MPO contraction.
+Qesim decoder implementation based on the [TNDecode module](@ref). A null value of `chi`
+corresponds to exact contraction, otherwise chi defines the bond dimension used in MPS/MPO
+contraction.
 
 An `ArgumentError` is thrown if chi is not null or positive. The Qecsim `label` method
 returns a label constructed from `chi`. The Qecsim `decode` method expects the keyword
@@ -107,10 +128,13 @@ The success probability is added to `custom_values` as a vector so that as Qecsi
 than simply summing over the value.
 
 !!! note
-    Currently `TNDecode` only supports codes that can be laid out on a square lattice.
+    Currently the [TNDecode module](@ref) only supports codes that can be laid out on a
+    square lattice.
 
 # Examples
 ```jldoctest
+julia> using TensorNetworkCodes.QecsimAdaptors
+
 julia> using Qecsim, Qecsim.GenericModels
 
 julia> using Random:MersenneTwister  # use RNG for reproducible example
@@ -153,12 +177,14 @@ function Model.decode(
 )
     chi = decoder.chi
     tn_syndrome::Vector{Int} = syndrome  # promote to Vector{Int}
-    tn_contract_fn = isnothing(chi) ? TNDecode.basic_contract : TNDecode.mps_contract
-    tn_recovery, predicted_success_rate = TNDecode.tn_decode(
+    tn_contract_fn = isnothing(chi) ? basic_contract : mps_contract
+    tn_recovery, predicted_success_rate = tn_decode(
         code.tn_code, tn_syndrome, p;
         contract_fn=tn_contract_fn, bond_dim=chi
     )
     recovery = _tnpauli_to_bsf(tn_recovery)
     # add predicted_success_rate as vector so all values retained (not summed) over runs
     return DecodeResult(recovery=recovery, custom_values=[[predicted_success_rate]])
+end
+
 end
