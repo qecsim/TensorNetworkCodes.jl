@@ -8,6 +8,15 @@ using Test
     @test tn_distance(code) == 2
 end
 
+@testset "tn_distance-contract-same-code" begin
+    code = TensorNetworkCode(steane_code())
+    code = contract(code, code, [[1, 1], [3, 3]])
+    code = contract(code, code, [[1, 1], [7, 7]])
+    brute_distance = find_distance_logicals(code)[1]
+    tensor_distance = tn_distance(code)
+    @test tensor_distance == brute_distance == 2
+end
+
 @testset "tn_operator_weights" begin
     code = TensorNetworkCode(five_qubit_code())
     code = contract(code, code, [[1, 1], [3, 3]])
