@@ -35,9 +35,6 @@ include("itensors_functions.jl")
 export five_qubit_code,five_qubit_surface_code,steane_code
 export random_code, random_stabilizer_state
 include("simple/examples.jl")
-export min_weight_brute_force,do_nothing_decoder
-export monte_carlo_simulation
-include("simple/decoding.jl")
 
 # Core exports
 export code_plot,operator_plot
