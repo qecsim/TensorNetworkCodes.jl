@@ -232,6 +232,31 @@ function pauli_product_pow(operators, powers)
 end
 
 """
+    pauli_random_operator(n::Int, p::Real, rng::AbstractRNG=GLOBAL_RNG)
+        -> AbstractVector{Int}
+
+Return a random Pauli operator on `n` qubits with Paulis applied according to i.i.d.
+depolarizing noise with probability `p`.
+
+# Examples
+```jldoctest
+julia> using Random:MersenneTwister  # use RNG for reproducible example
+
+julia> pauli_random_operator(5, 0.2, MersenneTwister(13))
+5-element Vector{Int64}:
+ 3
+ 3
+ 0
+ 2
+ 0
+```
+"""
+function pauli_random_operator(n::Int, p::Real, rng::AbstractRNG=GLOBAL_RNG)
+    weights = ProbabilityWeights([1 - p, p / 3, p / 3, p / 3])
+    return sample(rng, [0, 1, 2, 3], weights, n)
+end
+
+"""
     pauli_rep_change(pauli::Int) -> Char
     pauli_rep_change(pauli::Char) -> Int
 

@@ -13,6 +13,7 @@ pauli_commutation
 pauli_pow
 pauli_product
 pauli_product_pow
+pauli_random_operator
 pauli_rep_change
 pauli_weight
 ```

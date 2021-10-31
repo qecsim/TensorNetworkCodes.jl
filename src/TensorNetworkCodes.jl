@@ -2,8 +2,8 @@ module TensorNetworkCodes
 
 # SimpleCode imports
 using Combinatorics: combinations
-using Random: MersenneTwister, RandomDevice, rand
-using StatsBase: Weights, sample
+using Random: AbstractRNG, MersenneTwister, RandomDevice, GLOBAL_RNG, rand
+using StatsBase: ProbabilityWeights, sample
 
 # Core imports
 using GraphPlot: gplot
@@ -14,7 +14,8 @@ using LightGraphs: Graph, add_edge!
 export QuantumCode, SimpleCode, CodeGraph, TensorNetworkCode
 include("types.jl")
 export pauli_are_commuting, pauli_are_independent, pauli_commutation
-export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weight
+export pauli_pow, pauli_product, pauli_product_pow
+export pauli_random_operator, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")
 export num_qubits, verify
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
@@ -34,8 +35,6 @@ include("itensors_functions.jl")
 export five_qubit_code,five_qubit_surface_code,steane_code
 export random_code, random_stabilizer_state
 include("simple/examples.jl")
-export random_pauli_error
-include("simple/errors.jl")
 export min_weight_brute_force,do_nothing_decoder
 export monte_carlo_simulation
 include("simple/decoding.jl")
