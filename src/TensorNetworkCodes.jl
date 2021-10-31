@@ -27,18 +27,14 @@ export combine, contract, contract_by_coords, fusion
 include("contraction_functions.jl")
 export plot_code, plot_operator
 include("plotting_functions.jl")
+export five_qubit_code, five_qubit_surface_code, steane_code
+export random_code, random_stabilizer_state
+include("examples/simple.jl")
+export almost_rotated_surface_code, rotated_surface_code, surface_code
+include("examples/surface.jl")
 export code_to_Itensor, identity_coset, all_cosets
 export physical_tensor, create_virtual_tensor
 include("itensors_functions.jl")
-
-# SimpleCode exports
-export five_qubit_code,five_qubit_surface_code,steane_code
-export random_code, random_stabilizer_state
-include("simple/examples.jl")
-
-# Core exports
-export surface_code,rotated_surface_code,almost_rotated_surface_code
-include("core/surface.jl")
 
 # include submodules (not exported)
 include("TNDecode.jl")
