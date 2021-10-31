@@ -26,6 +26,9 @@ export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_n
 include("code_graph_functions.jl")
 export combine, contract, contract_by_coords, fusion
 include("contraction_functions.jl")
+export code_to_Itensor, identity_coset, all_cosets
+export physical_tensor, create_virtual_tensor
+include("itensors_functions.jl")
 
 # SimpleCode exports
 export five_qubit_code,five_qubit_surface_code,steane_code
@@ -38,9 +41,6 @@ export monte_carlo_simulation
 include("simple/decoding.jl")
 
 # Core exports
-export identity_coset,all_cosets,code_to_tensor,code_to_Itensor
-export physical_tensor,create_virtual_tensor
-include("itensors_adaptors.jl")
 export code_plot,operator_plot
 include("core/plotting.jl")
 export surface_code,rotated_surface_code,almost_rotated_surface_code

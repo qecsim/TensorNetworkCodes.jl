@@ -125,7 +125,7 @@ probabilities of all logical cosets, for example:
 
 The success probability is added to `custom_values` as a vector so that as Qecsim
 `App.qec_run` aggregates success probabilities over many runs it extends the vector rather
-than simply summing over the value.
+than simply summing over values.
 
 !!! note
     Currently the [TNDecode module](@ref) only supports codes that can be laid out on a

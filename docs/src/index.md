@@ -17,10 +17,10 @@ Pages = [
     "api/code_graph_functions.md",
     "api/plotting_functions.md",
     "api/example_codes.md",
-    "api/itensors_adaptors.md",
-    "api/QecsimAdaptors.md",
+    "api/itensors_functions.md",
     "api/TNDecode.md",
     "api/TNDistance.md",
+    "api/QecsimAdaptors.md",
     "api/index.md",
 ]
 ```
