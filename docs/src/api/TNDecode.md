@@ -1,11 +1,11 @@
 # TNDecode module
 
-TODO
-
 ```@meta
 CurrentModule = TensorNetworkCodes.TNDecode
 ```
 ```@docs
 TNDecode
-TNDecode.TN_decoder
+TNDecode.basic_contract
+TNDecode.mps_contract
+TNDecode.tn_decode
 ```

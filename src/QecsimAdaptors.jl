@@ -177,10 +177,10 @@ function Model.decode(
 )
     chi = decoder.chi
     tn_syndrome::Vector{Int} = syndrome  # promote to Vector{Int}
-    tn_contract_fn = isnothing(chi) ? basic_contract : mps_contract
+    tn_contract_fn = isnothing(chi) ? basic_contract() : mps_contract(chi)
     tn_recovery, predicted_success_rate = tn_decode(
         code.tn_code, tn_syndrome, p;
-        contract_fn=tn_contract_fn, bond_dim=chi
+        contract_fn=tn_contract_fn
     )
     recovery = _tnpauli_to_bsf(tn_recovery)
     # add predicted_success_rate as vector so all values retained (not summed) over runs
