@@ -1,5 +1,5 @@
 """
-Decoding functions based on contracting a tensor-network associated with as
+Decoding functions based on contracting a tensor-network associated with a
 [`TensorNetworkCode`](@ref), see [`tn_decode`](@ref).
 """
 module TNDecode
