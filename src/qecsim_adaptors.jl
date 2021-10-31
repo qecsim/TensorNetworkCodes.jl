@@ -100,7 +100,11 @@ object with `custom_values` containing the success probability. The success prob
 defined as the ratio of the probability of the mostly-likely logical coset to the sum of the
 probabilities of all logical cosets, for example:
 
-    DecodeResult.custom_values = [0.92] # e.g. where 0.92 is the success probability
+    DecodeResult.custom_values = [[0.92]] # e.g. where 0.92 is the success probability
+
+The success probability is added to `custom_values` as a vector so that as Qecsim
+`App.qec_run` aggregates success probabilities over many runs it extends the vector rather
+than simply summing over the value.
 
 !!! note
     Currently `TNDecode` only supports codes that can be laid out on a square lattice.
@@ -121,12 +125,12 @@ julia> label(decoder)
 "QecsimTNDecoder (chi=4)"
 
 julia> result = qec_run_once(code, error_model, decoder, 0.1, MersenneTwister(11))
-RunResult{Vector{Float64}}(true, 1, Bool[0, 0], [0.9249813981321254])
+RunResult{Vector{Vector{Float64}}}(true, 1, Bool[0, 0], [[0.9249813981321254]])
 
 julia> success_flag = result.success
 true
 
-julia> success_probability = result.custom_values[1]
+julia> success_probability = result.custom_values[1][1]
 0.9249813981321254
 ```
 """
@@ -155,5 +159,6 @@ function Model.decode(
         contract_fn=tn_contract_fn, bond_dim=chi
     )
     recovery = _tnpauli_to_bsf(tn_recovery)
-    return DecodeResult(recovery=recovery, custom_values=[predicted_success_rate])
+    # add predicted_success_rate as vector so all values retained (not summed) over runs
+    return DecodeResult(recovery=recovery, custom_values=[[predicted_success_rate]])
 end
