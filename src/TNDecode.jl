@@ -6,30 +6,15 @@ module TNDecode
 
 #imports
 using ..TensorNetworkCodes: TensorNetworkCode
-using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
-using ..TensorNetworkCodes: code_to_Itensor, create_virtual_tensor, physical_tensor
-using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
-using ..TensorNetworkCodes: num_qubits, physical_neighbours
-using ..TensorNetworkCodes: find_pure_error, find_syndrome
-using ..TensorNetworkCodes: random_pauli_error
+using ..TensorNetworkCodes: pauli_product, pauli_product_pow
+using ..TensorNetworkCodes: num_qubits, find_pure_error
+using ..TensorNetworkCodes: physical_neighbours, edge_indices
+using ..TensorNetworkCodes: create_virtual_tensor, physical_tensor
 using ITensors: ITensors  # only imported to avoid `contract` name clash
-using ITensors: Index, ITensor, MPO, MPS, array, hastags
-using Statistics: mean, stdm
+using ITensors: ITensor, MPO, MPS, array, hastags
 
 #exports
 export basic_contract, mps_contract, tn_decode
-
-# ########## Should be in core/types.jl
-# function _physical_neighbours(code,node)
-
-#     all_edges = edges(code)
-#     neighbour_edges = filter(x->node in x,all_edges)
-#     neighbour_nodes = union(neighbour_edges...)
-
-#     return filter(x->x>0,neighbour_nodes)
-
-# end
-# ##########
 
 """
     basic_contract(bond_dim=10) -> function
