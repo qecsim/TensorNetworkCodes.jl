@@ -1,3 +1,7 @@
+"""
+Calculate distances and distributions of logical operator and stabilizer weights for a
+[`TensorNetworkCode`](@ref), see [`tn_distance`](@ref) and [`tn_operator_weights`](@ref).
+"""
 module TNDistance
 
 #imports
@@ -11,7 +15,7 @@ using StatsPlots: groupedbar
 
 #exports
 export OperatorWeights
-export operator_weights_plot
+export plot_operator_weights
 export tn_distance, tn_operator_weights
 
 """
@@ -249,15 +253,18 @@ function tn_distance(
 end
 
 """
-    operator_weights_plot(weights::OperatorWeights;truncate_to = length(weights.stabilizer_weights))
+    plot_operator_weights(
+        weights::OperatorWeights; truncate_to=length(weights.stabilizer_weights)
+    )
 
 Plots a bar plot (on a log scale) of the number of operators of each weight.
 This includes all code operators (logicals plus stabilizers) and all stabilizers plotted
 separately.
 """
-function operator_weights_plot(
-        weights::OperatorWeights;
-        truncate_to = length(weights.stabilizer_weights))
+function plot_operator_weights(
+    weights::OperatorWeights;
+    truncate_to=length(weights.stabilizer_weights)
+)
 
     all_ops = weights.all_operator_weights[1:truncate_to]
     stabs = weights.stabilizer_weights[1:truncate_to]

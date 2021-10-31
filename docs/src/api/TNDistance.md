@@ -3,8 +3,9 @@
 ```@meta
 CurrentModule = TensorNetworkCodes.TNDistance
 ```
-
-Calculate distances and distributions of logical operator and stabilizer weights for a [`TensorNetworkCode`](@ref).
+```@docs
+TNDistance
+```
 
 ## Operator Weights
 

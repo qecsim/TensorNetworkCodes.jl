@@ -164,9 +164,3 @@ function _edge_to_graph_edge(edge::Set{Int64},n_virtual::Int64)
 
     return output
 end
-
-# plot_operator(
-#     code::TensorNetworkCode,
-#     operators::Array{Array{Int64,1},1};
-#     use_coords = true) =
-# plot_operator.(Ref(code),operators;use_coords)

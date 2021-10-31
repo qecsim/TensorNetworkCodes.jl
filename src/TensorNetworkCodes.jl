@@ -1,14 +1,12 @@
 module TensorNetworkCodes
 
-# SimpleCode imports
+# imports
 using Combinatorics: combinations
-using Random: AbstractRNG, MersenneTwister, RandomDevice, GLOBAL_RNG, rand
-using StatsBase: ProbabilityWeights, sample
-
-# Core imports
 using GraphPlot: gplot
 using ITensors: Index, ITensor, dim, hastags, inds
 using LightGraphs: Graph, add_edge!
+using Random: AbstractRNG, MersenneTwister, RandomDevice, GLOBAL_RNG, rand
+using StatsBase: ProbabilityWeights, sample
 
 # exports
 export QuantumCode, SimpleCode, CodeGraph, TensorNetworkCode

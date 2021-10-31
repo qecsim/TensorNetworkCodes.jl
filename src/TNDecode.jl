@@ -1,6 +1,6 @@
 """
-Decoding functions based on contracting a tensor-network associated with the tensor-network
-code, see [`tn_decode`](@ref).
+Decoding functions based on contracting a tensor-network associated with as
+[`TensorNetworkCode`](@ref), see [`tn_decode`](@ref).
 """
 module TNDecode
 
@@ -10,8 +10,7 @@ using ..TensorNetworkCodes: pauli_product, pauli_product_pow
 using ..TensorNetworkCodes: num_qubits, find_pure_error
 using ..TensorNetworkCodes: physical_neighbours, edge_indices
 using ..TensorNetworkCodes: create_virtual_tensor, physical_tensor
-using ITensors: ITensors  # only imported to avoid `contract` name clash
-using ITensors: ITensor, MPO, MPS, array, hastags
+using ITensors: ITensor, MPO, MPS, array, contract, hastags
 
 #exports
 export basic_contract, mps_contract, tn_decode
@@ -52,7 +51,7 @@ function mps_contract(bond_dim=10)
             ψ = MPS(imatrix[1,:])
             for j in 2:size(imatrix)[1]-1
                 Σ = MPO(imatrix[j,:])
-                ψ = ITensors.contract(Σ, ψ; maxdim = bond_dim)  # ITensors.contract
+                ψ = contract(Σ, ψ; maxdim = bond_dim)
             end
 
             output = imatrix[end,1] * ψ[1]
