@@ -12,9 +12,14 @@ end
 end
 
 @testset "num_nodes" begin
-    simple_code = five_qubit_code()
-    tn_code = TensorNetworkCode(simple_code)
-    @test num_nodes(tn_code) == 6  # 5 physical and 1 logical qubits
+    code = TensorNetworkCode(five_qubit_code())
+    @test num_nodes(code) == 6  # 5 physical and 1 logical qubits
+end
+
+@testset "physical_neighbours" begin
+    code = TensorNetworkCode(five_qubit_code())
+    @test physical_neighbours(code, -1) == Set(1:5)
+    @test physical_neighbours(code, 2) == Set()
 end
 
 @testset "set_coords!" begin

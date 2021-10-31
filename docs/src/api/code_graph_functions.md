@@ -21,6 +21,7 @@ Functions to access and manipulate the [`CodeGraph`](@ref) associated with a
 edges
 nodes
 num_nodes
+physical_neighbours
 set_coords!(::TensorNetworkCode, ::AbstractVector{<:AbstractVector{<:Real}})
 shift_coords!(::TensorNetworkCode, ::AbstractVector{<:Real})
 ```

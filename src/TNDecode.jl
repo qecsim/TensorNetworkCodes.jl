@@ -9,7 +9,7 @@ using ..TensorNetworkCodes: TensorNetworkCode
 using ..TensorNetworkCodes: edges, edge_indices, node_indices, node_types
 using ..TensorNetworkCodes: code_to_Itensor, create_virtual_tensor, physical_tensor
 using ..TensorNetworkCodes: pauli_commutation, pauli_product, pauli_product_pow
-using ..TensorNetworkCodes: num_qubits
+using ..TensorNetworkCodes: num_qubits, physical_neighbours
 using ..TensorNetworkCodes: find_pure_error, find_syndrome
 using ..TensorNetworkCodes: random_pauli_error
 using ITensors: ITensors  # only imported to avoid `contract` name clash
@@ -19,17 +19,17 @@ using Statistics: mean, stdm
 #exports
 export basic_contract, mps_contract, tn_decode
 
-########## Should be in core/types.jl
-function _physical_neighbours(code,node)
+# ########## Should be in core/types.jl
+# function _physical_neighbours(code,node)
 
-    all_edges = edges(code)
-    neighbour_edges = filter(x->node in x,all_edges)
-    neighbour_nodes = union(neighbour_edges...)
+#     all_edges = edges(code)
+#     neighbour_edges = filter(x->node in x,all_edges)
+#     neighbour_nodes = union(neighbour_edges...)
 
-    return filter(x->x>0,neighbour_nodes)
+#     return filter(x->x>0,neighbour_nodes)
 
-end
-##########
+# end
+# ##########
 
 """
     basic_contract(bond_dim=10) -> function
@@ -166,7 +166,7 @@ function _contract(code, pure_error::AbstractVector{Int}, error_prob::Float64, c
         node =  -(L*(i-1) + j)
         tensor = create_virtual_tensor(code, node)
 
-        neighbours = _physical_neighbours(code, node)
+        neighbours = physical_neighbours(code, node)
         for neighbour in neighbours
             indices = edge_indices(code, Set([node, neighbour]))
             α = findfirst(x->hastags(x, "physical"), indices)

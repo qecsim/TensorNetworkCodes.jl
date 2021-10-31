@@ -127,6 +127,18 @@ number of virtual nodes.
 num_nodes(code::TensorNetworkCode) = num_nodes(code.code_graph)
 
 """
+    physical_neighbours(code::TensorNetworkCode, node::Int) -> Set{Int}
+
+Returns the node labels of physical qubits connected by an edge to the given node.
+"""
+function physical_neighbours(code,node)
+    all_edges = edges(code)
+    neighbour_edges = filter(x -> node in x, all_edges)
+    neighbour_nodes = union(neighbour_edges...)
+    return filter(x -> x > 0 && x != node, neighbour_nodes)
+end
+
+"""
     set_coords!(
         code::TensorNetworkCode,
         new_coords::AbstractVector{<:AbstractVector{<:Real}}
