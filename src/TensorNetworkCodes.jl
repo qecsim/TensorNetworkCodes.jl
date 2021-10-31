@@ -27,6 +27,8 @@ export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_n
 include("code_graph_functions.jl")
 export combine, contract, contract_by_coords, fusion
 include("contraction_functions.jl")
+export plot_code, plot_operator
+include("plotting_functions.jl")
 export code_to_Itensor, identity_coset, all_cosets
 export physical_tensor, create_virtual_tensor
 include("itensors_functions.jl")
@@ -37,8 +39,6 @@ export random_code, random_stabilizer_state
 include("simple/examples.jl")
 
 # Core exports
-export code_plot,operator_plot
-include("core/plotting.jl")
 export surface_code,rotated_surface_code,almost_rotated_surface_code
 include("core/surface.jl")
 

@@ -1,3 +1,8 @@
 # Plotting functions
 
-TODO
+Functions for plotting tensor-network codes and operators.
+
+```@docs
+plot_code
+plot_operator
+```
