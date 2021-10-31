@@ -17,5 +17,5 @@ TNDistance.OperatorWeights
 ```@docs
 TNDistance.tn_operator_weights
 TNDistance.tn_distance
-TNDistance.operator_weights_plot
+TNDistance.plot_operator_weights
 ```
