@@ -47,7 +47,15 @@ function combine(code1::SimpleCode, code2::SimpleCode)
     return SimpleCode("", stabilizers, logicals, pure_errors)
 end
 function combine(code1::TensorNetworkCode, code2::TensorNetworkCode)
-    code2 = (code1 === code2) ? deepcopy(code2) : code2  # copy if codes identical
+    # code2 = (code1 === code2) ? deepcopy(code2) : code2  # copy if codes identical
+    
+    # copy & change indices of one of the codes.  necessary to avoid
+    # duplicate ITensor indices
+    if num_qubits(code1) < num_qubits(code2)
+        code1 = new_indices(code1)
+    else 
+        code2 = new_indices(code2)
+    end
 
     new_code = combine(SimpleCode(code1), SimpleCode(code2))
     new_code_graph = _combine(code1.code_graph, code2.code_graph)

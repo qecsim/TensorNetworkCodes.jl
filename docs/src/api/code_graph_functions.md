@@ -38,4 +38,5 @@ node_indices
 set_node_indices!
 node_types
 set_node_types!
+new_indices
 ```

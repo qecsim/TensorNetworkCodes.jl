@@ -43,3 +43,14 @@ end
     @test coords(code) != old_coords
     @test coords(code) == Dict([k, v + shift] for (k, v) in old_coords)
 end
+
+@testset "new_indices" begin
+    code1 = TensorNetworkCode(five_qubit_code())
+    code1 = contract(code1,TensorNetworkCode(steane_code()),[[1,1],[2,2]])
+    code2 = new_indices(code1)
+    # check number of indices is correct
+    length(edge_indices(code1)) == length(edge_indices(code2))
+    length(node_indices(code1)) == length(node_indices(code2))
+    # let's make sure all indices are new!
+    @test length(intersect(edge_indices(code2),edge_indices(code1))) == 0
+end
