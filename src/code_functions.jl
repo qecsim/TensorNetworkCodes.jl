@@ -12,7 +12,7 @@ end
 """
     verify(code::QuantumCode; log_warn=true) -> Bool
 
-Return true if the code satisfied the properties of a valid code, or false otherwise. if the
+Return true if the code satisfied the properties of a valid code, or false otherwise.  If the
 code is not valid and `log_warn` is true then a warning is logged with the specific reason.
 
 The following checks are performed:

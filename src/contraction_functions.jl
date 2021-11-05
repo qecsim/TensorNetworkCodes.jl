@@ -172,7 +172,8 @@ number of logical qubits. Physically equivalent to updating stabilizers, logical
 errors after measuring ``XX`` and ``ZZ`` on each pair of qubits.
 
 The versions that take `qubit_pairs` take iterables of `AbstractVector{Int}`. An
-`ErrorException` is thrown if the fusion is not possible.
+`ErrorException` is thrown if the fusion is not possible, i.e., if the logical
+degrees of freedom would not be preserved by the measurements.
 
 # Examples
 ```jldoctest

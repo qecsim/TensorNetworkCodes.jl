@@ -227,7 +227,8 @@ end
     tn_distance(code::TensorNetworkCode;truncate_to=num_qubits(code)+1)
     -> Int64
 
-Returns the code distance calculated by contracting a tensor network.
+Returns the code distance calculated by contracting a tensor network.  Returns
+zero for stabilizer states (codes with no logical qubits).
 
 # Examples
 ```jldoctest

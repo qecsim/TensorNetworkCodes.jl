@@ -4,7 +4,8 @@
 Return a plot, as returned by `GraphPlot.gplot`, of the code. If used in a Jupyter
 notebook the plot is rendered after the cell.
 
-Physical qubit nodes are coloured red and virtual tensors are coloured green.
+Physical qubit nodes are coloured red and virtual tensors are coloured green or blue: 
+green if they have no logical qubits and blue if they do.
 
 # Examples
 ```julia
