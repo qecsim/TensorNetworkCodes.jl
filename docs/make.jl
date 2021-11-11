@@ -6,11 +6,11 @@ DocMeta.setdocmeta!(TensorNetworkCodes, :DocTestSetup, :(using TensorNetworkCode
 makedocs(;
     modules=[TensorNetworkCodes],
     authors="Terry Farrelly, David K. Tuckett",
-    repo="https://github.com/dkt29/TensorNetworkCodes.jl/blob/{commit}{path}#{line}",
+    repo="https://github.com/qecsim/TensorNetworkCodes.jl/blob/{commit}{path}#{line}",
     sitename="TensorNetworkCodes.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://dkt29.github.io/TensorNetworkCodes.jl",
+        canonical="https://qecsim.github.io/TensorNetworkCodes.jl",
         assets=String[],
     ),
     pages=[
@@ -32,6 +32,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/dkt29/TensorNetworkCodes.jl",
+    repo="github.com/qecsim/TensorNetworkCodes.jl",
     devbranch="main",
 )
