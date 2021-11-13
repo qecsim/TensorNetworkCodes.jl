@@ -39,14 +39,11 @@ _TODO: replace with nbviewer links (works better) when TensorNetworkCodes.jl rep
 The following demos correspond to results included in
 [arXiv:2109.11996](https://arxiv.org/abs/2109.11996):
 
-* [Small example tensor-network codes and code distances]
-  (https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Small_examples_with_distance.ipynb)
+* [Small example tensor-network codes and code distances](https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Small_examples_with_distance.ipynb)
 
-* [The 19 qubit colour code as a tensor-network code]
-  (https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Colour_code.ipynb)
+* [The 19 qubit colour code as a tensor-network code](https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Colour_code.ipynb)
 
-* [The modified surface code]
-  (https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Modified_surface_code_example.ipynb)
+* [The modified surface code](https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Modified_surface_code_example.ipynb)
 
 ## Citing
 
