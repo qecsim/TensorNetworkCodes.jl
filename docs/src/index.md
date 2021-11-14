@@ -19,14 +19,12 @@ _TensorNetworkCodes.jl_ is installed using the Julia package manager
 
 ```julia
 pkg> # Press ']' to enter the Pkg REPL mode
-pkg> add https://github.com/qecsim/Qecsim.jl  # NOT REQUIRED WHEN QECSIM IS REGISTERED
 pkg> add https://github.com/qecsim/TensorNetworkCodes.jl
 
 ```
 or
 ```julia
 julia> using Pkg
-julia> Pkg.add(url="https://github.com/qecsim/Qecsim.jl")  # NOT REQUIRED WHEN QECSIM IS REGISTERED
 julia> Pkg.add(url="https://github.com/qecsim/TensorNetworkCodes.jl")
 
 ```
