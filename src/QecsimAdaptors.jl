@@ -1,6 +1,6 @@
 """
 Adaptors for using tensor-network codes within the
-[Qecsim](https://github.com/dkt29/Qecsim.jl) framework.
+[Qecsim](https://github.com/qecsim/Qecsim.jl) framework.
 
 Code, [`QecsimTNCode`](@ref), and decoder, [`QecsimTNDecoder`](@ref), implementations are
 provided to be used with Qecsim error models for QEC simulations using the Qecsim `App`

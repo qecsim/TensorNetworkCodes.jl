@@ -169,3 +169,35 @@ function shift_coords!(code::TensorNetworkCode, shift::AbstractVector{<:Real})
         set_coords!(code, node, new_coords)
     end
 end
+
+
+"""
+    new_indices(code::TensorNetworkCode) -> TensorNetworkCode
+
+Deepcopies the code but changes all `ITensor` indices.
+"""
+function new_indices(code::TensorNetworkCode)
+    new_code = deepcopy(code)
+
+    for edge in edges(new_code)
+        old_indices = edge_indices(new_code,edge)
+        # Create new indices with same dims and tags
+        new_indices = [Index(dim(old_index),tags(old_index)) for old_index in old_indices]
+        for node in nodes(new_code)
+            if node < 0
+                new_node_indices = node_indices(new_code,node)
+                for α in 1:length(old_indices)
+                    β = findfirst(x->x==old_indices[α],new_node_indices)
+                    if β == nothing
+                        continue
+                    end
+                    new_node_indices[β] = new_indices[α]
+                end
+                set_node_indices!(new_code,node,new_node_indices)
+            end
+        end
+        set_edge_indices!(new_code,edge,new_indices)
+    end
+
+    return new_code
+end

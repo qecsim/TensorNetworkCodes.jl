@@ -6,6 +6,17 @@ using Test
     @test Set(edges(code)) == Set([Set([-1, i]) for i in 1:5])
 end
 
+@testset "new_indices" begin
+    code1 = TensorNetworkCode(five_qubit_code())
+    code1 = contract(code1,TensorNetworkCode(steane_code()),[[1,1],[2,2]])
+    code2 = new_indices(code1)
+    # check number of indices is correct
+    length(edge_indices(code1)) == length(edge_indices(code2))
+    length(node_indices(code1)) == length(node_indices(code2))
+    # let's make sure all indices are new!
+    @test length(intersect(edge_indices(code2),edge_indices(code1))) == 0
+end
+
 @testset "nodes" begin
     code = TensorNetworkCode(five_qubit_code())
     @test nodes(code) == [-1, 1, 2, 3, 4, 5]

@@ -24,8 +24,9 @@ end
 """
     pauli_are_independent(operators) -> Bool
 
-Return true if the Pauli operators are linearly independent, or false otherwise, where
-`operators` is an iterable of `AbstractVector{Int}`.
+Return true if the Pauli operators are independent, or false otherwise, where
+`operators` is an iterable of `AbstractVector{Int}`.  Here independence means
+that no operator can be expressed as a product of the others.
 
 # Examples
 ```jldoctest
@@ -154,7 +155,8 @@ end
 """
     pauli_product(a::Int, b::Int) -> Int
 
-Return the product of two Paulis.
+Return the product of two Paulis.  Note that we are ignoring overall minus
+signs.
 
 # Examples
 ```jldoctest

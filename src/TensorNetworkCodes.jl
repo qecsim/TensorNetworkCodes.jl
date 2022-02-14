@@ -3,7 +3,7 @@ module TensorNetworkCodes
 # imports
 using Combinatorics: combinations
 using GraphPlot: gplot
-using ITensors: Index, ITensor, dim, hastags, inds
+using ITensors: Index, ITensor, dim, hastags, inds, tags
 using LightGraphs: Graph, add_edge!
 using Random: AbstractRNG, MersenneTwister, RandomDevice, GLOBAL_RNG, rand
 using StatsBase: ProbabilityWeights, sample
@@ -19,7 +19,7 @@ export num_qubits, verify
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
 export gauge, permute, purify
 include("code_functions.jl")
-export edges, nodes, num_nodes, physical_neighbours, set_coords!, shift_coords!
+export edges, new_indices, nodes, num_nodes, physical_neighbours, set_coords!, shift_coords!
 export coords, edge_indices, edge_types, node_indices, node_types
 export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_node_types!
 include("code_graph_functions.jl")
