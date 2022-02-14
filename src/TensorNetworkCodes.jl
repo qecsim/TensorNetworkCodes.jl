@@ -1,59 +1,44 @@
 module TensorNetworkCodes
 
 # imports
-using Qecsim
-
-# SimpleCode imports
 using Combinatorics: combinations
-using Random: MersenneTwister, RandomDevice, rand
-using StatsBase: Weights, sample
-
-# Core imports
 using GraphPlot: gplot
-using ITensors: Index, ITensor, dim, hastags, inds
+using ITensors: Index, ITensor, dim, hastags, inds, tags
 using LightGraphs: Graph, add_edge!
+using Random: AbstractRNG, MersenneTwister, RandomDevice, GLOBAL_RNG, rand
+using StatsBase: ProbabilityWeights, sample
 
 # exports
+export QuantumCode, SimpleCode, CodeGraph, TensorNetworkCode
+include("types.jl")
 export pauli_are_commuting, pauli_are_independent, pauli_commutation
-export pauli_pow, pauli_product, pauli_product_pow, pauli_rep_change, pauli_weight
+export pauli_pow, pauli_product, pauli_product_pow
+export pauli_random_operator, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")
+export num_qubits, verify
+export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
+export gauge, permute, purify
+include("code_functions.jl")
+export edges, new_indices, nodes, num_nodes, physical_neighbours, set_coords!, shift_coords!
+export coords, edge_indices, edge_types, node_indices, node_types
+export set_coords!, set_edge_indices!, set_edge_types!, set_node_indices!, set_node_types!
+include("code_graph_functions.jl")
+export combine, contract, contract_by_coords, fusion
+include("contraction_functions.jl")
+export plot_code, plot_operator
+include("plotting_functions.jl")
+export five_qubit_code, five_qubit_surface_code, steane_code
+export random_code, random_stabilizer_state
+include("examples/simple.jl")
+export almost_rotated_surface_code, rotated_surface_code, surface_code
+include("examples/surface.jl")
+export code_to_Itensor, identity_coset, all_cosets
+export physical_tensor, create_virtual_tensor
+include("itensors_functions.jl")
 
-# SimpleCode exports
-export SimpleCode, QuantumCode
-include("simple/types.jl")
-export five_qubit_code,five_qubit_surface_code,steane_code
-include("simple/examples.jl")
-
-export num_qubits, verify_code
-export find_distance_logicals, find_pure_error, find_syndrome
-export permute, generate_pure_errors
-export low_weight_stabilizers, are_physically_equivalent
-export purify_code, gauge_code, random_stabilizer_state, random_code
-include("simple/code_functions.jl")
-export random_pauli_error
-include("simple/errors.jl")
-export min_weight_brute_force,do_nothing_decoder
-export monte_carlo_simulation
-include("simple/decoding.jl")
-
-# Core exports
-export TNCode,num_nodes,nodes,edges,SimpleCode
-export coords,node_types,node_indices,edge_types,edge_indices
-export set_coords!,set_node_types!,set_node_indices!,set_edge_types!,set_edge_indices!
-export shift_coords!
-include("core/types.jl")
-export identity_coset,all_cosets,gauge_code,code_to_tensor,code_to_Itensor
-include("core/functions.jl")
-export code_plot,operator_plot
-include("core/plotting.jl")
-export combine_by_coordinates,contract,fusion,merge
-include("core/contract.jl")
-export surface_code,diamond_lattice_code,almost_surface_code,fully_random_code
-export checkerboard_code, funny_code
-include("core/surface.jl")
-
-# include submodules (not reexported)
+# include submodules (not exported)
 include("TNDecode.jl")
 include("TNDistance.jl")
+include("QecsimAdaptors.jl")
 
 end

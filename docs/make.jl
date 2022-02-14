@@ -6,11 +6,11 @@ DocMeta.setdocmeta!(TensorNetworkCodes, :DocTestSetup, :(using TensorNetworkCode
 makedocs(;
     modules=[TensorNetworkCodes],
     authors="Terry Farrelly, David K. Tuckett",
-    repo="https://github.com/dkt29/TensorNetworkCodes.jl/blob/{commit}{path}#{line}",
+    repo="https://github.com/qecsim/TensorNetworkCodes.jl/blob/{commit}{path}#{line}",
     sitename="TensorNetworkCodes.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://dkt29.github.io/TensorNetworkCodes.jl",
+        canonical="https://qecsim.github.io/TensorNetworkCodes.jl",
         assets=String[],
     ),
     pages=[
@@ -19,17 +19,19 @@ makedocs(;
             "api/types.md",
             "api/pauli_functions.md",
             "api/code_functions.md",
-            "api/codegraph_functions.md",
-            "api/contraction_functions.md",
+            "api/code_graph_functions.md",
             "api/plotting_functions.md",
             "api/example_codes.md",
-            "api/qecsim_adaptors.md",
+            "api/itensors_functions.md",
+            "api/TNDecode.md",
+            "api/TNDistance.md",
+            "api/QecsimAdaptors.md",
             "api/index.md",
         ],
     ],
 )
 
 deploydocs(;
-    repo="github.com/dkt29/TensorNetworkCodes.jl",
+    repo="github.com/qecsim/TensorNetworkCodes.jl",
     devbranch="main",
 )

@@ -1,3 +1,0 @@
-# Contraction functions
-
-TODO

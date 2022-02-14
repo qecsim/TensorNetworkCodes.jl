@@ -1,3 +1,0 @@
-# Qecsim adaptors
-
-TODO

@@ -1,15 +1,19 @@
 # Code functions
 
-Basic, evaluation and transformation functions for codes and code fields.
+[`QuantumCode`](@ref) functions for verifying, evaluating, transforming and contracting.
 
 ## Basic
 
+Functions for code properties or verification.
+
 ```@docs
 num_qubits
-verify_code
+verify
 ```
 
 ## Evaluation
+
+Functions to evaluate operators or syndromes.
 
 ```@docs
 find_distance_logicals
@@ -20,8 +24,22 @@ find_syndrome
 
 ## Transformation
 
+Functions to gauge, permute and purify codes.
+
 ```@docs
-gauge_code
-permute_code
-purify_code
+gauge
+permute
+purify
+```
+
+## Contraction
+
+Functions to contract codes using the primitives of combining codes and fusing physical
+qubits.
+
+```@docs
+combine
+contract
+contract_by_coords
+fusion
 ```

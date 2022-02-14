@@ -24,8 +24,9 @@ end
 """
     pauli_are_independent(operators) -> Bool
 
-Return true if the Pauli operators are linearly independent, or false otherwise, where
-`operators` is an iterable of `AbstractVector{Int}`.
+Return true if the Pauli operators are independent, or false otherwise, where
+`operators` is an iterable of `AbstractVector{Int}`.  Here independence means
+that no operator can be expressed as a product of the others.
 
 # Examples
 ```jldoctest
@@ -154,7 +155,8 @@ end
 """
     pauli_product(a::Int, b::Int) -> Int
 
-Return the product of two Paulis.
+Return the product of two Paulis.  Note that we are ignoring overall minus
+signs.
 
 # Examples
 ```jldoctest
@@ -181,7 +183,30 @@ function pauli_product(a::Int, b::Int)
 end
 
 """
-    pauli_product_pow(operators, powers)
+    pauli_product(operators) -> Vector{Int}
+
+Return the product of the Pauli operators, where `operators` is an iterable of
+`AbstractVector{Int}`.
+
+See also [`pauli_product_pow`](@ref).
+
+# Examples
+```jldoctest
+julia> ops = [[3, 3, 0], [0, 1, 1], [2, 0, 2]];  # ZZI, IXX, YIY
+
+julia> pauli_product(ops)
+3-element Vector{Int64}:
+ 1
+ 2
+ 3
+```
+"""
+function pauli_product(operators)
+    return reduce((a, b)->pauli_product.(a, b), operators)
+end
+
+"""
+    pauli_product_pow(operators, powers) -> Vector{Int}
 
 Return the product of the Pauli operators each raised to the corresponding power, where
 `operators` is an iterable of `AbstractVector{Int}` and `powers` is an iterable of `Int`.
@@ -206,6 +231,31 @@ function pauli_product_pow(operators, powers)
         (a, b)->pauli_product.(a, b),
         (pauli_pow.(operator, power) for (operator, power) in zip(operators, powers))
     )
+end
+
+"""
+    pauli_random_operator(n::Int, p::Real, rng::AbstractRNG=GLOBAL_RNG)
+        -> AbstractVector{Int}
+
+Return a random Pauli operator on `n` qubits with Paulis applied according to i.i.d.
+depolarizing noise with probability `p`.
+
+# Examples
+```jldoctest
+julia> using Random:MersenneTwister  # use RNG for reproducible example
+
+julia> pauli_random_operator(5, 0.2, MersenneTwister(13))
+5-element Vector{Int64}:
+ 3
+ 3
+ 0
+ 2
+ 0
+```
+"""
+function pauli_random_operator(n::Int, p::Real, rng::AbstractRNG=GLOBAL_RNG)
+    weights = ProbabilityWeights([1 - p, p / 3, p / 3, p / 3])
+    return sample(rng, [0, 1, 2, 3], weights, n)
 end
 
 """

@@ -2,12 +2,16 @@ using Test
 using SafeTestsets
 
 @testset verbose=true "TensorNetworkCodes.jl" begin
-    # refactored tests
+    @safetestset "types.jl" begin include("types.jl") end
     @safetestset "pauli_functions.jl" begin include("pauli_functions.jl") end
-    # SimpleCode tests
-    @safetestset "simple/code_functions.jl" begin include("simple/code_functions.jl") end
-    # Core tests
-    @safetestset "core/types.jl" begin include("core/types.jl") end
-    @safetestset "core/contract.jl" begin include("core/contract.jl") end
-    @safetestset "core/surface.jl" begin include("core/surface.jl") end
+    @safetestset "code_functions.jl" begin include("code_functions.jl") end
+    @safetestset "code_graph_functions.jl" begin include("code_graph_functions.jl") end
+    @safetestset "contraction_functions.jl" begin include("contraction_functions.jl") end
+    @safetestset "plotting_functions.jl" begin include("plotting_functions.jl") end
+    @safetestset "examples/simple.jl" begin include("examples/simple.jl") end
+    @safetestset "examples/surface.jl" begin include("examples/surface.jl") end
+    @safetestset "itensors_functions.jl" begin include("itensors_functions.jl") end
+    @safetestset "TNDecode.jl" begin include("TNDecode.jl") end
+    @safetestset "TNDistance.jl" begin include("TNDistance.jl") end
+    @safetestset "QecsimAdaptors.jl" begin include("QecsimAdaptors.jl") end
 end

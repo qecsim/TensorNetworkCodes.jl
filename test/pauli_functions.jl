@@ -58,17 +58,27 @@ end
     @test pauli_product.(3, [0, 1, 2, 3]) == [3, 2, 1, 0]  # Z with IXYZ -> ZYXI
 end
 
+@testset "pauli_product" begin
+    operators = [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1]]
+    operators_copy = deepcopy(operators)
+    @test pauli_product(operators) == [3, 2, 1, 0]
+    @test operators == operators_copy  # operators not modified
+    @test pauli_product([Int[]]) == []  # empty operator
+end
+
 @testset "pauli_product_pow" begin
-    ops = [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1]]
-    @test pauli_product_pow(ops, [0, 0, 0]) == [0, 0, 0, 0]
-    @test pauli_product_pow(ops, [0, 0, 1]) == [2, 3, 0, 1]
-    @test pauli_product_pow(ops, [0, 1, 0]) == [1, 0, 3, 2]
-    @test pauli_product_pow(ops, [0, 1, 1]) == [3, 3, 3, 3]
-    @test pauli_product_pow(ops, [1, 0, 0]) == [0, 1, 2, 3]
-    @test pauli_product_pow(ops, [1, 0, 1]) == [2, 2, 2, 2]
-    @test pauli_product_pow(ops, [1, 1, 0]) == [1, 1, 1, 1]
-    @test pauli_product_pow(ops, [1, 1, 1]) == [3, 2, 1, 0]
-    @test pauli_product_pow(ops, [-1, 3, 1]) == [3, 2, 1, 0]  # non-binary powers
+    operators = [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1]]
+    operators_copy = deepcopy(operators)
+    @test pauli_product_pow(operators, [0, 0, 0]) == [0, 0, 0, 0]
+    @test pauli_product_pow(operators, [0, 0, 1]) == [2, 3, 0, 1]
+    @test pauli_product_pow(operators, [0, 1, 0]) == [1, 0, 3, 2]
+    @test pauli_product_pow(operators, [0, 1, 1]) == [3, 3, 3, 3]
+    @test pauli_product_pow(operators, [1, 0, 0]) == [0, 1, 2, 3]
+    @test pauli_product_pow(operators, [1, 0, 1]) == [2, 2, 2, 2]
+    @test pauli_product_pow(operators, [1, 1, 0]) == [1, 1, 1, 1]
+    @test pauli_product_pow(operators, [1, 1, 1]) == [3, 2, 1, 0]
+    @test pauli_product_pow(operators, [-1, 3, 1]) == [3, 2, 1, 0]  # non-binary powers
+    @test operators == operators_copy  # operators not modified
     @test pauli_product_pow([Int[]], [1]) == []  # empty operator
 end
 
