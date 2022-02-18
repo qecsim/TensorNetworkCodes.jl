@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Code functions · TensorNetworkCodes.jl</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://qecsim.github.io/TensorNetworkCodes.jl/api/code_functions/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><script src="../../../copy.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">TensorNetworkCodes.jl</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Overview</a></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="../types/">Types</a></li><li><a class="tocitem" href="../pauli_functions/">Pauli functions</a></li><li class="is-active"><a class="tocitem" href>Code functions</a><ul class="internal"><li><a class="tocitem" href="#Basic"><span>Basic</span></a></li><li><a class="tocitem" href="#Evaluation"><span>Evaluation</span></a></li><li><a class="tocitem" href="#Transformation"><span>Transformation</span></a></li><li><a class="tocitem" href="#Contraction"><span>Contraction</span></a></li></ul></li><li><a class="tocitem" href="../code_graph_functions/">Code graph functions</a></li><li><a class="tocitem" href="../plotting_functions/">Plotting functions</a></li><li><a class="tocitem" href="../example_codes/">Example codes</a></li><li><a class="tocitem" href="../itensors_functions/">ITensors functions</a></li><li><a class="tocitem" href="../TNDecode/">TNDecode module</a></li><li><a class="tocitem" href="../TNDistance/">TNDistance module</a></li><li><a class="tocitem" href="../QecsimAdaptors/">QecsimAdaptors module</a></li><li><a class="tocitem" href="../">Index</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">API</a></li><li class="is-active"><a href>Code functions</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Code functions</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/master/docs/src/api/code_functions.md#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Code-functions"><a class="docs-heading-anchor" href="#Code-functions">Code functions</a><a id="Code-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Code-functions" title="Permalink"></a></h1><p><a href="../types/#TensorNetworkCodes.QuantumCode"><code>QuantumCode</code></a> functions for verifying, evaluating, transforming and contracting.</p><h2 id="Basic"><a class="docs-heading-anchor" href="#Basic">Basic</a><a id="Basic-1"></a><a class="docs-heading-anchor-permalink" href="#Basic" title="Permalink"></a></h2><p>Functions for code properties or verification.</p><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.num_qubits" href="#TensorNetworkCodes.num_qubits"><code>TensorNetworkCodes.num_qubits</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">num_qubits(code::QuantumCode) -&gt; Int</code></pre><p>Return the number of physical qubits of the code.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L3-L7">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.verify" href="#TensorNetworkCodes.verify"><code>TensorNetworkCodes.verify</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">verify(code::QuantumCode; log_warn=true) -&gt; Bool</code></pre><p>Return true if the code satisfied the properties of a valid code, or false otherwise.  If the code is not valid and <code>log_warn</code> is true then a warning is logged with the specific reason.</p><p>The following checks are performed:</p><ul><li>Number of stabilizers, pure errors and logicals are consistent.</li><li>Stabilizers are independent and mutually commute.</li><li>Pure errors anticommute with corresponding stabilizers and commute with other stabilizers.</li><li>Logicals commute with stabilizers.</li></ul><p>The following checks are not yet performed:</p><ul><li>Logical commutation relations.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L12-L26">source</a></section></article><h2 id="Evaluation"><a class="docs-heading-anchor" href="#Evaluation">Evaluation</a><a id="Evaluation-1"></a><a class="docs-heading-anchor-permalink" href="#Evaluation" title="Permalink"></a></h2><p>Functions to evaluate operators or syndromes.</p><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.find_distance_logicals" href="#TensorNetworkCodes.find_distance_logicals"><code>TensorNetworkCodes.find_distance_logicals</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">find_distance_logicals(code::Quantum_code; max_distance=5) -&gt; Int, Vector{Vector{Int}}</code></pre><p>Return the distance of the code and all minimum-weight logical operators.</p><p>This method works by brute force. It searches for operators of increasing weight so it works well for low-distance codes but will be slow for high-distance codes. If during the search <code>max_distance</code> is exceeded then an <code>ErrorException</code> is thrown.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; d, ls = find_distance_logicals(five_qubit_code());
+
+julia&gt; d, length(ls), ls[1]  # distance, number and example of minimum-weight logicals
+(3, 30, [1, 2, 1, 0, 0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L79-L95">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.find_pure_error" href="#TensorNetworkCodes.find_pure_error"><code>TensorNetworkCodes.find_pure_error</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">find_pure_error(code::QuantumCode, syndrome::AbstractVector{Int}) -&gt; AbstractVector{Int}</code></pre><p>Return a pure error which yields the given syndrome with the given code.</p><p>The pure error is formed from a product of <code>code.pure_errors</code> and is not unique nor necessarily the lowest-weight error corresponding to the syndrome.</p><p>See also <a href="#TensorNetworkCodes.find_syndrome"><code>find_syndrome</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code = five_qubit_code();
+
+julia&gt; syndrome = find_syndrome(code, [0, 1, 3, 0, 1])  # error = IXZIX
+4-element Vector{Int64}:
+ 1
+ 0
+ 0
+ 1
+
+julia&gt; pure_error = find_pure_error(code, syndrome)
+5-element Vector{Int64}:
+ 1
+ 1
+ 0
+ 0
+ 0
+
+julia&gt; find_syndrome(code, pure_error) == syndrome
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L167-L199">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.find_pure_errors" href="#TensorNetworkCodes.find_pure_errors"><code>TensorNetworkCodes.find_pure_errors</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">find_pure_errors(stabilizers::AbstractVector{&lt;:AbstractVector{Int}})
+    -&gt; Vector{Vector{Int}}</code></pre><p>Return pure errors corresponding to a list of stabilizers, such that each pure error anticommutes with precisely one stabilizer and the order of pure errors respects that of the stabilizers.</p><p>This function is efficient but does not give lowest weight pure errors (you cannot have both of these properties). An <code>ErrorException</code> is thrown if the function cannot succeed; for example if the stabilizers are not linearly independent.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; stabilizers = [[1, 3, 3, 1, 0], [0, 1, 3, 3, 1], [1, 0, 1, 3, 3], [3, 1, 0, 1, 3]];
+
+julia&gt; pure_errors = find_pure_errors(stabilizers)
+4-element Vector{Vector{Int64}}:
+ [0, 1, 0, 0, 0]
+ [1, 3, 0, 0, 0]
+ [3, 1, 0, 0, 0]
+ [1, 0, 0, 0, 0]
+
+julia&gt; [pauli_commutation(s, p) for s in stabilizers, p in pure_errors]  # commutations
+4×4 Matrix{Int64}:
+ 1  0  0  0
+ 0  1  0  0
+ 0  0  1  0
+ 0  0  0  1</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L321-L351">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.find_syndrome" href="#TensorNetworkCodes.find_syndrome"><code>TensorNetworkCodes.find_syndrome</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">find_syndrome(code::QuantumCode, error::AbstractVector{Int}) -&gt; AbstractVector{Int}</code></pre><p>Return the syndrome yielded by the given error with the given code.</p><p>The syndrome is a list of 1 and 0 of the same length as <code>code.stabilizers</code>, where 1 indicates the error anticommutes with the corresponding stabilizer.</p><p>See also <a href="#TensorNetworkCodes.find_pure_error"><code>find_pure_error</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; syndrome = find_syndrome(five_qubit_code(), [0, 1, 3, 0, 1])  # error = IXZIX
+4-element Vector{Int64}:
+ 1
+ 0
+ 0
+ 1</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L358-L377">source</a></section></article><h2 id="Transformation"><a class="docs-heading-anchor" href="#Transformation">Transformation</a><a id="Transformation-1"></a><a class="docs-heading-anchor-permalink" href="#Transformation" title="Permalink"></a></h2><p>Functions to gauge, permute and purify codes.</p><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.gauge" href="#TensorNetworkCodes.gauge"><code>TensorNetworkCodes.gauge</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">gauge(code::SimpleCode, logical_qubit::Int, logical_pauli::Int) -&gt; SimpleCode
+
+gauge(code::TensorNetworkCode, logical_qubit::Int, logical_pauli::Int)
+    -&gt; TensorNetworkCode</code></pre><p>Given a code with <span>$k$</span> logicals on <span>$n$</span> physical qubits, return a new code with <span>$k - 1$</span> logicals on <span>$n$</span> physical qubits by adding a logical operator as a stabilizer, where <code>logical_qubit</code> indexes which logical qubit is gauged and <code>logical_pauli</code> indicates which logical Pauli is added to the stabilizers.</p><p>A <code>ErrorException</code> is thrown if <code>logical_qubit</code> indexes a non-existant logical qubit, or if <code>logical_pauli</code> is not in <code>1:3</code> (logical identity does not fix a gauge).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code = five_qubit_code();
+
+julia&gt; code.stabilizers
+4-element Vector{Vector{Int64}}:
+ [1, 3, 3, 1, 0]
+ [0, 1, 3, 3, 1]
+ [1, 0, 1, 3, 3]
+ [3, 1, 0, 1, 3]
+
+julia&gt; code.logicals
+2-element Vector{Vector{Int64}}:
+ [1, 1, 1, 1, 1]
+ [3, 3, 3, 3, 3]
+
+julia&gt; new_code = gauge(code, 1, 3);  # gauge logical qubit 1 using logical Z
+
+julia&gt; new_code.stabilizers
+5-element Vector{Vector{Int64}}:
+ [1, 3, 3, 1, 0]
+ [0, 1, 3, 3, 1]
+ [1, 0, 1, 3, 3]
+ [3, 1, 0, 1, 3]
+ [3, 3, 3, 3, 3]
+
+julia&gt; new_code.logicals
+Vector{Int64}[]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L386-L429">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.permute" href="#TensorNetworkCodes.permute"><code>TensorNetworkCodes.permute</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">permute(code::SimpleCode, permutation) -&gt; SimpleCode</code></pre><p>Return a new simple code with the physical qubits permuted relative to the given code, according to the permutation.</p><p>The <code>permutation</code> is expected in the format used for <code>Base.permute!</code> and it is applied to each stabilizer, logical and pure error of the code. No checking is done to verify that <code>permuation</code> is a valid.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code = five_qubit_code();
+
+julia&gt; code.name
+&quot;Five qubit code&quot;
+
+julia&gt; code.stabilizers
+4-element Vector{Vector{Int64}}:
+ [1, 3, 3, 1, 0]
+ [0, 1, 3, 3, 1]
+ [1, 0, 1, 3, 3]
+ [3, 1, 0, 1, 3]
+
+julia&gt; new_code = permute(code, [2, 1, 3, 4, 5]);
+
+julia&gt; new_code.name
+&quot;Five qubit code [2, 1, 3, 4, 5]&quot;
+
+julia&gt; new_code.stabilizers
+4-element Vector{Vector{Int64}}:
+ [3, 1, 3, 1, 0]
+ [1, 0, 3, 3, 1]
+ [0, 1, 1, 3, 3]
+ [1, 3, 0, 1, 3]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L464-L500">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.purify" href="#TensorNetworkCodes.purify"><code>TensorNetworkCodes.purify</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">purify(code::SimpleCode) -&gt; SimpleCode</code></pre><p>Given a simple code with <span>$k$</span> logicals on <span>$n$</span> physical qubits, return a new simple code with <span>$0$</span> logicals on <span>$n + k$</span> physical qubits.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code = purify(five_qubit_code());
+
+julia&gt; num_qubits(code), length(code.logicals)
+(6, 0)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/code_functions.jl#L513-L526">source</a></section></article><h2 id="Contraction"><a class="docs-heading-anchor" href="#Contraction">Contraction</a><a id="Contraction-1"></a><a class="docs-heading-anchor-permalink" href="#Contraction" title="Permalink"></a></h2><p>Functions to contract codes using the primitives of combining codes and fusing physical qubits.</p><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.combine" href="#TensorNetworkCodes.combine"><code>TensorNetworkCodes.combine</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">combine(code1::SimpleCode, code2::SimpleCode) -&gt; SimpleCode
+combine(code1::TensorNetworkCode, code2::TensorNetworkCode) -&gt; TensorNetworkCode</code></pre><p>Return a new code that is the tensor product of the given codes. Physically equivalent to preparing two codes on different sets of physical qubits.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code = combine(five_qubit_code(), steane_code());  # combine 5 and 7 qubit codes
+
+julia&gt; num_qubits(code)
+12</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/contraction_functions.jl#L3-L17">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.contract" href="#TensorNetworkCodes.contract"><code>TensorNetworkCodes.contract</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">contract(
+    code1::TensorNetworkCode,
+    code2::TensorNetworkCode,
+    qubit_pair::AbstractVector{Int}
+) -&gt; TensorNetworkCode
+
+contract(
+    code1::TensorNetworkCode,
+    code2::TensorNetworkCode,
+    qubit_pairs
+) -&gt; TensorNetworkCode</code></pre><p>Return a new code that results from combining the codes and fusing physical qubits identified by the qubit pairs. The first and second elements of a qubit pair refer to qubit labels from the first and second codes, respectively.</p><p>This is equivalent to <a href="#TensorNetworkCodes.combine"><code>combine</code></a> followed by <a href="#TensorNetworkCodes.fusion"><code>fusion</code></a>, with the qubit pair labels referring to the code qubit labels before combining. The version that takes <code>qubit_pairs</code> takes iterables of <code>AbstractVector{Int}</code>. An <code>ErrorException</code> is thrown if the fusion is not possible.</p><p>See also: <a href="#TensorNetworkCodes.combine"><code>combine</code></a>, <a href="#TensorNetworkCodes.fusion"><code>fusion</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code1 = TensorNetworkCode(five_qubit_code());
+
+julia&gt; code2 = TensorNetworkCode(steane_code());
+
+julia&gt; contracted_code = contract(code1, code2, [[1, 2], [2, 7]]);
+
+julia&gt; num_qubits(contracted_code), length(contracted_code.logicals) ÷ 2
+(8, 2)
+
+julia&gt; fusion(combine(code1, code2), [[1, 7], [2, 12]]);  # equivalent code</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/contraction_functions.jl#L572-L609">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.contract_by_coords" href="#TensorNetworkCodes.contract_by_coords"><code>TensorNetworkCodes.contract_by_coords</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">contract_by_coords(code1::TensorNetworkCode,code2::TensorNetworkCode)
+    -&gt; TensorNetworkCode</code></pre><p>Return a new code that results from combining the codes and fusing physical qubits with coincident coordinates.</p><p>This is equivalent to <a href="#TensorNetworkCodes.combine"><code>combine</code></a> followed by <a href="#TensorNetworkCodes.fusion"><code>fusion</code></a>, with the fusion qubit pairs being those with coincident coordinates. An <code>ErrorException</code> is thrown if the fusion is not possible.</p><p>See also: <a href="#TensorNetworkCodes.combine"><code>combine</code></a>, <a href="#TensorNetworkCodes.fusion"><code>fusion</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code1 = TensorNetworkCode(five_qubit_code());
+
+julia&gt; code2 = TensorNetworkCode(steane_code());
+
+julia&gt; set_coords!(code1, 1, [5, 5]); set_coords!(code2, 2, [5, 5]); # qubits 1 &amp; 2 coincide
+
+julia&gt; set_coords!(code1, 2, [6, 6]); set_coords!(code2, 7, [6, 6]); # qubits 2 &amp; 7 coincide
+
+julia&gt; contracted_code = contract_by_coords(code1, code2);
+
+julia&gt; num_qubits(contracted_code), length(contracted_code.logicals) ÷ 2
+(8, 2)
+
+julia&gt; contract(code1, code2, [[1, 2], [2, 7]]);  # equivalent code</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/contraction_functions.jl#L628-L658">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="TensorNetworkCodes.fusion" href="#TensorNetworkCodes.fusion"><code>TensorNetworkCodes.fusion</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">fusion(code::SimpleCode, qubit_pair::AbstractVector{Int}) -&gt; SimpleCode
+fusion(code::SimpleCode, qubit_pairs) -&gt; SimpleCode
+
+fusion(code::TensorNetworkCode, qubit_pair::AbstractVector{Int}) -&gt; TensorNetworkCode
+fusion(code::TensorNetworkCode, qubit_pairs) -&gt; TensorNetworkCode</code></pre><p>Return a new code that results from fusing the physical qubits with labels given by each qubit pair. The new code has two fewer physical qubits, for each qubit pair, but the same number of logical qubits. Physically equivalent to updating stabilizers, logicals and pure errors after measuring <span>$XX$</span> and <span>$ZZ$</span> on each pair of qubits.</p><p>The versions that take <code>qubit_pairs</code> take iterables of <code>AbstractVector{Int}</code>. An <code>ErrorException</code> is thrown if the fusion is not possible, i.e., if the logical degrees of freedom would not be preserved by the measurements.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; code = steane_code();
+
+julia&gt; num_qubits(code), length(code.logicals) ÷ 2
+(7, 1)
+
+julia&gt; fused_code = fusion(code, [1, 2]);
+
+julia&gt; num_qubits(fused_code), length(fused_code.logicals) ÷ 2
+(5, 1)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/qecsim/TensorNetworkCodes.jl/blob/b7f9065f2f1e387317dc942c5c273991ea96b50c/src/contraction_functions.jl#L162-L190">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../pauli_functions/">« Pauli functions</a><a class="docs-footer-nextpage" href="../code_graph_functions/">Code graph functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Friday 18 February 2022 23:55">Friday 18 February 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
