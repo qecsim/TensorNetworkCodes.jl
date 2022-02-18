@@ -105,7 +105,7 @@ function _bsf_to_tnpauli(bs::AbstractMatrix{Bool})
     return _bsf_to_tnpauli.(b for b in eachrow(bs))
 end
 
-"""
+@doc raw"""
     QecsimTNDecoder <: Decoder
 
     QecsimTNDecoder(chi::Union{Nothing,Integer}=nothing)
@@ -132,7 +132,7 @@ than simply summing over values.
     square lattice.
 
 # Examples
-```jldoctest
+```jldoctest; filter = r"0\.92498\d*"
 julia> using TensorNetworkCodes.QecsimAdaptors
 
 julia> using Qecsim, Qecsim.GenericModels
@@ -149,13 +149,13 @@ julia> label(decoder)
 "QecsimTNDecoder (chi=4)"
 
 julia> result = qec_run_once(code, error_model, decoder, 0.1, MersenneTwister(11))
-RunResult{Vector{Vector{Float64}}}(true, 1, Bool[0, 0], [[0.9249813981321254]])
+RunResult{Vector{Vector{Float64}}}(true, 1, Bool[0, 0], [[0.9249813981321253]])
 
 julia> success_flag = result.success
 true
 
 julia> success_probability = result.custom_values[1][1]
-0.9249813981321254
+0.9249813981321253
 ```
 """
 struct QecsimTNDecoder <: Decoder
