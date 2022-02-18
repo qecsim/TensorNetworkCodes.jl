@@ -32,10 +32,6 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - run: | # hack to add qecsim from URL until it is registered
-          julia --project=. -e '
-            using Pkg
-            Pkg.add(PackageSpec(url="https://github.com/qecsim/Qecsim.jl"))'
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
         continue-on-error: ${{ matrix.version == 'nightly' }}
