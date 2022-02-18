@@ -1,6 +1,6 @@
 # TensorNetworkCodes
 
-<!-- [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qecsim.github.io/TensorNetworkCodes.jl/stable) -->
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qecsim.github.io/TensorNetworkCodes.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://qecsim.github.io/TensorNetworkCodes.jl/dev)
 [![Build Status](https://github.com/qecsim/TensorNetworkCodes.jl/workflows/CI/badge.svg)](https://github.com/qecsim/TensorNetworkCodes.jl/actions)
 [![Coverage](https://codecov.io/gh/qecsim/TensorNetworkCodes.jl/branch/main/graph/badge.svg?token=M4ATXN9DIK)](https://codecov.io/gh/qecsim/TensorNetworkCodes.jl)
