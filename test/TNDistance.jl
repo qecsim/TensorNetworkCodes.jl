@@ -25,4 +25,5 @@ end
     @test actual.stabilizer_weights == expected.stabilizer_weights
     @test actual.all_operator_weights == expected.all_operator_weights
     @test actual.distance == expected.distance
+    plot_operator_weights(actual)  # no error thrown
 end
