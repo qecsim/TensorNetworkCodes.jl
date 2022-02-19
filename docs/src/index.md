@@ -14,36 +14,28 @@ developed to support the following research:
 
 ## Installation
 
-_TensorNetworkCodes.jl_ is installed using the Julia package manager
-[Pkg](https://pkgdocs.julialang.org/):
+_TensorNetworkCodes.jl_ is installed, like any other registered Julia package,
+using the Julia package manager [Pkg](https://pkgdocs.julialang.org/):
 
 ```julia
-pkg> # Press ']' to enter the Pkg REPL mode
-pkg> add https://github.com/qecsim/TensorNetworkCodes.jl
-
+pkg> add TensorNetworkCodes  # Press ']' to enter the Pkg REPL mode.
 ```
 or
 ```julia
-julia> using Pkg
-julia> Pkg.add(url="https://github.com/qecsim/TensorNetworkCodes.jl")
-
+julia> using Pkg; Pkg.add("TensorNetworkCodes")
 ```
 
 ## Demos
 
-_TODO: replace with nbviewer links (works better) when TensorNetworkCodes.jl repo is public_
-
 The following demos correspond to results included in
 [arXiv:2109.11996](https://arxiv.org/abs/2109.11996):
 
-* [Small example tensor-network codes and code distances]
-  (https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Small_examples_with_distance.ipynb)
+* [Small example tensor-network codes and code distances](https://nbviewer.org/github/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Small_examples_with_distance.ipynb)
 
-* [The 19 qubit colour code as a tensor-network code]
-  (https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Colour_code.ipynb)
+* [The 19 qubit colour code as a tensor-network code](https://nbviewer.org/github/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Colour_code.ipynb)
 
-* [The modified surface code]
-  (https://github.com/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Modified_surface_code_example.ipynb)
+* [The modified surface code](https://nbviewer.org/github/qecsim/TensorNetworkCodes.jl/blob/main/nbs/Modified_surface_code_example.ipynb)
+
 
 ## Citing
 
