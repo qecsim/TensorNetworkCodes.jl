@@ -65,4 +65,4 @@ _TensorNetworkCodes.jl_ is released under the BSD 3-Clause license, see
 
 * Source code: <https://github.com/qecsim/TensorNetworkCodes.jl>
 * Documentation: <https://qecsim.github.io/TensorNetworkCodes.jl>
-* Contact: _TODO: add contact email_
+* Contact: Terry Farrelly [farreltc@tcd.ie](mailto:farreltc@tcd.ie)
