@@ -146,11 +146,12 @@ function _tn_weights(
 
     for α in 1:length(code_tensors)
         indices = inds(code_tensors[α])  #tuple
+        indices = collect(indices)  #convert to array
         physical_indices = filter(x->hastags(x,"physical"),indices)
         num_phys = length(physical_indices)
         output_index = Index(num_phys + 1,"weight")
 
-        local_weight_tensor = _simple_weight_tensor([physical_indices...],output_index)
+        local_weight_tensor = _simple_weight_tensor(physical_indices,output_index)
         code_tensors[α] = code_tensors[α]*local_weight_tensor
     end
 

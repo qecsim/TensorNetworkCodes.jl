@@ -8,6 +8,16 @@ using Test
     @test tn_distance(code) == 2
 end
 
+@testset "tn_distance-edge-case" begin
+    # this case previously led to an error because after applying `contract`
+    # one of the nodes has no "physical" indices
+    tn_five_qubit = TensorNetworkCode(five_qubit_code())
+    bell_pair = SimpleCode("Bell pair", [[1,1], [3,3]], [])
+    tn_bell = TensorNetworkCode(bell_pair)
+    code = contract(tn_five_qubit, tn_bell, [[1,1], [2,2]])
+    @test tn_distance(code) == 1
+end
+
 @testset "tn_distance-contract-same-code" begin
     code = TensorNetworkCode(steane_code())
     code = contract(code, code, [[1, 1], [3, 3]])
