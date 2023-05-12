@@ -223,7 +223,10 @@ function _find_pure_errors_disordered(stabilizers::AbstractVector{<:AbstractVect
     n = length(stabilizers[1])
     remaining = collect(1:r)
 
-    for qubit in 1:r  # TODO: should be 1:n ?
+    for qubit in 1:n  
+        if length(pure_errors) == r
+            break
+        end
         paulis = [1,2,3]
         indices = Int[]
         for α in remaining
@@ -248,6 +251,7 @@ function _find_pure_errors_disordered(stabilizers::AbstractVector{<:AbstractVect
         end
 
         remaining = setdiff(remaining, indices)
+        # ensure remaining stabilizers commute with new pure errors
         for α in remaining
             if stabilizers[α][qubit] == 0
                 continue
