@@ -24,13 +24,8 @@ of `ITensor` working along row-by-row.
 See also: [`tn_decode`](@ref).
 """
 function basic_contract()
-    return function _basic_contract(imatrix)
-        output = ITensor(1)
-        for i in 1:size(imatrix)[1], j in 1:size(imatrix)[2]
-            output = output * imatrix[i,j]
-        end
-
-        return output
+    return function _basic_contract(tensors)
+        return vec(tensors) |> contract
     end
 end
 
