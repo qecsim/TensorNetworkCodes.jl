@@ -216,21 +216,23 @@ function fusion(code::SimpleCode, qubit_pair::AbstractVector{Int})
     end
 
     _remove_qubits!(stabilizers, qubit_pair)
+    _remove_qubits!(pure_errors, qubit_pair)
     if length(logicals) != 0
         _remove_qubits!(logicals, qubit_pair)
     end
 
     if length(useful_inds) != 2
         new_stabilizers = Array{Int64,1}[]
+        new_pure_errors = Array{Int64,1}[]
         for α in 1:length(stabilizers)
             if pauli_are_independent(vcat(new_stabilizers, [stabilizers[α]]))
                 push!(new_stabilizers, stabilizers[α])
+                push!(new_pure_errors, pure_errors[α])
             end
         end
+        pure_errors = new_pure_errors
         stabilizers = new_stabilizers
     end
-
-    _remove_qubits!(pure_errors, qubit_pair)
 
     return SimpleCode(" ", stabilizers, logicals, pure_errors)
 end

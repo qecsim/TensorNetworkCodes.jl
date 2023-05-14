@@ -69,6 +69,20 @@ end
     equivalent_code = fusion(combine(code1, code2), [[1, 7], [2, 12]])
     @test contracted_code.stabilizers == equivalent_code.stabilizers
     @test contracted_code.logicals == equivalent_code.logicals
+    # tricky edge case
+    bell_pair = SimpleCode("Bell pair", [[1,1], [3,3]], [])
+    tn_bell = TensorNetworkCode(bell_pair)
+    code = SimpleCode(
+        "Poor code",
+        [[1, 1, 0], [3, 3, 0]],
+        [[0, 0, 1], [0, 0, 3]],
+        )
+    code = TensorNetworkCode(code)
+    code = contract(code, tn_bell, [[1, 1], [2,2]])
+    @test verify(code)
+    @test length(code.stabilizers) == 0
+    @test code.logicals == [[1], [3]] || code.logicals == [[3], [1]]
+    @test length(code.pure_errors) == 0
 end
 
 @testset "contract_by_coords" begin
