@@ -6,7 +6,11 @@
 Return the number of physical qubits of the code.
 """
 function num_qubits(code::QuantumCode)
-    return length(code.stabilizers) == 0 ? 0 : length(code.stabilizers[1])
+    if length(code.stabilizers) == 0
+        return Int(length(code.logicals) / 2)
+    else
+        return length(code.stabilizers[1])
+    end
 end
 
 """

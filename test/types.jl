@@ -13,6 +13,13 @@ using Test
 
     code = SimpleCode()
     @test verify(code)
+
+    code = SimpleCode(
+        "Poor code",
+        [[1, 0, 0], [0, 0, 3]],
+        [[0, 1, 0], [0, 3, 0]],
+        )
+    @test verify(code)
 end
 
 @testset "TensorNetworkCode" begin
