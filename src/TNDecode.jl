@@ -8,7 +8,7 @@ module TNDecode
 using ..TensorNetworkCodes: TensorNetworkCode
 using ..TensorNetworkCodes: pauli_product, pauli_product_pow
 using ..TensorNetworkCodes: num_qubits, find_pure_error
-using ..TensorNetworkCodes: physical_neighbours, edge_indices
+using ..TensorNetworkCodes: physical_neighbours, edge_indices, nodes
 using ..TensorNetworkCodes: create_virtual_tensor, physical_tensor
 using ITensors: ITensor, MPO, MPS, array, contract, hastags
 
@@ -24,13 +24,8 @@ of `ITensor` working along row-by-row.
 See also: [`tn_decode`](@ref).
 """
 function basic_contract()
-    return function _basic_contract(imatrix)
-        output = ITensor(1)
-        for i in 1:size(imatrix)[1], j in 1:size(imatrix)[2]
-            output = output * imatrix[i,j]
-        end
-
-        return output
+    return function _basic_contract(tensors)
+        return vec(tensors) |> contract
     end
 end
 
@@ -143,11 +138,16 @@ end
 Contracts the tensor network described by `code_graph`.  Uses any specified `contract_fn`.
 """
 function _contract(code, pure_error::AbstractVector{Int}, error_prob::Float64, contract_fn)
-    L = Int64(sqrt(num_qubits(code)))
+    num_virtuals = -minimum(nodes(code))  # virtuals have negative index
+    # create a matrix of ITensors
+    L = ceil(Int, sqrt(num_virtuals))
     imatrix = [ITensor(1) for i in 1:L, j in 1:L]
 
     for i in 1:L, j in 1:L
         node =  -(L*(i-1) + j)
+        if node ∉ nodes(code)
+            break
+        end
         tensor = create_virtual_tensor(code, node)
 
         neighbours = physical_neighbours(code, node)
