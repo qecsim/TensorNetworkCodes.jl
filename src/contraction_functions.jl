@@ -281,7 +281,7 @@ function _fusion(code_graph::CodeGraph, qubit_pair::AbstractVector{Int})
     new_edge = union(virtual1, virtual2)
 
     if length(new_edge) == 1
-        println("Self contraction occurred.  Contraction algorithms may not work!")
+        println("Self contraction occurred.  Tensor-network decoding & distance algorithms may not work!")
         @goto skip_new_edge_stuff
     end
 
