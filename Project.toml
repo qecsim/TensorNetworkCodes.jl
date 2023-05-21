@@ -1,7 +1,7 @@
 name = "TensorNetworkCodes"
 uuid = "b317c587-d840-4e81-9857-9d906192e215"
 authors = ["Terry Farrelly <farreltc@tcd.ie>", "David K. Tuckett"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
