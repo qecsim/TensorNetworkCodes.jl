@@ -581,20 +581,22 @@ function depurify(code::SimpleCode, index::Int)
     k = Int(K / 2)
     n = num_qubits(code)
     # preconditions
-    (logical_qubit in 1:k) || error("logical qubit index out of bounds!")
-    (k != 0) || error("code is not [[n,0]] SimpleCode. Depurify function haven't been supported general case yet.")
+    (index in 1:n) || error("logical qubit index out of bounds!")
+    (k == 0) || error("code is not [[n,0]] SimpleCode. Depurify function haven't been supported general case yet.")
 
     x_indices = []
     z_indices = []
-    operators = g[:, index]
-    for (i, op) in enumerate(operators)
+    operators_on_index = [element[index] for element in g]
+    for (i, op) in enumerate(operators_on_index)
         if op in (1, 2)
             push!(x_indices, i)
+        end
         if op in (3, 2)
             push!(z_indices, i)
+        end
     end
-    if x_indices.length() == 0 || z_indices.length() == 0
-        error("code cannot be depurified. There is no X or Z operator in the column of the index.")
+    if length(x_indices) == 0 || length(z_indices) == 0
+        error("This code cannot be depurified. There is no X or Z operator in the column of the index.")
     end
 
     logical_x = g[x_indices[1]]
@@ -610,7 +612,8 @@ function depurify(code::SimpleCode, index::Int)
 
     name = "$(index)th-Depurified $(code.name)"
     physical_qubits = [i for i in 1:n if i != index]
-    new_stabilizers = g[:, physical_qubits]
+    left_stabilizer_index = [i for i in 1:length(g) if i != x_indices[1] && i != z_indices[1]]
+    new_stabilizers = [element[physical_qubits] for element in g[left_stabilizer_index]]
     new_logicals = [logical_x[physical_qubits], logical_z[physical_qubits]]
 
     return SimpleCode(name, new_stabilizers, new_logicals)
