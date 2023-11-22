@@ -603,11 +603,11 @@ function depurify(code::SimpleCode, index::Int)
     logical_z = g[z_indices[1]]
     for i in x_indices[2:end]
         stabilizer = g[i]
-        g[i] = pauli_product(logical_x, stabilizer)
+        g[i] = pauli_product([logical_x, stabilizer])
     end
     for i in z_indices[2:end]
         stabilizer = g[i]
-        g[i] = pauli_product(logical_z, stabilizer)
+        g[i] = pauli_product([logical_z, stabilizer])
     end
 
     name = "$(index)th-Depurified $(code.name)"
