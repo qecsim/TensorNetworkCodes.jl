@@ -564,3 +564,54 @@ function purify(code::SimpleCode)
 
     return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
 end
+
+function depurify(code::SimpleCode, index::Int)
+    """
+        this function is depurification of SimpleCode.
+        It just supports depurification from [[n,0]] SimpleCode to [n[-1,1]] SimpleCode now.
+        It should be extended to support more general depurification.
+
+        Input:
+            code::SimpleCode:   SimpleCode to be depurified
+            index::Int:        index of qubit to be a logical qubit
+    """
+    g = deepcopy(code.stabilizers)
+    l = code.logicals
+    K = length(l)
+    k = Int(K / 2)
+    n = num_qubits(code)
+    # preconditions
+    (logical_qubit in 1:k) || error("logical qubit index out of bounds!")
+    (k != 0) || error("code is not [[n,0]] SimpleCode. Depurify function haven't been supported general case yet.")
+
+    x_indices = []
+    z_indices = []
+    operators = g[:, index]
+    for (i, op) in enumerate(operators)
+        if op in (1, 2)
+            push!(x_indices, i)
+        if op in (3, 2)
+            push!(z_indices, i)
+    end
+    if x_indices.length() == 0 || z_indices.length() == 0
+        error("code cannot be depurified. There is no X or Z operator in the column of the index.")
+    end
+
+    logical_x = g[x_indices[1]]
+    logical_z = g[z_indices[1]]
+    for i in x_indices[2:end]
+        stabilizer = g[i]
+        g[i] = pauli_product(logical_x, stabilizer)
+    end
+    for i in z_indices[2:end]
+        stabilizer = g[i]
+        g[i] = pauli_product(logical_z, stabilizer)
+    end
+
+    name = "$(index)th-Depurified $(code.name)"
+    physical_qubits = [i for i in 1:n if i != index]
+    new_stabilizers = g[:, physical_qubits]
+    new_logicals = [logical_x[physical_qubits], logical_z[physical_qubits]]
+
+    return SimpleCode(name, new_stabilizers, new_logicals)
+end
