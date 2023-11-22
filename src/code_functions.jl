@@ -568,7 +568,7 @@ end
 function depurify(code::SimpleCode, index::Int)
     """
         this function is depurification of SimpleCode.
-        It just supports depurification from [[n,0]] SimpleCode to [n[-1,1]] SimpleCode now.
+        It just supports depurification from [[n,0]] SimpleCode to [[n-1,1]] SimpleCode now.
         It should be extended to support more general depurification.
 
         Input:
