@@ -165,3 +165,25 @@ end
     @test length(new_code.logicals) == 0
     @test verify(new_code)
 end
+
+@testset "depurify" begin
+    code = purify(five_qubit_code())
+    code_copy = deepcopy(code)
+    new_code = depurify(code, 1)
+    # test code not modified
+    @test code.name == code_copy.name
+    @test code.stabilizers == code_copy.stabilizers
+    @test verify(code)
+    # test new_code modified as expected
+    @test new_code.name == "1th-Depurified $(code.name)"
+    @test num_qubits(new_code) == num_qubits(code) - 1
+    @test length(new_code.stabilizers) == num_qubits(new_code)-1
+    @test length(new_code.logicals) == 2
+    @test verify(new_code)
+    @test new_code.logicals == five_qubit_code().logicals
+    @test new_code.stabilizers == five_qubit_code().stabilizers
+    # test exceptions
+    @test_throws ErrorException depurify(code, 0)  # invalid logical qubit
+    @test_throws ErrorException depurify(code, 7)  # invalid logical qubit
+    @test_throws ErrorException depurify(five_qubit_code(), 1)  # depurifying with identity
+end

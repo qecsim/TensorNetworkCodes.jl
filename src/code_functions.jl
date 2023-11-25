@@ -564,3 +564,57 @@ function purify(code::SimpleCode)
 
     return SimpleCode(name, output_stabilizers, output_logicals, output_pure_errors)
 end
+
+function depurify(code::SimpleCode, index::Int)
+    """
+        this function is depurification of SimpleCode.
+        It just supports depurification from [[n,0]] SimpleCode to [[n-1,1]] SimpleCode now.
+        It should be extended to support more general depurification.
+
+        Input:
+            code::SimpleCode:   SimpleCode to be depurified
+            index::Int:        index of qubit to be a logical qubit
+    """
+    g = deepcopy(code.stabilizers)
+    l = code.logicals
+    K = length(l)
+    k = Int(K / 2)
+    n = num_qubits(code)
+    # preconditions
+    (index in 1:n) || error("logical qubit index out of bounds!")
+    (k == 0) || error("code is not [[n,0]] SimpleCode. Depurify function haven't been supported general case yet.")
+
+    x_indices = []
+    z_indices = []
+    operators_on_index = [element[index] for element in g]
+    for (i, op) in enumerate(operators_on_index)
+        if op in (1, 2)
+            push!(x_indices, i)
+        end
+        if op in (3, 2)
+            push!(z_indices, i)
+        end
+    end
+    if length(x_indices) == 0 || length(z_indices) == 0
+        error("This code cannot be depurified. There is no X or Z operator in the column of the index.")
+    end
+
+    logical_x = g[x_indices[1]]
+    logical_z = g[z_indices[1]]
+    for i in x_indices[2:end]
+        stabilizer = g[i]
+        g[i] = pauli_product([logical_x, stabilizer])
+    end
+    for i in z_indices[2:end]
+        stabilizer = g[i]
+        g[i] = pauli_product([logical_z, stabilizer])
+    end
+
+    name = "$(index)th-Depurified $(code.name)"
+    physical_qubits = [i for i in 1:n if i != index]
+    left_stabilizer_index = [i for i in 1:length(g) if i != x_indices[1] && i != z_indices[1]]
+    new_stabilizers = [element[physical_qubits] for element in g[left_stabilizer_index]]
+    new_logicals = [logical_x[physical_qubits], logical_z[physical_qubits]]
+
+    return SimpleCode(name, new_stabilizers, new_logicals)
+end

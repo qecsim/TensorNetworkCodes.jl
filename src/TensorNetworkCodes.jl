@@ -17,7 +17,7 @@ export pauli_random_operator, pauli_rep_change, pauli_weight
 include("pauli_functions.jl")
 export num_qubits, verify
 export find_distance_logicals, find_pure_error, find_pure_errors, find_syndrome
-export gauge, permute, purify
+export gauge, permute, purify, depurify
 include("code_functions.jl")
 export edges, new_indices, nodes, num_nodes, physical_neighbours, set_coords!, shift_coords!
 export coords, edge_indices, edge_types, node_indices, node_types
